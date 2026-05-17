@@ -118,8 +118,33 @@ export default {
       }
       return card_text;
     },
+    getPlayerInventory() {
+      const inventory = [];
+
+      for (const card of this.cards) {
+        if (card.type === 'item') {
+          const item = {
+            id: card.id,
+            name: card.name || '',
+            item_type: card.item_type || 'other',
+            content: card.content || '',
+            equipped: card.equipped || false
+          };
+          inventory.push(item);
+        }
+      }
+      return inventory;
+    },
     removeCard(id) {
       this.cards = this.cards.filter(card => card.id !== id);
+    }
+  },
+  watch: {
+    cards: {
+      handler() {
+        this.$emit('inventory-updated', this.getPlayerInventory());
+      },
+      deep: true // Watch for changes in individual cards
     }
   },
   computed: {

@@ -1,6 +1,7 @@
 <script>
 import ContextCards from './ContextCards.vue';
 import FileMenu from './FileMenu.vue';
+import PlayerCard from './PlayerCard.vue';
 
 // Approximate to 4 characters per token for simple tokens-to-chars conversion.
 // Real token amount may vary based on language and content.
@@ -10,7 +11,8 @@ export default {
   name: 'StoryEditor',
   components: {
     ContextCards,
-    FileMenu
+    FileMenu,
+    PlayerCard
   },
   emits: ['loading-changed'],
   props: {
@@ -50,12 +52,18 @@ export default {
       action_input: '',
       recent_action: '',
       recent_outcome: '',
-      outcome_counter: 0
+      outcome_counter: 0,
+      player_equipment: [],
+      player_inventory: []
     }
   },
   methods: {
     setActiveTab(tab) {
       this.active_tab = tab;
+    },
+    updatePlayerInventory(inventory) {
+      this.player_inventory = inventory || [];
+      this.player_equipment = this.player_inventory.filter(item => item.equipped);
     },
     // Extract past content between cursor and beginning of recent content,
     // i.e. content that has fallen out of the context window. Overlap with recent  
@@ -429,6 +437,7 @@ export default {
         this.memory_cursor = data.memory_cursor || 0;
         this.summary_cursor = data.summary_cursor || 0;
         this.$refs.contextCards.cards = data.context_cards || [];
+        this.updatePlayerInventory(this.$refs.contextCards.getPlayerInventory());
         this.action_input = '';
         this.recent_action = '';
         this.recent_outcome = '';
@@ -460,8 +469,15 @@ export default {
       this.recent_action = '';
       this.recent_outcome = '';
       this.outcome_counter = 0;
+      this.player_equipment = [];
+      this.player_inventory = [];
       
       this.status_message = 'New story initialized with ID '  + this.story_id + '.';
+    }
+  },
+  mounted() {
+    if (this.$refs.contextCards) {
+      this.updatePlayerInventory(this.$refs.contextCards.getPlayerInventory());
     }
   },
   computed: {
@@ -479,7 +495,7 @@ export default {
       const max_chars = this.context_length * APPROX_CHARS_PER_TOKEN;
 
       return Math.max(0, this.content.length - max_chars);
-    }
+    },
   },
   watch: {
     // Update story_editor_content when content changes, e.g. when continuing or loading story
@@ -541,6 +557,13 @@ export default {
     @click="setActiveTab('editor')"
   >
     Editor
+  </button>
+
+  <button 
+    :class="{ active: active_tab === 'player_card' }"
+    @click="setActiveTab('player_card')"
+  >
+    Player Card
   </button>
 
   <button 
@@ -619,7 +642,7 @@ export default {
           <input
             v-model="action_input"
             type="text"
-            spellcheck: true
+            spellcheck="true"
             placeholder="Next character action"
           />
         </div>
@@ -631,7 +654,11 @@ export default {
     </div>
 
     <div class="container" v-show="active_tab === 'context_cards'">
-      <ContextCards ref="contextCards" />
+      <ContextCards ref="contextCards" @inventory-updated="updatePlayerInventory" />
+    </div>
+
+    <div class="container" v-show="active_tab === 'player_card'">
+      <PlayerCard ref="playerCard" :inventory="player_inventory" />
     </div>
 
     <div class="container" v-show="active_tab === 'sent_context'">
