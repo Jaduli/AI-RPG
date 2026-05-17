@@ -1,5 +1,6 @@
 <script>
 import ContextCards from './ContextCards.vue';
+import FileMenu from './FileMenu.vue';
 
 // Approximate to 4 characters per token for simple tokens-to-chars conversion.
 // Real token amount may vary based on language and content.
@@ -8,7 +9,8 @@ const APPROX_CHARS_PER_TOKEN = 4;
 export default {
   name: 'StoryEditor',
   components: {
-    ContextCards
+    ContextCards,
+    FileMenu
   },
   emits: ['loading-changed'],
   props: {
@@ -35,7 +37,7 @@ export default {
       sent_context: '', // Full context sent for story generation
       status_message: '',
       // Values
-      filename: '',
+      story_name: '',
       active_tab: 'editor',
       active_requests: 0,
       memory_cursor: 0,
@@ -121,7 +123,6 @@ export default {
           },
           body: JSON.stringify({
             model: this.main_model,
-            story_id: this.story_id,
             instructions: this.instructions,
             summary: this.summary,
             story_essentials: this.story_essentials,
@@ -200,13 +201,13 @@ export default {
         }
 
         // Automatically turn past context into a memory and save the story if filename is set
-        if (this.filename && this.filename.trim() !== '') {
+        if (this.story_name && this.story_name.trim() !== '') {
           if (this.memorize) {
             await this.createMemory();
           }
           await this.saveStory();
         } else {
-          this.status_message = 'Please set filename to save and memorize story.'
+          this.status_message = 'Please set story name to save and memorize story.'
         }
       }catch (err) {
         this.status_message = 'Error continuing story: ' + (err.message || err);
@@ -217,7 +218,7 @@ export default {
     // Function to summarize the story with backend API
     async summarizeStory() {
       // Minimum past content length (in characters) to create a new summary.
-      // default: 4000
+      // default: 5000
       const minimum_length_chars = 5000;
       // Use half of minimum length as overlap with recent story.
       // This prevents context that falls out of recent content window
@@ -279,7 +280,7 @@ export default {
     // Function to create a memory with backend API
     async createMemory() {
       // Minimum past content length to create a new memory.
-      // default: 7000
+      // default: 8000
       const minimum_length_chars = 8000;
 
       // Use past story content for new memory (without overlap with recent story)
@@ -328,8 +329,8 @@ export default {
     },
     // Function to save the story to backend API
     async saveStory(sync = true) {
-      if (!this.filename || this.filename.trim() === '') {
-        this.status_message = 'Please enter a filename to save the story.';
+      if (!this.story_name || this.story_name.trim() === '') {
+        this.status_message = 'Please enter a story name to save the story.';
         return;
       }
       try {
@@ -344,9 +345,6 @@ export default {
           // Sync content with story editor before saving
           this.syncContentWithEditor();
         }
-
-        // Ensure filename ends with .json
-        const filename = this.filename.endsWith('.json') ? this.filename : this.filename + '.json';
         
         const context_cards = this.$refs.contextCards.cards || [];
 
@@ -357,8 +355,8 @@ export default {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            filename,
             story_id: this.story_id,
+            story_name: this.story_name,
             instructions: this.instructions,
             content: this.content,
             summary: this.summary,
@@ -377,6 +375,9 @@ export default {
         if (this.active_requests === 1 && data.message) {
           this.status_message = 'Success: ' + data.message;
         }
+        if (!data.error) {
+          this.$refs.fileMenu.fetchFiles();
+        }
       } catch (err) {
         this.status_message = 'Error saving story: ' + (err.message || err);
       } finally {
@@ -385,26 +386,27 @@ export default {
     },
     // Function to load the story from backend API.
     // If file is not found or filename is empty/invalid, creates a new story instead.
-    async loadStory() {
+    async loadStory(story_id = null) {
       try {
         this.active_requests++;
         this.status_message = 'Loading story...';
 
-        let data = {};
-      
-        // Fetch file content if filename is set
-        if (this.filename && this.filename.trim() !== '') {
-          // Ensure filename ends with .json
-          const filename = this.filename.endsWith('.json') ? this.filename : this.filename + '.json';
-
-          // Use GET to load story (default method for fetch).
-          // Encode filename to prevent issues with URL special characters such as '&' and '='.
-          const res = await fetch('/api/load?filename=' + encodeURIComponent(filename));
-          data = await res.json();
+        const id = story_id || this.story_id;
+        if (!id) {
+          this.status_message = 'Please select a saved story to load.';
+          return;
         }
 
-        // Set values, default to new story
-        this.story_id = data.story_id || crypto.getRandomValues(new Uint32Array(1))[0];
+        const res = await fetch('/api/load?story_id=' + encodeURIComponent(id));
+        const data = await res.json();
+
+        if (data.error) {
+          this.status_message = 'Backend load error: ' + data.error;
+          return;
+        }
+
+        this.story_id = Number(id);
+        this.story_name = data.story_name || '';
         this.instructions = data.instructions || '';
         this.content = data.content || '';
         this.summary = data.summary || '';
@@ -417,14 +419,6 @@ export default {
         this.recent_outcome = '';
         this.outcome_counter = 0;
 
-        if (data.error) {
-          this.status_message = 'Backend: ' + data.error + ' New story created.';
-          return;
-        }
-        else if (!this.filename || this.filename.trim() === '') {
-          this.status_message = 'Filename not set. New story created.'
-          return;
-        }
         // Scroll to bottom after loading story
         this.$nextTick(() => {
           const el = this.$refs.storyBox;
@@ -615,10 +609,10 @@ export default {
     </div>
   </div>
   <p class="status">{{ status_message }}</p>
+  <FileMenu ref="fileMenu" :story_id="story_id" @load-file="loadStory" />
   <div class="container">
-    <h2>Story File Name</h2>
-    <input v-model="filename" placeholder="Enter filename" />
-    <button @click="loadStory" :disabled="isLoading">Load Story</button>
+    <h2>Story Title</h2>
+    <input v-model="story_name" placeholder="Enter story title for saving" />
     <button @click="saveStory" :disabled="isLoading">Save Story</button>
   </div>
 </template>

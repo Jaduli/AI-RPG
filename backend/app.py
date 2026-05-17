@@ -60,16 +60,14 @@ Returns 400 if filename or story_id is missing or invalid,
 """
 @app.route('/api/load', methods=['GET'])
 def load_file():
-    filename = request.args.get('filename')
-    if not filename:
-        return jsonify({"error": "Filename is required."}), 400
-    
-    # Basic validation to prevent directory traversal or invalid filenames.
-    # Only allow .json files.
-    if not re.match(r'^[a-zA-Z0-9_-]+\.json$', filename):
-        return jsonify({"error": "Invalid filename."}), 400
+    story_id_str = request.args.get('story_id')
+    story_id = int(story_id_str) if story_id_str.isdigit() else None
 
-    path = os.path.join(BASE_DIR, filename)
+    # Validate story ID
+    if not story_id:
+        return jsonify({"error": "Story ID is required. ID must be a positive integer."}), 400
+
+    path = os.path.join(BASE_DIR, str(story_id), 'save.json')
 
     # Ensure the real path is within the BASE_DIR to prevent directory traversal
     real_path = os.path.realpath(path)
@@ -83,7 +81,7 @@ def load_file():
     try:
         with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
-            story_id = data.get("story_id")
+            story_name = data.get("story_name", '')
             instructions = data.get("instructions", '')
             content = data.get("content", '')
             summary = data.get("summary", '')
@@ -95,28 +93,20 @@ def load_file():
         # Internal Server Error
         return jsonify({"error": str(e)}), 500
 
-    # Validate story ID
-    if not story_id:
-        return jsonify({"error": "Story ID missing from file."}), 400
-    # Check that ID is a positive integer. Separate check for bool as python counts True and False as int.
-    if not isinstance(story_id, int) or isinstance(story_id, bool) or story_id <= 0:
-        return jsonify({"error": "Invalid story ID. ID must be a positive integer."}), 400
-
-    return jsonify({"story_id": story_id, "instructions": instructions, "content": content, 
+    return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
                     "summary": summary, "story_essentials": story_essentials, "memory_cursor": memory_cursor,
                     "summary_cursor":summary_cursor, "context_cards": context_cards})
 
 """
 /save
 
-Save story to file. Valid filename and story_id are required. 
+Save story to file. Valid story_id is required. 
 Returns 400 if filename or story_id is missing or invalid,
 413 (Payload Too Large) if file size exceeds set limit.
 """
 @app.route('/api/save', methods=['POST'])
 def save_file():
     data = request.json
-    filename = data.get("filename")
     story_id = data.get("story_id")
 
     # Validate story ID
@@ -124,41 +114,30 @@ def save_file():
         return jsonify({"error": "Story ID is required."}), 400
     if not isinstance(story_id, int) or isinstance(story_id, bool) or story_id <= 0:
         return jsonify({"error": "Invalid story ID. ID must be a positive integer."}), 400
+    
+    story_name = data.get("story_name", '')
+    if (story_name.strip() == ''):
+        return jsonify({"error": "Story name is required."}), 400
 
-    # Validate file
-    if not filename:
-        return jsonify({"error": "Filename is required."}), 400
-    
-    # Basic validation to prevent directory traversal or invalid filenames.
-    # Only allow .json files.
-    if not re.match(r'^[a-zA-Z0-9_-]+\.json$', filename):
-        return jsonify({"error": "Invalid filename."}), 400
-    
-    path = os.path.join(BASE_DIR, filename)
+    path = os.path.join(BASE_DIR, str(story_id))
+    os.makedirs(path, exist_ok=True)
+    save_path = os.path.join(path, 'save.json')
 
     # Ensure the real path is within the BASE_DIR to prevent directory traversal
-    real_path = os.path.realpath(path)
+    real_path = os.path.realpath(save_path)
     if not real_path.startswith(os.path.realpath(BASE_DIR)):
         return jsonify({"error": "Invalid path."}), 400
     
     # Create a backup of existing file. Only keep one backup per file.
-    if os.path.exists(path):
-        # Build backup filename (story.json -> story_backup.json)
-        base, ext = os.path.splitext(filename) # Get base name without extension
-        backup_filename = f"{base}_backup.json"
-        backup_path = os.path.join(BASE_DIR, backup_filename)
-
-        # Ensure backup path is also safe
-        real_backup_path = os.path.realpath(backup_path)
-        if not real_backup_path.startswith(os.path.realpath(BASE_DIR)):
-            return jsonify({"error": "Invalid backup path."}), 400
+    if os.path.exists(save_path):
+        backup_path = os.path.join(path, 'backup.json')
 
         # If backup already exists, remove it (only keep one backup)
         if os.path.exists(backup_path):
             os.remove(backup_path)
 
         # Rename current file to backup
-        os.rename(path, backup_path)
+        os.rename(save_path, backup_path)
 
     # Get rest of saved data
     instructions = data.get("instructions", '')
@@ -171,7 +150,7 @@ def save_file():
 
     # Build payload
     save_data = {
-        "story_id": story_id,
+        "story_name": story_name,
         "instructions": instructions,
         "content": content,
         "summary": summary,
@@ -192,10 +171,49 @@ def save_file():
         }), 413
 
     # Save new file
-    with open(path, 'w', encoding='utf-8') as f:
+    with open(save_path, 'w', encoding='utf-8') as f:
         f.write(json_string)
 
-    return jsonify({"message": "File saved as " + filename + "."})
+    return jsonify({"message": "File saved with ID " + str(story_id) + "."})
+
+
+"""
+/get_save_files
+
+Returns list of saved story files with their associated story IDs.
+Returns 500 if error reading files.
+"""
+@app.route('/api/get_save_files', methods=['GET'])
+def get_save_files():
+    files = []
+    try:
+        for entry in os.scandir(BASE_DIR):
+            if not entry.is_dir():
+                continue
+            story_id = int(entry.name) if entry.name.isdigit() else None
+
+            if not story_id or story_id <= 0:
+                continue
+
+            save_file_path = os.path.join(entry.path, 'save.json')
+            if not os.path.exists(save_file_path):
+                continue
+            try:
+                with open(save_file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                story_name = data.get("story_name", '')
+
+                files.append({
+                    "story_id": story_id,
+                    "story_name": story_name
+                })
+            except (OSError, json.JSONDecodeError):
+                # Skip corrupted or unreadable save files
+                continue
+    except OSError as e:
+        return jsonify({"error": str(e)}), 500
+
+    return jsonify({"files": files})
 
 """
 /continue
