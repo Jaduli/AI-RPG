@@ -430,6 +430,23 @@ export default {
       } finally {
         this.active_requests--;
       }
+    },
+    async createNewStory() {
+      this.story_id = crypto.getRandomValues(new Uint32Array(1))[0];
+      this.story_name = this.story_name || '';
+      this.instructions = '';
+      this.content = '';
+      this.summary = '';
+      this.story_essentials = '';
+      this.memory_cursor = 0;
+      this.summary_cursor = 0;
+      this.$refs.contextCards.cards = [];
+      this.action_input = '';
+      this.recent_action = '';
+      this.recent_outcome = '';
+      this.outcome_counter = 0;
+      
+      this.status_message = 'New story initialized with ID '  + this.story_id + '.';
     }
   },
   computed: {
@@ -609,12 +626,13 @@ export default {
     </div>
   </div>
   <p class="status">{{ status_message }}</p>
-  <FileMenu ref="fileMenu" :story_id="story_id" @load-file="loadStory" />
   <div class="container">
     <h2>Story Title</h2>
     <input v-model="story_name" placeholder="Enter story title for saving" />
     <button @click="saveStory" :disabled="isLoading">Save Story</button>
+    <button @click="createNewStory" :disabled="isLoading">Create New Story</button>
   </div>
+  <FileMenu ref="fileMenu" :story_id="story_id" @load-file="loadStory" />
 </template>
 
 <style scoped>

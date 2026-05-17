@@ -5,6 +5,7 @@ export default {
     return {
       files: [],
       loading: false,
+      show: true,
       error: ''
     }
   },
@@ -39,21 +40,24 @@ export default {
   <div class="file-menu container">
     <div class="header-row">
       <h2>Saved Stories</h2>
-      <button @click="fetchFiles" :disabled="loading">Refresh</button>
+      <button @click="show = !show">
+        {{ show ? 'Collapse' : 'Expand' }}
+      </button>
     </div>
+    <div v-if="show">
+      <div v-if="error" class="error-message">{{ error }}</div>
+      <div v-else-if="loading" class="info-message">Loading saved stories...</div>
+      <div v-else-if="files.length === 0" class="info-message">No saved stories found.</div>
 
-    <div v-if="error" class="error-message">{{ error }}</div>
-    <div v-else-if="loading" class="info-message">Loading saved stories...</div>
-    <div v-else-if="files.length === 0" class="info-message">No saved stories found.</div>
-
-    <ul v-else class="file-list">
-      <li v-for="file in files" :key="file.story_id">
-        <span class="file-label">
-          {{ file.story_id }} — {{ file.story_name || 'Untitled Story' }}
-        </span>
-        <button @click="load(file.story_id)" :disabled="loading">Load</button>
-      </li>
-    </ul>
+      <ul v-else class="file-list">
+        <li v-for="file in files" :key="file.story_id">
+          <span class="file-label">
+            {{ file.story_id }} — {{ file.story_name || 'Untitled Story' }}
+          </span>
+          <button @click="load(file.story_id)" :disabled="loading">Load</button>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -99,17 +103,5 @@ export default {
 }
 .error-message {
   color: #ff7f7f;
-}
-button {
-  background: #aa3bff;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 3px;
-  cursor: pointer;
-}
-button:disabled {
-  opacity: 0.6;
-  cursor: default;
 }
 </style>
