@@ -285,10 +285,10 @@ def continue_story():
         "\n\n[Story Summary]\n" + summary +
         "\n\n[Past Memories]\n" + memory_block +
         "\n\n[Relevant Context]\n" + context_cards +
-        ("\n\n[Recent Character Action]\n" + recent_action if recent_action else "") +
+        ("\n\n[Recent Player Action]\n" + recent_action if recent_action else "") +
         ("\n\n[Recent Action Outcome]\n" + recent_outcome if recent_outcome else "") +
         "\n\n[Recent Story]\n" + recent_story +
-        ("\n\n[Character Action]\n" + user_action if user_action else "") +
+        ("\n\n[Player Action]\n" + user_action if user_action else "") +
         ("\n\n[Action Outcome]\n" + outcome if outcome else "")
     )
     
@@ -457,7 +457,7 @@ def memorize():
         return jsonify({"error": "Model is required."}), 400
     
     story_id = data.get('story_id')
-    
+
     # Validate story ID
     if not story_id:
         return jsonify({"error": "Story ID is required."}), 400

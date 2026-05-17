@@ -1,0 +1,85 @@
+{
+  "story_name": "War is Coming",
+  "instructions": "- Continue the story in second-person present tense (like this: 'He looks at you.'). Do NOT use past tense.\n- Do NOT decide for the protagonist (referred to as 'you').\n- Story genres: fantasy, adventure.\n- Do NOT write mature or inappropriate content.",
+  "content": "Your life was peaceful. Then a raven brought you a letter, written by the King himself. War is coming, it said. The Holy Kingdom of Donvard will attack your home, Arthinora, and show no mercy. You, a knight who has served King Cairon in past battles, will be crucial in winning this war. So you gather your gear, saddle your horse, and begin the long ride towards the castle where the King resides.\n\nYou ride your horse, Fern, down a dirt road.",
+  "summary": "You, a knight, left your home after being summoned by the king.",
+  "story_essentials": "Protagonist Information:\nYou are a knight. You have dark leather armor and a steel sword on your back. You have a brown destrier mare named Fern. You serve King Cairon in the Kingdom of Arthinora.\n\nWorld Information:\nThe Three Kingdoms: Arthinora, Eldoria, Donvard.\n\nKing Lionel of the Holy Kingdom of Donvard has declared war with Arthinora.",
+  "memory_cursor": 0,
+  "summary_cursor": 0,
+  "context_cards": [
+    {
+      "id": 1779028506940,
+      "name": "Eldoria",
+      "type": "location",
+      "content": "Eldoria is ruled by the Elven Queen Lysa. Eldoria is considered to be a peaceful and rich kingdom. Eldoria is located next to the Great Violet Sea.",
+      "keywords": [
+        "Eldoria",
+        "Lysa",
+        "Kingdoms"
+      ]
+    },
+    {
+      "id": 1779028553088,
+      "name": "Donvard",
+      "type": "location",
+      "content": "A Holy Kingdom that is ruled by King Lionel and Queen Anise. It's lands are vast with low hills and human-dominated farming land.",
+      "keywords": [
+        "Donvard",
+        "Lionel",
+        "Anise",
+        "Kingdoms"
+      ]
+    },
+    {
+      "id": 1779029866153,
+      "name": "Lionel",
+      "type": "character",
+      "content": "A cruel and ambitious king. Lionel has thinning blond hair and ice-blue eyes.",
+      "keywords": [
+        "Lionel",
+        "Donvard"
+      ]
+    },
+    {
+      "id": 1779030002049,
+      "name": "Arthinora",
+      "type": "location",
+      "content": "A Northern Kingdom ruled by King Cairon. Dominated by woods and spirits. Arthinoran people are considered to be loyal and resilient.",
+      "keywords": [
+        "Arthinora",
+        "Cairon",
+        "kingdoms"
+      ]
+    },
+    {
+      "id": 1779030584611,
+      "name": "Oakwood",
+      "type": "location",
+      "content": "A small village located in the woods of Arthinora. Notable characters include an elderly seer named Evely, and the Blacksmith's son Fenn.",
+      "keywords": [
+        "Oakwood"
+      ],
+      "parent_location": "Kingdom of Arthinora"
+    },
+    {
+      "id": 1779030758848,
+      "name": "Fenn",
+      "type": "character",
+      "content": "A dapper and adventurous young man. Fenn has tousled brown hair, sun-tanned skin, and green eyes. Fenn wears light leather armor and is talented with his bow carved from dark wood.",
+      "keywords": [
+        "Fenn",
+        "Oakwood"
+      ]
+    },
+    {
+      "id": 1779031113687,
+      "name": "Oakwood Tavern",
+      "type": "location",
+      "content": "A small but comfortable tavern with a kind but brutish owner, a woman named Maya. Oakwood Tavern offers a place to rest, and some Oakwood residents may drink there with gossip to share.",
+      "keywords": [
+        "Oakwood Tavern"
+      ],
+      "parent_location": "Oakwood Tavern"
+    }
+  ]
+}

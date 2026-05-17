@@ -1,0 +1,138 @@
+{
+  "story_name": "War is Coming",
+  "instructions": "- Continue the story in second-person present tense (like this: 'He looks at you.'). Do NOT use past tense.\n- Do NOT decide for the protagonist (referred to as 'you').\n- Story genres: fantasy, adventure.\n- Do NOT write mature or inappropriate content.",
+  "content": "Your life was peaceful. Then a raven brought you a letter, written by the King himself. War is coming, it said. The Holy Kingdom of Donvard will attack your home, Arthinora, and show no mercy. You, a knight who has served King Cairon in past battles, will be crucial in winning this war. So you gather your gear, saddle your horse, and begin the long ride towards the castle where the King resides.\n\nYou ride your horse, Fern, down a dirt road.",
+  "summary": "You, a knight, left your home after being summoned by the king.",
+  "story_essentials": "Protagonist Information:\nYou are a knight. You serve King Cairon in the Kingdom of Arthinora.\n\nWorld Information:\nThe Three Kingdoms: Arthinora, Eldoria, Donvard.\n\nKing Lionel of the Holy Kingdom of Donvard has declared war with Arthinora.",
+  "memory_cursor": 0,
+  "summary_cursor": 0,
+  "context_cards": [
+    {
+      "content": "Eldoria is ruled by the Elven Queen Lysa. Eldoria is considered to be a peaceful and rich kingdom. Eldoria is located next to the Great Violet Sea.",
+      "id": 1779028506940,
+      "keywords": [
+        "Eldoria",
+        "Lysa",
+        "Kingdoms"
+      ],
+      "name": "Eldoria",
+      "type": "location"
+    },
+    {
+      "content": "A Holy Kingdom that is ruled by King Lionel and Queen Anise. It's lands are vast with low hills and human-dominated farming land.",
+      "id": 1779028553088,
+      "keywords": [
+        "Donvard",
+        "Lionel",
+        "Anise",
+        "Kingdoms"
+      ],
+      "name": "Donvard",
+      "type": "location"
+    },
+    {
+      "content": "A cruel and ambitious king. Lionel has thinning blond hair and ice-blue eyes.",
+      "id": 1779029866153,
+      "keywords": [
+        "Lionel",
+        "Donvard"
+      ],
+      "name": "Lionel",
+      "type": "character"
+    },
+    {
+      "content": "A Northern Kingdom ruled by King Cairon. Dominated by woods and spirits. Arthinoran people are considered to be loyal and resilient.",
+      "id": 1779030002049,
+      "keywords": [
+        "Arthinora",
+        "Cairon",
+        "kingdoms"
+      ],
+      "name": "Arthinora",
+      "type": "location",
+      "child_locations": "Oakwood"
+    },
+    {
+      "content": "A small village located in the woods of Arthinora. Notable characters include an elderly seer named Evely, and the Blacksmith's son Fenn.",
+      "id": 1779030584611,
+      "keywords": [
+        "Oakwood"
+      ],
+      "name": "Oakwood",
+      "parent_location": "Kingdom of Arthinora",
+      "type": "location",
+      "child_locations": "Oakwood Tavern"
+    },
+    {
+      "content": "A dapper and adventurous young man. Fenn has tousled brown hair, sun-tanned skin, and green eyes. Fenn wears light leather armor and is talented with his bow carved from dark wood.",
+      "id": 1779030758848,
+      "keywords": [
+        "Fenn",
+        "Oakwood"
+      ],
+      "name": "Fenn",
+      "type": "character"
+    },
+    {
+      "content": "A small but comfortable tavern with a kind but brutish owner, a woman named Maya. Oakwood Tavern offers a place to rest and eat for cheap. Residents of Oakwood often share gossip there.",
+      "id": 1779031113687,
+      "keywords": [
+        "Oakwood Tavern"
+      ],
+      "name": "Oakwood Tavern",
+      "parent_location": "Oakwood",
+      "type": "location"
+    },
+    {
+      "id": 1779037213334,
+      "name": "Inherited Steel Sword",
+      "type": "item",
+      "content": "An unassuming but durable sword inherited from your father. Good for slashing, not for much else.",
+      "item_type": "weapon",
+      "equipped": true
+    },
+    {
+      "id": 1779037327232,
+      "name": "Worn Leather Armor",
+      "type": "item",
+      "content": "Armor that has seen better days, but provides some protection from physical attacks and cold weather. Poor protection against magic.",
+      "item_type": "apparel",
+      "equipped": true
+    },
+    {
+      "id": 1779037392186,
+      "name": "Dried Meat",
+      "type": "item",
+      "content": "A handful of dried meat, ready to eat. Lowers hunger.",
+      "item_type": "perishable",
+      "equipped": false
+    },
+    {
+      "id": 1779037459484,
+      "name": "Health Potion",
+      "type": "item",
+      "content": "A magical health potion that can cure ailments in a pinch. Tastes like strawberries.",
+      "item_type": "perishable",
+      "equipped": false
+    },
+    {
+      "id": 1779037533014,
+      "name": "Bandages",
+      "type": "item",
+      "content": "Clean bandages that can be used to stop bleeding and provide protection against infection.",
+      "item_type": "perishable",
+      "equipped": false
+    },
+    {
+      "id": 1779037730327,
+      "name": "Fern the horse",
+      "type": "other",
+      "content": "Your trusty mare. Sturdy stature, bay coat thick enough for the northern weather. Not the fastest or bravest horse, but a fine mount for travel.",
+      "keywords": [
+        "Fern",
+        "horse",
+        "mount"
+      ]
+    }
+  ]
+}

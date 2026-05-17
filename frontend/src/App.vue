@@ -191,4 +191,19 @@ button:disabled {
   background: #1a1a2e;
   color: #fff;
 }
+
+select {
+  background: #0f0f1e;
+  border: 1px solid #0f0f1e;
+  color: #fff;
+  border-radius: 3px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+select:focus {
+  outline: none;
+  border: 1px solid #aa3bff;
+  box-shadow: 0 0 5px rgba(170, 59, 255, 0.3);
+}
 </style>

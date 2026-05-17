@@ -7,19 +7,47 @@ export default {
       cards: [],
       name: '',
       content: '',
-      keywords: ''
+      keywords: '',
+      selected_type: 'all',
+      type: 'other',
+      // Type-specific values:
+      parent_location: '',
+      child_locations: '',
+      item_type: 'other',
+      equipped: false,
+      create_memories: true
     }
   },
   components: { ContextCard },
   methods: {
-    // Add card with id, name, content, and keywords (comma separated)
+    // Add card with id, name, content, keywords (comma separated),
+    // and type-specific values.
     addCard() {
-      this.cards.push({
+      const type = this.type
+      var payload = {
         id: Date.now(),
         name: this.name,
+        type: type,
         content: this.content,
-        keywords: this.keywords.split(',').map(k => k.trim())
-      });
+        
+      };
+      if (type === 'location' && this.parent_location?.trim()) {
+        payload.parent_location = this.parent_location;
+      }
+      if (type === 'location' && this.child_locations?.trim()) {
+        payload.child_locations = this.child_locations;
+      }
+      if (type === 'item') {
+        payload.item_type = this.item_type;
+        payload.equipped = this.equipped;
+      }
+      if (type === 'character' && this.create_memories) {
+        payload.create_memories = this.create_memories;
+      }
+      if (type !== 'item') {
+        payload.keywords = this.keywords.split(',').map(k => k.trim())
+      }
+      this.cards.push(payload);
       this.name = '';
       this.content = '';
       this.keywords = '';
@@ -30,31 +58,78 @@ export default {
       const matching = [];
 
       for (const card of this.cards) {
+        // Add equipped items to context
+        if (card.type === 'item' && card.equipped) {
+          payload = {
+            name: card.name || '',
+            type: card.type || '',
+            content: card.content || '',
+            item_type: card.item_type || ''
+          };
+          matching.push(payload);
+          continue;
+        }
+        if (card.keywords.length === 0) continue; // skip empty keyword fields
         // Check if any keyword is in the text
         for (const keyword of card.keywords) {
           if (lower_text.includes(keyword.trim().toLowerCase())) {
-            matching.push(card.content);
+            payload = {
+              name: card.name || '',
+              type: card.type || '',
+              content: card.content || '',
+              item_type: card.item_type || '',
+              parent_location: card.parent_location || '',
+              child_locations: card.child_locations || ''
+            };
+            matching.push(payload);
             break; // Only add card once even if multiple keywords match
           }
         }
-
-        // To avoid adding too much context, stop if we have 5 matching cards
-        if (matching.length >= 5) {
+        // To avoid adding too much context, stop if we have 10 matching cards
+        if (matching.length >= 10) {
           break;
         }
       }
 
       if (matching.length === 0) return '';
       
-      // Format matching cards into a string to be included in the prompt
-      let cardText = '';
+      // Format matching cards into a string to be included in the prompt.
+      // Example format
+      // "Colin, character:
+      //  A talented swordsman."
+      let card_text = '';
       for (const card of matching) {
-        cardText += '- ' + card + '\n';
+        card_text += card.name + ', ';
+
+        if (card.item_type) {
+          card_text += card.item_type;
+        }
+        else if (card.item_type !== 'other') {
+          card_text += card.type;
+        }
+        if (card.parent_location) {
+          card_text += card.parent_location;
+        }
+        card_text += ':\n' + card.content + '\n';
+        if (card.child_locations) {
+          card_text += 'Locations within ' + card.name + ': ' + card.child_locations + '\n';
+        }
+        card_text += '\n';
       }
-      return cardText;
+      return card_text;
     },
     removeCard(id) {
       this.cards = this.cards.filter(card => card.id !== id);
+    }
+  },
+  computed: {
+    // Display cards from newest to oldest, filtered by selected type
+    sortedCards() {
+      let filtered = this.cards;
+      if (this.selected_type !== 'all') {
+        filtered = filtered.filter(card => card.type === this.selected_type);
+      }
+      return [...filtered].reverse();
     }
   }
 }
@@ -64,14 +139,58 @@ export default {
   <div class="context-cards">
     <h2>Add New Card</h2>
     <div class="context-card">
-        <h4>Name</h4>
-        <input type="text" v-model="name" />
-        <h4>Content</h4>
-        <textarea v-model="content" />
+      <h4>Name</h4>
+      <input type="text" v-model="name" />
+
+      <h4>Type</h4>
+      <select v-model="type">
+        <option value="other">Other</option>
+        <option value="character">Character</option>
+        <option value="location">Location</option>
+        <option value="item">Item</option>
+      </select>
+
+      <!-- Type-specific values -->
+      <div v-if="type === 'character'">
+        <label>Create Character Memories: </label>
+        <input v-model="create_memories" type="checkbox" class="custom-checkbox" />
+      </div>
+
+      <div v-if="type === 'location'">
+        <label>Parent Location:</label>
+        <input type="text" v-model="parent_location"/>
+      </div>
+      <div v-if="type === 'location'">
+        <label>Child Locations (comma-seperated):</label>
+        <input type="text" v-model="child_locations"/>
+      </div>
+
+      <div v-if="type === 'item'">
+        <label>Item Type: </label>
+        <select v-model="item_type">
+          <option value="other">Other</option>
+          <option value="perishable">Perishable</option>
+          <option value="weapon">Weapon</option>
+          <option value="apparel">Armor/apparel</option>
+        </select>
+        <div>
+        <label>Equipped: </label>
+        <input v-model="equipped" type="checkbox" class="custom-checkbox" />
+        <span title="Equipped items will always be used in story context. For world items requiring keywords, use type 'Other'.">
+          ⓘ
+        </span>
+        </div>
+      </div>
+
+      <h4>Content</h4>
+      <textarea v-model="content" />
+
+      <div v-if="this.type !== 'item'">
         <h4>Keywords (comma-separated)</h4>
         <input type="text" v-model="keywords" />
+      </div>
 
-        <button @click="addCard">Add Card</button>
+      <button @click="addCard">Add Card</button>
     </div>
     <div class="info-container">
     <h3>Existing Cards</h3>
@@ -80,8 +199,16 @@ export default {
       Cards will automatically be saved when edited.
     </h4>
     </div>
+    <label>Filter: </label>
+    <select v-model="selected_type">
+      <option value="all">All</option>
+      <option value="character">Characters</option>
+      <option value="location">Locations</option>
+      <option value="item">Items</option>
+      <option value="other">Other</option>
+    </select>
     <ContextCard
-      v-for="card in cards"
+      v-for="card in sortedCards"
       :key="card.id"
       :card="card"
       @remove="removeCard(card.id)"
@@ -89,7 +216,7 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style>
 .context-cards {
   display: flex;
   flex-direction: column;
