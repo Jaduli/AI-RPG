@@ -31,7 +31,7 @@ export default {
         <button @click="collapse = !collapse">{{ collapse ? 'Edit' : 'Collapse' }}</button>
         <div v-if="!collapse">          
           <h4>Name</h4>
-          <input type="text" v-model="card.name" />
+          <input type="text" v-model="card.name" maxlength="25" />
 
           <h4>Content</h4>
           <textarea v-model="card.content" />
@@ -56,14 +56,14 @@ export default {
           <div v-if="card.type === 'location'">
             <div>
             <label>Parent Location: </label>
-            <input v-model="card.parent_location">
+            <input v-model="card.parent_location" maxlength="200" />
             <span title="Parent location can be a kingdom or some other region the location belongs in.">
               ⓘ
             </span>
             </div>
             <div>
             <label>Child Locations: </label>
-            <input v-model="card.child_locations">
+            <input v-model="card.child_locations" maxlength="200" />
             <span title="Multiple child locations, such as villages in a kingdom, can be seperated using commas.">
               ⓘ
             </span>
@@ -77,7 +77,7 @@ export default {
 
           <div v-if="card.type !== 'item'">
             <h4>Keywords (comma-separated)</h4>
-            <input type="text" v-model="card.keywords" />
+            <input type="text" v-model="card.keywords" maxlength="200" />
           </div>
 
           <button class="btn btn-danger" @click="$emit('remove')">Delete Card</button>

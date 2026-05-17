@@ -12,6 +12,25 @@ export default {
       default: () => []
     }
   },
+  methods: {
+    getPlayerStr() {
+      var str = '';
+
+      if (this.name) {
+        str += 'Player name: ' + this.name + '\n\n';
+      }
+      if (this.description) {
+        str += 'Player Description:\n' + this.description + '\n\n';
+      }
+      return str;  
+    },
+    formatType(type) {
+      const capitalized = type.charAt(0).toUpperCase() + type.slice(1);
+
+      // Keep 'apparel' non-plural
+      return type === 'apparel' ? capitalized : capitalized + 's';
+    }
+  },
   computed: {
     sortedInventory() {
       const typeOrder = { 'perishable': 1, 'weapon': 2, 'apparel': 3, 'other': 4 };
@@ -37,7 +56,9 @@ export default {
 <template>
   <div class="container">
       <h2>Name</h2>
-      <input type="text" v-model="name" />
+      <input type="text" 
+      v-model="name" 
+      maxlength="20"/>
 
       <h2>Description</h2>
       <textarea 
@@ -54,9 +75,9 @@ export default {
       </div>
       <div v-else>
         <div v-for="(items, type) in inventoryByType" :key="type" class="inventory-category">
-          <h4>{{ type.charAt(0).toUpperCase() + type.slice(1) }}</h4>
+          <h4>{{ formatType(type) }}</h4>
           <div v-for="item in items" :key="item.id" class="inventory-item">
-            <p>{{ item.name }}(s)</p>
+            <p>{{ item.name }}</p>
             <p>{{ item.content }}</p>
             <p class="equipped-text" v-if="item.equipped">(equipped)</p>
           </div>

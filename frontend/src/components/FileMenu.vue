@@ -1,6 +1,5 @@
 <script>
 export default {
-  name: 'FileMenu',
   data() {
     return {
       files: [],

@@ -29,6 +29,8 @@ export default {
       temperature: 1,
       // Max tokens controls the length of returned content in story generation.
       max_tokens: 200,
+      memorize: true,
+      summarize: true,
       show_settings: false,
       config_ready: false,
       story_is_loading: false

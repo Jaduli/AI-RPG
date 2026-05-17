@@ -28,17 +28,16 @@ def trim_incomplete_sentences(text):
 
 def get_action_outcome(text):
     """
-    Return an action outcome if text contains the word try/wish/attempt.
+    Return a random outcome for action.
+    Returns one of:
+      - "Success." (20 %)
+      - "Partial success." (20 %)
+      - "Critical success." (10 %)
+      - "Failure." (40 %)
+      - "Critical failure." (10 %)
 
-    The text contains "try", "wish", or "attempt", this function
-    rolls a random value and returns one of:
-      - "Success."
-      - "Partial success."
-      - "Critical success."
-      - "Failure."
-      - "Critical failure."
-
-    "Advantage" and "disadvantage" words are detected as modifiers in the text.
+    "Advantage" and "disadvantage" words are detected as modifiers in the text  
+    and give +-15 % to success chance.
     """
     if not isinstance(text, str):
         return None
@@ -52,9 +51,9 @@ def get_action_outcome(text):
 
     success_threshold = 0.5
     if re.search(r'\bdisadvantage\b', trimmed_text, re.IGNORECASE):
-        success_threshold += 0.2
+        success_threshold += 0.15
     elif re.search(r'\badvantage\b', trimmed_text, re.IGNORECASE):
-        success_threshold -= 0.2
+        success_threshold -= 0.15
 
     partial_threshold = success_threshold + 0.2
     crit_success_threshold = 0.9

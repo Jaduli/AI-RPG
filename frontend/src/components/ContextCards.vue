@@ -165,7 +165,7 @@ export default {
     <h2>Add New Card</h2>
     <div class="context-card">
       <h4>Name</h4>
-      <input type="text" v-model="name" />
+      <input type="text" v-model="name" maxlength="25" />
 
       <h4>Type</h4>
       <select v-model="type">
@@ -183,11 +183,11 @@ export default {
 
       <div v-if="type === 'location'">
         <label>Parent Location:</label>
-        <input type="text" v-model="parent_location"/>
+        <input type="text" v-model="parent_location" maxlength="200" />
       </div>
       <div v-if="type === 'location'">
         <label>Child Locations (comma-seperated):</label>
-        <input type="text" v-model="child_locations"/>
+        <input type="text" v-model="child_locations" maxlength="200" />
       </div>
 
       <div v-if="type === 'item'">
@@ -212,7 +212,7 @@ export default {
 
       <div v-if="this.type !== 'item'">
         <h4>Keywords (comma-separated)</h4>
-        <input type="text" v-model="keywords" />
+        <input type="text" v-model="keywords" maxlength="200" />
       </div>
 
       <button @click="addCard">Add Card</button>

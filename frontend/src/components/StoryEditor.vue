@@ -53,8 +53,11 @@ export default {
       recent_action: '',
       recent_outcome: '',
       outcome_counter: 0,
-      player_equipment: [],
-      player_inventory: []
+      player_equipment_str: '',
+      player_inventory: [],
+      action_type: 'custom',
+      selected_item: '',
+      use_d20: false
     }
   },
   methods: {
@@ -63,7 +66,13 @@ export default {
     },
     updatePlayerInventory(inventory) {
       this.player_inventory = inventory || [];
-      this.player_equipment = this.player_inventory.filter(item => item.equipped);
+      const player_equipment = this.player_inventory.filter(item => item.equipped);
+
+      var str = '';
+      for (const equipment of player_equipment) {
+        str += '- ' + equipment.name + ': ' + equipment.content; 
+      }
+      this.player_equipment_str = str;
     },
     // Extract past content between cursor and beginning of recent content,
     // i.e. content that has fallen out of the context window. Overlap with recent  
@@ -120,6 +129,21 @@ export default {
           this.outcome_counter = 0;
         }
 
+        // Get item used in action
+        const item = this.selected_item;
+        var user_item = '';
+        if (action_type === 'use') {
+          user_item = item.name;
+          
+          // Add used item to context
+          if (!item.equipped) {
+            player_equipment_str += '\n- ' + user_item + ': ' + item.content;
+          }
+        }
+
+        // Get player information
+        player_information = this.$refs.playerMenu.getPlayerStr();
+
         // Get relevant context cards based on found keywords in recent story
         const context_cards = this.$refs.contextCards.getMatchingContextCards(recent_story);
 
@@ -136,9 +160,13 @@ export default {
             story_essentials: this.story_essentials,
             context_cards: context_cards,
             recent_story: recent_story,
-            user_action: user_action,
+            player_information: player_information,
+            player_equipment: this.player_equipment_str,
+            player_action: user_action,
+            player_item: this.user_item,
             recent_action: this.recent_action,
             recent_outcome: this.recent_outcome,
+            use_d20: this.use_d20,
             top_p: this.top_p || 0.9,
             temperature: this.temperature || 0.8,
             max_tokens: this.max_tokens || 200
@@ -195,6 +223,12 @@ export default {
           this.outcome_counter = 0;
         }
         this.action_input = '';
+        this.use_d20 = false;
+
+        // Remove perishable items after use
+        if (action_type === 'use' && item.type === 'perishable') {
+          this.$refs.contextCards.removeCard(item.id);
+        }
         
         // Scroll to bottom to show new content
         this.$nextTick(() => {
@@ -585,7 +619,9 @@ export default {
     <div v-show="active_tab === 'files'">
       <div class="container">
         <h2>Story Title</h2>
-        <input v-model="story_name" placeholder="Story name" />
+        <input v-model="story_name" 
+        placeholder="Story name"
+        maxlength="30" />
         <button @click="saveStory" :disabled="isLoading">Save Story</button>
         <button @click="createNewStory" :disabled="isLoading">Create New Story</button>
       </div>
@@ -637,15 +673,39 @@ export default {
         v-model="story_editor_content" 
         rows="12" 
         cols="80" 
-        placeholder="Paste or write story text here."></textarea>
-        <div class="action-input-row">
+        placeholder="Paste or write story text here.">
+        </textarea>
+
+        <div class="action-controls-row">
+          <select v-model="action_type">
+            <option value="other">Custom</option>
+            <option value="do">Do</option>
+            <option value="say">Say</option>
+            <option value="use">Use</option>
+            <option value="get">Get</option>
+          </select>
+
+          <select v-if="action_type === 'use'" v-model="selected_item">
+            <option value="">Select an item...</option>
+            <option v-for="item in player_inventory" :key="item.id" :value="item">
+              {{ item.name }}
+            </option>
+          </select>
+
           <input
             v-model="action_input"
             type="text"
             spellcheck="true"
             placeholder="Next character action"
           />
+
+          <label>🎲</label>
+          <input v-model="use_d20" type="checkbox" class="custom-checkbox" />
+          <span title="D20: If checked, actions will have a random chance to succeed or fail.">
+            ⓘ
+          </span>
         </div>
+
         <div>
           <button @click="continueStory" :disabled="isLoading">Continue Story</button>
         </div>
@@ -721,5 +781,33 @@ export default {
 .action-input-row input {
   flex: 1;
   width: 100%;
+}
+
+.action-controls-row {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.action-controls-row select {
+  min-width: 120px;
+}
+
+.action-controls-row input[type="text"] {
+  flex: 1;
+}
+
+.action-controls-row input[type="checkbox"] {
+  margin: 0 4px;
+}
+
+.action-controls-row label {
+  margin-right: 4px;
+}
+
+.action-controls-row span {
+  margin-left: 2px;
 }
 </style>

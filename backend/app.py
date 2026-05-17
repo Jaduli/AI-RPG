@@ -247,12 +247,16 @@ def continue_story():
         return jsonify({"error": "Invalid story ID. ID must be a positive integer."}), 400
     
     user_instructions = data.get('instructions')
-    user_action = data.get('user_action', '')
+    player_information = data.get('player_information')
+    player_action = data.get('user_action', '')
+    player_equipment = data.get('player_equipment', '')
+    player_item = data.get('player_item', '')
     recent_action = data.get('recent_action', '')
     recent_outcome = data.get('recent_outcome', '')
     story_essentials = data.get('story_essentials', 'None.')
     summary = data.get('summary', 'None.')
     context_cards = data.get('context_cards', 'None.')
+    use_d20 = data.get('use_d20', False)
 
     top_p = data.get('top_p', 0.9)
     temperature = data.get('temperature', 0.8)
@@ -275,26 +279,29 @@ def continue_story():
 
     outcome = ''
 
-    if (user_action):
-        outcome = utils.get_action_outcome(user_action)
+    if (player_action and use_d20):
+        outcome = utils.get_action_outcome(player_action)
     
     # Context ordered based on which content is most likely to stay static (unedited).
     # This will increase rate of cache hits in API call -> cheaper responses (if supported by API provider).
     full_prompt = (
         "[Essential Story Information]\n" + story_essentials +
-        "\n\n[Story Summary]\n" + summary +
+        ("\n\n[Player Information]\n" + player_information if player_information else "") +
+        ("\n\n[Player Equipment]\n" + player_equipment if player_equipment else "") +
+        ("\n\n[Story Summary]\n" + summary if summary else "") +
         "\n\n[Past Memories]\n" + memory_block +
-        "\n\n[Relevant Context]\n" + context_cards +
+        ("\n\n[Relevant Context]\n" + context_cards if context_cards else "") +
         ("\n\n[Recent Player Action]\n" + recent_action if recent_action else "") +
         ("\n\n[Recent Action Outcome]\n" + recent_outcome if recent_outcome else "") +
         "\n\n[Recent Story]\n" + recent_story +
-        ("\n\n[Player Action]\n" + user_action if user_action else "") +
+        ("\n\n[Player Uses Item]\n" + player_item if player_item else "") +
+        ("\n\n[Player Action]\n" + player_action if player_action else "") +
         ("\n\n[Action Outcome]\n" + outcome if outcome else "")
     )
     
     full_instructions = GENERATION_SYS_PROMPT
 
-    if (user_action):
+    if (player_action):
         full_instructions += CHARACTER_ACTION_SYS_PROMPT
     elif (recent_action):
         full_instructions += RECENT_ACTION_SYS_PROMPT
