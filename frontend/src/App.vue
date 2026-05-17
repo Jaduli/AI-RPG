@@ -89,6 +89,8 @@ export default {
       :top_p="top_p"
       :temperature="temperature"
       :max_tokens="max_tokens"
+      :summarize="summarize"
+      :memorize="memorize"
       @loading-changed="story_is_loading = $event"
     />
     <button @click="show_settings = !show_settings">
@@ -107,6 +109,8 @@ export default {
       :temperature="temperature"
       :max_tokens="max_tokens"
       :is_loading="story_is_loading"
+      :summarize="summarize"
+      :memorize="memorize"
 
       @update:main_model="main_model = $event"
       @update:mem_model="mem_model = $event"
@@ -116,6 +120,8 @@ export default {
       @update:top_p="top_p = $event"
       @update:temperature="temperature = $event"
       @update:max_tokens="max_tokens = $event"
+      @update:summarize="summarize = $event"
+      @update:memorize="memorize = $event"
     />
   </div>
   <div v-else>
@@ -177,5 +183,12 @@ button:disabled {
 .custom-checkbox {
   accent-color: #aa3bff;
   cursor: pointer;
+}
+
+.info-container {
+  border-radius: 5px;
+  padding: 5px;
+  background: #1a1a2e;
+  color: #fff;
 }
 </style>

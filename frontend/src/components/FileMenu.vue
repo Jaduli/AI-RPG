@@ -46,7 +46,6 @@ export default {
     </div>
     <div v-if="show">
       <div v-if="error" class="error-message">{{ error }}</div>
-      <div v-else-if="loading" class="info-message">Loading saved stories...</div>
       <div v-else-if="files.length === 0" class="info-message">No saved stories found.</div>
 
       <ul v-else class="file-list">

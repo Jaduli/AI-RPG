@@ -64,7 +64,7 @@ def load_file():
     story_id = int(story_id_str) if story_id_str.isdigit() else None
 
     # Validate story ID
-    if not story_id:
+    if not story_id or story_id <= 0:
         return jsonify({"error": "Story ID is required. ID must be a positive integer."}), 400
 
     path = os.path.join(BASE_DIR, str(story_id), 'save.json')
@@ -239,8 +239,12 @@ def continue_story():
         return jsonify({"error": "Model is required."}), 400
     
     story_id = data.get('story_id')
+
+    # Validate story ID
     if not story_id:
         return jsonify({"error": "Story ID is required."}), 400
+    if not isinstance(story_id, int) or isinstance(story_id, bool) or story_id <= 0:
+        return jsonify({"error": "Invalid story ID. ID must be a positive integer."}), 400
     
     user_instructions = data.get('instructions')
     user_action = data.get('user_action', '')
@@ -453,8 +457,12 @@ def memorize():
         return jsonify({"error": "Model is required."}), 400
     
     story_id = data.get('story_id')
+    
+    # Validate story ID
     if not story_id:
         return jsonify({"error": "Story ID is required."}), 400
+    if not isinstance(story_id, int) or isinstance(story_id, bool) or story_id <= 0:
+        return jsonify({"error": "Invalid story ID. ID must be a positive integer."}), 400
     
     new_memory = ''
     tokens_total = -1

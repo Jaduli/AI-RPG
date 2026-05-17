@@ -73,7 +73,7 @@ export default {
 
         <button @click="addCard">Add Card</button>
     </div>
-    <div class="context-card">
+    <div class="info-container">
     <h3>Existing Cards</h3>
     <h4>
       Cards with keywords matching recent story content will be included as context in story generation.

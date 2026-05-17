@@ -21,7 +21,9 @@ export default {
     context_length: Number,
     top_p: Number,
     temperature: Number,
-    max_tokens: Number
+    max_tokens: Number,
+    summarize: Boolean,
+    memorize: Boolean
   },
   data() {
     return {
@@ -48,9 +50,7 @@ export default {
       action_input: '',
       recent_action: '',
       recent_outcome: '',
-      outcome_counter: 0,
-      summarize: true,
-      memorize: true
+      outcome_counter: 0
     }
   },
   methods: {
@@ -143,6 +143,12 @@ export default {
           return;
         }
 
+        const continued_content = data.continued_content || '';
+        if (continued_content.trim() === '') {
+          this.status_message = 'Error: Continue action returned empty content.';
+          return;
+        }
+
         // Append new content to story with proper spacing (\n\n + new content)
         // Count existing newlines at end of text
         const matching_count = recent_story.match(/\n*$/)[0].length;
@@ -158,8 +164,6 @@ export default {
           this.recent_action = user_action;
           this.content += user_action + '\n\n';
         }
-
-        const continued_content = data.continued_content || '';
 
         this.content += continued_content;
         
@@ -225,12 +229,17 @@ export default {
       // from being lost between summary actions.
       const overlap = minimum_length_chars / 2;
 
-      const {past_content, cutoff_index} = 
-              this.extractPastContent(this.summary_cursor, minimum_length_chars, overlap);
+      var {past_content, cutoff_index} = this.extractPastContent(this.summary_cursor, overlap);
 
-      // Return if there is not enough content to summarize
-      if (past_content.length < minimum_length_chars) {
+      const content_length = past_content.length;
+
+      // Return if there is not enough content to memorize
+      if (content_length < minimum_length_chars) {
         return;
+      }
+      // Prevent including too much content at once. Prioritize using newest story content.
+      if (content_length > 10000) {
+        past_content = past_content.slice(-10000);
       }
       try {
         this.active_requests++;
@@ -284,11 +293,17 @@ export default {
       const minimum_length_chars = 8000;
 
       // Use past story content for new memory (without overlap with recent story)
-      const {past_content, cutoff_index} = this.extractPastContent(this.memory_cursor, 7000);
+      var {past_content, cutoff_index} = this.extractPastContent(this.memory_cursor);
+
+      const content_length = past_content.length;
 
       // Return if there is not enough content to memorize
-      if (past_content.length < minimum_length_chars) {
+      if (content_length < minimum_length_chars) {
         return;
+      }
+      // Prevent including too much content at once. Prioritize using newest story content.
+      if (content_length > 12000) {
+        past_content = past_content.slice(-12000);
       }
       try {
         this.active_requests++;
@@ -506,11 +521,19 @@ export default {
 
 <template>
   <div class="tab-header">
+
   <button 
-    :class="{ active: active_tab === 'instructions' }"
-    @click="setActiveTab('instructions')"
+    :class="{ active: active_tab === 'files' }"
+    @click="setActiveTab('files')"
   >
-    Instructions
+    Save Files
+  </button>
+
+  <button 
+    :class="{ active: active_tab === 'story_context' }"
+    @click="setActiveTab('story_context')"
+  >
+    Story Context
   </button>
 
   <button 
@@ -518,20 +541,6 @@ export default {
     @click="setActiveTab('editor')"
   >
     Editor
-  </button>
-
-  <button 
-    :class="{ active: active_tab === 'summary' }"
-    @click="setActiveTab('summary')"
-  >
-    Summary
-  </button>
-
-  <button 
-    :class="{ active: active_tab === 'essentials' }"
-    @click="setActiveTab('essentials')"
-  >
-    Essentials
   </button>
 
   <button 
@@ -550,64 +559,75 @@ export default {
   </div>
 
   <div class="tab-content">
-    <div class="container" v-show="active_tab === 'instructions'">
-      <h2>Storytelling Instructions</h2>
-      <textarea 
-      v-model="instructions" 
-      rows="12" 
-      cols="80" 
-      placeholder="Additional story generation instructions can be added here.">
-      </textarea>
-      <div class="tab-footer-space"></div>
+    <div v-show="active_tab === 'files'">
+      <div class="container">
+        <h2>Story Title</h2>
+        <input v-model="story_name" placeholder="Story name" />
+        <button @click="saveStory" :disabled="isLoading">Save Story</button>
+        <button @click="createNewStory" :disabled="isLoading">Create New Story</button>
+      </div>
+      <p class="status">{{ status_message }}</p>
+      <FileMenu
+        ref="fileMenu" 
+        :story_id="story_id" 
+        @load-file="loadStory" 
+      />
     </div>
 
-    <div class="container" v-show="active_tab === 'editor'">
-      <h2>Story Editor</h2>
-      <textarea 
-      ref="storyBox"
-      v-model="story_editor_content" 
-      rows="12" 
-      cols="80" 
-      placeholder="Paste or write story text here."></textarea>
-      <div class="action-input-row">
-        <input
-          v-model="action_input"
-          type="text"
-          spellcheck: true
-          placeholder="Next character action"
-        />
+    <div v-show="active_tab === 'story_context'">
+      <div class="info-container">
+        <h3>Context Fields</h3>
+        <h4>Context used in story generation. Fields are automatically updated when edited.</h4>
       </div>
-      <div>
-        <button @click="continueStory" :disabled="isLoading">Continue Story</button>
+      <div class="container">
+        <h2>Storytelling Instructions</h2>
+        <textarea 
+        v-model="instructions" 
+        rows="10" 
+        cols="80" 
+        placeholder="Additional story generation instructions can be added here.">
+        </textarea>
       </div>
-    </div>
-
-    <div class="container" v-show="active_tab === 'summary'">
-      <h2>Story Summary</h2>
-      <textarea v-model="summary" 
-      rows="12" 
-      cols="80" 
-      placeholder="Summary will appear here. Summary will be used as context in story generation.">
-      </textarea>
-      <div class="tab-footer-space"></div>
-      <div>
-        <label>Summarize: </label>
-        <input v-model="summarize" type="checkbox" class="custom-checkbox" />
+      <div class="container">
+        <h2>Story Essentials</h2>
+        <textarea v-model="story_essentials" 
+        rows="10" 
+        cols="80" 
+        placeholder="Key plot points, character details, or world-building elements. This will always be used as context in story generation.">
+        </textarea>
       </div>
-      <div>
-        <label>Memorize: </label>
-        <input v-model="memorize" type="checkbox" class="custom-checkbox" />
+      <div class="container">
+        <h2>Story Summary</h2>
+        <textarea v-model="summary" 
+        rows="10" 
+        cols="80" 
+        placeholder="Summary will appear here. Summary will be used as context in story generation.">
+        </textarea>
       </div>
     </div>
 
-    <div class="container" v-show="active_tab === 'essentials'">
-      <h2>Story Essentials</h2>
-      <textarea v-model="story_essentials" 
-      rows="12" 
-      cols="80" 
-      placeholder="Key plot points, character details, or world-building elements. This will always be used as context in story generation.">
-      </textarea>
-      <div class="tab-footer-space"></div>
+    <div v-show="active_tab === 'editor'">
+      <div class="container">
+        <h2>Story Editor</h2>
+        <textarea 
+        ref="storyBox"
+        v-model="story_editor_content" 
+        rows="12" 
+        cols="80" 
+        placeholder="Paste or write story text here."></textarea>
+        <div class="action-input-row">
+          <input
+            v-model="action_input"
+            type="text"
+            spellcheck: true
+            placeholder="Next character action"
+          />
+        </div>
+        <div>
+          <button @click="continueStory" :disabled="isLoading">Continue Story</button>
+        </div>
+      </div>
+      <p class="status">{{ status_message }}</p>
     </div>
 
     <div class="container" v-show="active_tab === 'context_cards'">
@@ -625,28 +645,20 @@ export default {
       <div class="tab-footer-space"></div>
     </div>
   </div>
-  <p class="status">{{ status_message }}</p>
-  <div class="container">
-    <h2>Story Title</h2>
-    <input v-model="story_name" placeholder="Enter story title for saving" />
-    <button @click="saveStory" :disabled="isLoading">Save Story</button>
-    <button @click="createNewStory" :disabled="isLoading">Create New Story</button>
-  </div>
-  <FileMenu ref="fileMenu" :story_id="story_id" @load-file="loadStory" />
 </template>
 
 <style scoped>
-.status {
-  height: 30px;
+.status  {
   background: #0f0f1e;
-  padding: 5px;
-  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px;
 }
 
 .tab-content {
   position: relative;
-  min-height: 285px;
-  padding: 10px;
   padding-top: 10px;
 }
 

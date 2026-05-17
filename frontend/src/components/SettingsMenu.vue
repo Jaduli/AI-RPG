@@ -11,7 +11,9 @@ export default {
     temperature: Number,
     max_tokens: Number,
     context_length: Number,
-    is_loading: Boolean
+    is_loading: Boolean,
+    summarize: Boolean,
+    memorize: Boolean
   },
   data() {
     return {
@@ -62,6 +64,14 @@ export default {
     tokenVal: {
       get() { return this.show_token_use; },
       set(v) { this.$emit('update:show_token_use', v); }
+    },
+    summarizeVal: {
+      get() { return this.summarize; },
+      set(v) { this.$emit('update:summarize', v); }
+    },
+    memorizeVal: {
+      get() { return this.memorize; },
+      set(v) { this.$emit('update:memorize', v); }
     },
     topPVal: {
       get() { return this.top_p; },
@@ -152,6 +162,15 @@ export default {
       </span>
     </div>
     
+    <div>
+      <label>Summarize Story: </label>
+      <input v-model="summarizeVal" type="checkbox" class="custom-checkbox" />
+    </div>
+    <div>
+      <label>Create Memories: </label>
+      <input v-model="memorizeVal" type="checkbox" class="custom-checkbox" />
+    </div>
+
     <div>
       <label>Top P: </label>
       <input v-model.number="topPVal" 
