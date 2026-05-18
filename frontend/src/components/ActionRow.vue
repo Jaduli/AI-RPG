@@ -6,15 +6,11 @@ export default {
       selected_item: null,
       action_type: 'custom',
       action_input: '',
-      input_placeholder: 'Input content'
+      input_placeholder: 'Input action'
     };
   },
   props: {
     gamemode: String,
-    inventory: {
-      type: Array,
-      default: () => []
-    }
   },
   methods: {
     // Reset values. Parameter all = false is used after a continue action
@@ -33,7 +29,7 @@ export default {
       if (action_type === 'use') {
         item = this.selected_item;
       }
-      
+
       return {
         user_action: this.getFormattedAction(this.action_input),
         selected_item: item,
@@ -108,8 +104,11 @@ export default {
         case 'do': return 'What do you do?';
         case 'say': return 'What do you say?';
         case 'use': return 'How do you use the item?';
-        default: return 'Input content';
+        default: return 'Input action';
       }
+    },
+    inventory() {
+      return this.$parent.$refs.inventory?.inventory || [];
     }
   }
 }
@@ -165,7 +164,7 @@ export default {
 }
 
 .action-controls-row select {
-  min-width: 50px;
+  width: 100px;
 }
 
 .action-controls-row input[type="text"] {

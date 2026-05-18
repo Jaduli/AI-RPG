@@ -31,7 +31,7 @@ export default {
         <button @click="collapse = !collapse">{{ collapse ? 'Edit' : 'Collapse' }}</button>
         <div v-if="!collapse">          
           <h4>Name</h4>
-          <input type="text" v-model="card.name" maxlength="25" />
+          <input type="text" v-model="card.name" maxlength="50" />
 
           <h4>Content</h4>
           <textarea v-model="card.content" />
@@ -85,9 +85,6 @@ export default {
 }
 .context-card button {
   margin-bottom: 10px;
-}
-.context-card .btn-danger {
-  background: #ff4d4d;
 }
 .card-type {
   font-size: 0.7em;

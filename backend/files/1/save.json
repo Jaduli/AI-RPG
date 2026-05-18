@@ -41,6 +41,7 @@
       "type": "character"
     },
     {
+      "child_locations": "Oakwood",
       "content": "A Northern Kingdom ruled by King Cairon. Dominated by woods and spirits. Arthinoran people are considered to be loyal and resilient.",
       "id": 1779030002049,
       "keywords": [
@@ -49,10 +50,10 @@
         "kingdoms"
       ],
       "name": "Arthinora",
-      "type": "location",
-      "child_locations": "Oakwood"
+      "type": "location"
     },
     {
+      "child_locations": "Oakwood Tavern",
       "content": "A small village located in the woods of Arthinora. Notable characters include an elderly seer named Evely, and the Blacksmith's son Fenn.",
       "id": 1779030584611,
       "keywords": [
@@ -60,8 +61,7 @@
       ],
       "name": "Oakwood",
       "parent_location": "Kingdom of Arthinora",
-      "type": "location",
-      "child_locations": "Oakwood Tavern"
+      "type": "location"
     },
     {
       "content": "A dapper and adventurous young man. Fenn has tousled brown hair, sun-tanned skin, and green eyes. Fenn wears light leather armor and is talented with his bow carved from dark wood.",
@@ -84,55 +84,52 @@
       "type": "location"
     },
     {
-      "id": 1779037213334,
-      "name": "Inherited Steel Sword",
-      "type": "item",
-      "content": "An unassuming but durable sword inherited from your father. Good for slashing, not for much else.",
-      "item_type": "weapon",
-      "equipped": true
-    },
-    {
-      "id": 1779037327232,
-      "name": "Worn Leather Armor",
-      "type": "item",
-      "content": "Armor that has seen better days, but provides some protection from physical attacks and cold weather. Poor protection against magic.",
-      "item_type": "apparel",
-      "equipped": true
-    },
-    {
-      "id": 1779037392186,
-      "name": "Dried Meat",
-      "type": "item",
-      "content": "A handful of dried meat, ready to eat. Lowers hunger.",
-      "item_type": "perishable",
-      "equipped": false
-    },
-    {
-      "id": 1779037459484,
-      "name": "Health Potion",
-      "type": "item",
-      "content": "A magical health potion that can cure ailments in a pinch. Tastes like strawberries.",
-      "item_type": "perishable",
-      "equipped": false
-    },
-    {
-      "id": 1779037533014,
-      "name": "Bandages",
-      "type": "item",
-      "content": "Clean bandages that can be used to stop bleeding and provide protection against infection.",
-      "item_type": "perishable",
-      "equipped": false
-    },
-    {
-      "id": 1779037730327,
-      "name": "Fern the horse",
-      "type": "other",
       "content": "Your trusty mare. Sturdy stature, bay coat thick enough for the northern weather. Not the fastest or bravest horse, but a fine mount for travel.",
+      "id": 1779037730327,
       "keywords": [
         "Fern",
         "horse",
         "mount"
-      ]
+      ],
+      "name": "Fern the horse",
+      "type": "other"
     }
+  ],
+  "inventory": [
+    {
+      "content": "An unassuming but durable sword inherited from your father. Good for slashing, not for much else.",
+      "equipped": true,
+      "id": 1779037213334,
+      "type": "weapon",
+      "name": "Inherited Steel Sword"
+    },
+    {
+      "content": "Armor that has seen better days, but provides some protection from physical attacks and cold weather. Poor protection against magic.",
+      "equipped": true,
+      "id": 1779037327232,
+      "type": "apparel",
+      "name": "Worn Leather Armor"
+    },
+    {
+      "content": "A handful of dried meat, ready to eat. Lowers hunger.",
+      "equipped": false,
+      "id": 1779037392186,
+      "type": "perishable",
+      "name": "Dried Meat"
+    },
+    {
+      "content": "A magical health potion that can cure ailments in a pinch. Tastes like strawberries.",
+      "equipped": false,
+      "id": 1779037459484,
+      "type": "perishable",
+      "name": "Health Potion"
+    },
+    {
+      "content": "Clean bandages that can be used to stop bleeding and provide protection against infection.",
+      "equipped": false,
+      "id": 1779037533014,
+      "type": "perishable",
+      "name": "Bandages"
+    }    
   ]
 }

@@ -18,6 +18,12 @@ export default {
 <template>
     <div class="item">
         <h3>{{ item.name }} <span class="item-type">({{ item.type }})</span></h3>
+        
+        <label v-if="type !== 'perishable'">
+          Equipped: 
+          <input v-model="item.equipped" type="checkbox" class="custom-checkbox" />
+        </label>
+
         <button @click="collapse = !collapse">{{ collapse ? 'Edit' : 'Collapse' }}</button>
         <div v-if="!collapse">          
           <h4>Name</h4>
@@ -25,14 +31,6 @@ export default {
 
           <h4>Content</h4>
           <textarea v-model="item.content" />
-
-          <div>
-            <label>Equipped: </label>
-            <input v-model="item.equipped" type="checkbox" class="custom-checkbox" />
-            <span title="Equipped items will always be used in story context.">
-              ⓘ
-            </span>
-          </div>
 
           <button class="btn btn-danger" @click="$emit('remove')">Discard Item</button>
         </div>
@@ -51,7 +49,7 @@ export default {
   gap: 5px;
 }
 .item textarea {
-  min-height: 120px;
+  min-height: 50px;
 }
 .item h4 {
   margin: 3px 0 3px;

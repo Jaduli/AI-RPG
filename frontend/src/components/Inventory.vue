@@ -4,17 +4,13 @@ import InventoryItem from './InventoryItem.vue';
 export default {
   data() {
     return {
+      collapse: false,
       name: '',
       content: '',
       selected_type: 'all',
       type: 'other',
-      equipped: false
-    }
-  },
-  props: {
-    inventory: {
-      type: Array,
-      default: () => []
+      equipped: false,
+      inventory: []
     }
   },
   components: { InventoryItem },
@@ -86,38 +82,45 @@ export default {
 <template>
   <div class="inventory">
     <h2>Add New Item</h2>
-    <div class="item">
+    <button @click="collapse = !collapse">{{ collapse ? 'Expand' : 'Collapse' }}</button>
+    
+    <div class="item" v-if="!collapse">
       <h4>Name</h4>
       <input type="text" v-model="name" maxlength="25" />
-      <label>Item Type: </label>
-      <select v-model="type">
-        <option value="other">Other</option>
-        <option value="perishable">Perishable</option>
-        <option value="weapon">Weapon</option>
-        <option value="apparel">Armor/apparel</option>
-      </select>
-      <div>
-        <label>Equipped: </label>
-        <input v-model="equipped" type="checkbox" class="custom-checkbox" />
-        <span title="Equipped inventory will always be used in story context.">
-          ⓘ
-        </span>
-      </div>
+      
+      <label>Item Type: 
+        <select v-model="type">
+          <option value="other">Other</option>
+          <option value="perishable">Perishable</option>
+          <option value="weapon">Weapon</option>
+          <option value="apparel">Armor/apparel</option>
+        </select>
+      </label>
 
       <h4>Item Information</h4>
       <textarea v-model="content" />
 
+      <label v-if="type !== 'perishable'">
+        Equipped: 
+        <input v-model="equipped" type="checkbox" class="custom-checkbox" />
+        <span title="Equipped inventory will always be used in story context.">
+          ⓘ
+        </span>
+      </label>
+
       <button @click="addItem">Add Item</button>
     </div>
+    <h3>Existing Cards</h3>
     <div class="container">
-      <label>Filter: </label>
-      <select v-model="selected_type">
-        <option value="all">All</option>
-        <option value="perishable">Perishable</option>
-        <option value="weapon">Weapon</option>
-        <option value="apparel">Armor/apparel</option>
-        <option value="other">Other</option>
-      </select>
+      <label>Filter: 
+        <select v-model="selected_type">
+          <option value="all">All</option>
+          <option value="perishable">Perishable</option>
+          <option value="weapon">Weapon</option>
+          <option value="apparel">Armor/apparel</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
       <InventoryItem
         v-for="item in sortedItems"
         :key="item.id"

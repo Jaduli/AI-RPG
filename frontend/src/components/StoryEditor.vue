@@ -57,8 +57,7 @@ export default {
       story_editor_content: '',
       recent_action: '',
       recent_outcome: '',
-      outcome_counter: 0,
-      player_inventory: []
+      outcome_counter: 0
     }
   },
   methods: {
@@ -412,6 +411,7 @@ export default {
         
         const context_cards = this.$refs.contextCards.cards || [];
         const player_information = this.$refs.playerCard.getPlayer() || [];
+        const player_inventory = this.$refs.inventory.getInventory() || [];
 
         // Use POST to save story
         const res = await fetch('/api/save', {
@@ -430,7 +430,7 @@ export default {
             summary_cursor: this.summary_cursor,
             context_cards: context_cards,
             player_information: player_information,
-            inventory: this.player_inventory
+            inventory: player_inventory
           })
         });
         const data = await res.json();
@@ -617,6 +617,14 @@ export default {
   </button>
 
   <button 
+    v-if="gamemode === 'rpg'"
+    :class="{ active: active_tab === 'inventory' }"
+    @click="setActiveTab('inventory')"
+  >
+    Inventory
+  </button>
+
+  <button 
     :class="{ active: active_tab === 'context_cards' }"
     @click="setActiveTab('context_cards')"
   >
@@ -695,7 +703,6 @@ export default {
           ref="actionRow"
           v-if="gamemode === 'rpg'"
           :gamemode="gamemode"
-          :inventory="player_inventory"
         />
       </div>
 
@@ -710,7 +717,10 @@ export default {
 
     <div class="container" v-show="active_tab === 'player'">
       <PlayerCard ref="playerCard" />
-      <Inventory ref="inventory" :inventory="player_inventory" />
+    </div>
+
+    <div class="container" v-show="active_tab === 'inventory'">
+      <Inventory ref="inventory" />
     </div>
 
     <div class="container" v-show="active_tab === 'sent_context'">

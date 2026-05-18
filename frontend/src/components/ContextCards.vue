@@ -4,6 +4,7 @@ import ContextCard from './ContextCard.vue';
 export default {
   data() {
     return {
+      collapse: false,
       cards: [],
       name: '',
       content: '',
@@ -117,17 +118,20 @@ export default {
 <template>
   <div class="context-cards">
     <h2>Add New Card</h2>
-    <div class="context-card">
-      <h4>Name</h4>
-      <input type="text" v-model="name" maxlength="25" />
+    <button @click="collapse = !collapse">{{ collapse ? 'Expand' : 'Collapse' }}</button>
 
-      <h4>Type</h4>
-      <select v-model="type">
-        <option value="other">Other</option>
-        <option value="character">Character</option>
-        <option value="location">Location</option>
-        <option value="object">Object</option>
-      </select>
+    <div class="context-card" v-if="!collapse">
+      <h4>Name</h4>
+      <input type="text" v-model="name" maxlength="50" />
+
+      <label>Type: 
+        <select v-model="type">
+          <option value="other">Other</option>
+          <option value="character">Character</option>
+          <option value="location">Location</option>
+          <option value="object">Object</option>
+        </select>
+      </label>
 
       <!-- Type-specific values -->
       <div v-if="type === 'character'">
@@ -159,14 +163,15 @@ export default {
       Cards will automatically be saved when edited.
     </h4>
     </div>
-    <label>Filter: </label>
-    <select v-model="selected_type">
-      <option value="all">All</option>
-      <option value="character">Characters</option>
-      <option value="location">Locations</option>
-      <option value="object">Object</option>
-      <option value="other">Other</option>
-    </select>
+    <label>Filter: 
+      <select v-model="selected_type">
+        <option value="all">All</option>
+        <option value="character">Characters</option>
+        <option value="location">Locations</option>
+        <option value="object">Object</option>
+        <option value="other">Other</option>
+      </select>
+    </label>
     <ContextCard
       v-for="card in sortedCards"
       :key="card.id"
