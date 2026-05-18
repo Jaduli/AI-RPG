@@ -1,5 +1,5 @@
-# Story generation
-GENERATION_SYS_PROMPT = """
+# Storyteller
+STORYTELLER_SYS_PROMPT = """
 You are a storytelling engine that continues an ongoing narrative.
 
 Your task is to write the next part of the story, continuing directly from the most recent story.
@@ -52,6 +52,7 @@ FAIL CONDITIONS:
 - Starting the story over or changing perspective without reason.
 """
 
+# RPG
 RPG_SYS_PROMPT = """
 You are an RPG storytelling engine that continues an ongoing interactive narrative.
 

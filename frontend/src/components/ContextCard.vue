@@ -36,23 +36,6 @@ export default {
           <h4>Content</h4>
           <textarea v-model="card.content" />
 
-          <div v-if="card.type === 'item'">
-            <label>Item Type: </label>
-            <select v-model="card.item_type">
-              <option value="perishable">Perishable</option>
-              <option value="weapon">Weapon</option>
-              <option value="apparel">Armor/apparel</option>
-              <option value="other">Other</option>
-            </select>
-            <div>
-            <label>Equipped: </label>
-            <input v-model="card.equipped" type="checkbox" class="custom-checkbox" />
-            <span title="Equipped items will be used in story context.">
-              ⓘ
-            </span>
-            </div>
-          </div>
-
           <div v-if="card.type === 'location'">
             <div>
             <label>Parent Location: </label>
@@ -75,10 +58,8 @@ export default {
             <input v-model="card.create_memories" type="checkbox" class="custom-checkbox" />
           </div>
 
-          <div v-if="card.type !== 'item'">
-            <h4>Keywords (comma-separated)</h4>
-            <input type="text" v-model="card.keywords" maxlength="200" />
-          </div>
+          <h4>Keywords (comma-separated)</h4>
+          <input type="text" v-model="card.keywords" maxlength="200" />
 
           <button class="btn btn-danger" @click="$emit('remove')">Delete Card</button>
         </div>

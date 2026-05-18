@@ -8,6 +8,9 @@ export default {
     return {
       // Default settings //
 
+      // Mode determines which default prompt is used in storytelling.
+      // Currently available modes: 'rpg' and 'storyteller'
+      gamemode: 'rpg',
       // Main model used for story continuation.
       main_model: 'llama-3.1-8b-instant', // Free model on Groq
       // Memory model used for memory and summary generation.
@@ -60,6 +63,8 @@ export default {
           this.main_model = data.main_model || this.main_model;
           this.mem_model = data.mem_model || this.mem_model;
 
+          this.gamemode = data.gamemode || this.gamemode;
+
           this.config_ready = true;
         } catch (err) {
           console.error('Failed to load backend configuration, retrying...', err);
@@ -83,6 +88,7 @@ export default {
   <div v-if="config_ready" class="app-container">
     <h1>AI Storyteller</h1>
     <StoryEditor class="story-editor"
+      :gamemode="gamemode"
       :main_model="main_model"
       :mem_model="mem_model"
       :use_local="use_local"
@@ -101,6 +107,7 @@ export default {
     <SettingsMenu
       v-if="show_settings"
       
+      :gamemode="gamemode"
       :main_model="main_model"
       :mem_model="mem_model"
       :show_local_toggle="show_local_toggle"
@@ -114,6 +121,7 @@ export default {
       :summarize="summarize"
       :memorize="memorize"
 
+      @update:gamemode="gamemode = $event"
       @update:main_model="main_model = $event"
       @update:mem_model="mem_model = $event"
       @update:use_local="use_local = $event"
@@ -173,6 +181,9 @@ button:disabled {
   background: #9a2bef;
   cursor: default;
   opacity: 0.7;
+}
+.btn-danger {
+  background: #ff4d4d;
 }
 
 .container {

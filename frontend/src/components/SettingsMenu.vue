@@ -1,7 +1,12 @@
 <script>
 export default {
-  name: 'SettingsMenu',
+  data() {
+    return {
+      temp_context_length: this.context_length
+    }
+  },
   props: {
+    gamemode: String,
     main_model: String,
     mem_model: String,
     use_local: Boolean,
@@ -14,11 +19,6 @@ export default {
     is_loading: Boolean,
     summarize: Boolean,
     memorize: Boolean
-  },
-  data() {
-    return {
-      temp_context_length: this.context_length
-    }
   },
   methods: {
     setContextLength(new_length) {
@@ -37,6 +37,10 @@ export default {
   },
   computed: {
     // Create computed properties with getters and setters to emit value updates
+    gamemodeVal: {
+      get() { return this.gamemode; },
+      set(v) { this.$emit('update:gamemode', v); }
+    },
     mainModelVal: {
       get() {
         return this.main_model;
@@ -127,6 +131,14 @@ export default {
     <h2>Settings</h2>
 
     <div>
+      <label>Gamemode: </label>
+      <select v-model="gamemodeVal">
+        <option value="rpg">RPG</option>
+        <option value="storyteller">Storyteller</option>
+      </select>
+    </div>
+
+    <div>
       <label>Main Model Name: </label>
       <input v-model="mainModelVal" 
       type="text" 
@@ -148,6 +160,15 @@ export default {
     </div>
 
     <div>
+      <label>Summarize Story: </label>
+      <input v-model="summarizeVal" type="checkbox" class="custom-checkbox" />
+    </div>
+    <div>
+      <label>Create Memories: </label>
+      <input v-model="memorizeVal" type="checkbox" class="custom-checkbox" />
+    </div>
+
+    <div>
       <label>Recent Story Token Limit: </label>
       <input 
         v-model.number="temp_context_length"
@@ -160,15 +181,6 @@ export default {
       <span title="Setting the limit will update the editor to display content with new context length.">
         ⓘ
       </span>
-    </div>
-    
-    <div>
-      <label>Summarize Story: </label>
-      <input v-model="summarizeVal" type="checkbox" class="custom-checkbox" />
-    </div>
-    <div>
-      <label>Create Memories: </label>
-      <input v-model="memorizeVal" type="checkbox" class="custom-checkbox" />
     </div>
 
     <div>

@@ -13,7 +13,6 @@ export default {
       // Type-specific values:
       parent_location: '',
       child_locations: '',
-      item_type: 'other',
       equipped: false,
       create_memories: true
     }
@@ -37,16 +36,11 @@ export default {
       if (type === 'location' && this.child_locations?.trim()) {
         payload.child_locations = this.child_locations;
       }
-      if (type === 'item') {
-        payload.item_type = this.item_type;
-        payload.equipped = this.equipped;
-      }
       if (type === 'character' && this.create_memories) {
         payload.create_memories = this.create_memories;
       }
-      if (type !== 'item') {
-        payload.keywords = this.keywords.split(',').map(k => k.trim())
-      }
+      payload.keywords = this.keywords.split(',').map(k => k.trim())
+      
       this.cards.push(payload);
       this.name = '';
       this.content = '';
@@ -58,18 +52,8 @@ export default {
       const matching = [];
 
       for (const card of this.cards) {
-        // Add equipped items to context
-        if (card.type === 'item' && card.equipped) {
-          payload = {
-            name: card.name || '',
-            type: card.type || '',
-            content: card.content || '',
-            item_type: card.item_type || ''
-          };
-          matching.push(payload);
-          continue;
-        }
         if (card.keywords.length === 0) continue; // skip empty keyword fields
+
         // Check if any keyword is in the text
         for (const keyword of card.keywords) {
           if (lower_text.includes(keyword.trim().toLowerCase())) {
@@ -77,7 +61,6 @@ export default {
               name: card.name || '',
               type: card.type || '',
               content: card.content || '',
-              item_type: card.item_type || '',
               parent_location: card.parent_location || '',
               child_locations: card.child_locations || ''
             };
@@ -101,14 +84,10 @@ export default {
       for (const card of matching) {
         card_text += card.name + ', ';
 
-        if (card.item_type) {
-          card_text += card.item_type;
-        }
-        else if (card.item_type !== 'other') {
-          card_text += card.type;
-        }
+        card_text += card.type;
+
         if (card.parent_location) {
-          card_text += card.parent_location;
+          card_text += ' in ' + card.parent_location;
         }
         card_text += ':\n' + card.content + '\n';
         if (card.child_locations) {
@@ -118,33 +97,8 @@ export default {
       }
       return card_text;
     },
-    getPlayerInventory() {
-      const inventory = [];
-
-      for (const card of this.cards) {
-        if (card.type === 'item') {
-          const item = {
-            id: card.id,
-            name: card.name || '',
-            item_type: card.item_type || 'other',
-            content: card.content || '',
-            equipped: card.equipped || false
-          };
-          inventory.push(item);
-        }
-      }
-      return inventory;
-    },
     removeCard(id) {
       this.cards = this.cards.filter(card => card.id !== id);
-    }
-  },
-  watch: {
-    cards: {
-      handler() {
-        this.$emit('inventory-updated', this.getPlayerInventory());
-      },
-      deep: true // Watch for changes in individual cards
     }
   },
   computed: {
@@ -172,7 +126,7 @@ export default {
         <option value="other">Other</option>
         <option value="character">Character</option>
         <option value="location">Location</option>
-        <option value="item">Item</option>
+        <option value="object">Object</option>
       </select>
 
       <!-- Type-specific values -->
@@ -190,30 +144,11 @@ export default {
         <input type="text" v-model="child_locations" maxlength="200" />
       </div>
 
-      <div v-if="type === 'item'">
-        <label>Item Type: </label>
-        <select v-model="item_type">
-          <option value="other">Other</option>
-          <option value="perishable">Perishable</option>
-          <option value="weapon">Weapon</option>
-          <option value="apparel">Armor/apparel</option>
-        </select>
-        <div>
-        <label>Equipped: </label>
-        <input v-model="equipped" type="checkbox" class="custom-checkbox" />
-        <span title="Equipped items will always be used in story context. For world items requiring keywords, use type 'Other'.">
-          ⓘ
-        </span>
-        </div>
-      </div>
-
       <h4>Content</h4>
       <textarea v-model="content" />
 
-      <div v-if="this.type !== 'item'">
-        <h4>Keywords (comma-separated)</h4>
-        <input type="text" v-model="keywords" maxlength="200" />
-      </div>
+      <h4>Keywords (comma-separated)</h4>
+      <input type="text" v-model="keywords" maxlength="200" />
 
       <button @click="addCard">Add Card</button>
     </div>
@@ -229,7 +164,7 @@ export default {
       <option value="all">All</option>
       <option value="character">Characters</option>
       <option value="location">Locations</option>
-      <option value="item">Items</option>
+      <option value="object">Object</option>
       <option value="other">Other</option>
     </select>
     <ContextCard

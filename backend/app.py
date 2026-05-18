@@ -4,7 +4,7 @@ import json
 import requests
 import re
 import os
-from default_prompts import GENERATION_SYS_PROMPT, CHARACTER_ACTION_SYS_PROMPT, RECENT_ACTION_SYS_PROMPT, SUMMARIZATION_SYS_PROMPT, MEMORY_SYS_PROMPT, OUTCOME_SYS_PROMPT
+from default_prompts import STORYTELLER_SYS_PROMPT, RPG_SYS_PROMPT, CHARACTER_ACTION_SYS_PROMPT, RECENT_ACTION_SYS_PROMPT, SUMMARIZATION_SYS_PROMPT, MEMORY_SYS_PROMPT, OUTCOME_SYS_PROMPT
 import utils
 import database
 
@@ -26,6 +26,7 @@ api_url = os.getenv("API_URL")
 api_key = os.getenv("API_KEY")
 api_main_model = os.getenv("API_MAIN_MODEL", None)
 api_mem_model = os.getenv("API_MEM_MODEL", None)
+env_gamemode = os.getenv("GAMEMODE", None)
 
 app = Flask(__name__)
 CORS(app)
@@ -48,7 +49,8 @@ def get_config():
     return jsonify({
         "local_ai_enabled": LOCAL_AI_ENABLED,
         "main_model": api_main_model,
-        "mem_model": api_mem_model
+        "mem_model": api_mem_model,
+        "gamemode": env_gamemode
     })
 
 """
@@ -89,13 +91,14 @@ def load_file():
             memory_cursor = data.get("memory_cursor", 0)
             summary_cursor = data.get("summary_cursor", 0)
             context_cards = data.get("context_cards", [])
+            inventory = data.get("inventory", [])
     except Exception as e:
         # Internal Server Error
         return jsonify({"error": str(e)}), 500
 
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
                     "summary": summary, "story_essentials": story_essentials, "memory_cursor": memory_cursor,
-                    "summary_cursor":summary_cursor, "context_cards": context_cards})
+                    "summary_cursor":summary_cursor, "context_cards": context_cards, "inventory": inventory})
 
 """
 /save
@@ -147,6 +150,7 @@ def save_file():
     memory_cursor = data.get("memory_cursor", 0)
     summary_cursor = data.get("summary_cursor", 0)
     context_cards = data.get("context_cards", [])
+    inventory = data.get("inventory", [])
 
     # Build payload
     save_data = {
@@ -157,7 +161,8 @@ def save_file():
         "story_essentials": story_essentials,
         "memory_cursor": memory_cursor,
         "summary_cursor": summary_cursor,
-        "context_cards": context_cards
+        "context_cards": context_cards,
+        "inventory": inventory
     }
 
     # Serialize to JSON
@@ -246,16 +251,17 @@ def continue_story():
     if not isinstance(story_id, int) or isinstance(story_id, bool) or story_id <= 0:
         return jsonify({"error": "Invalid story ID. ID must be a positive integer."}), 400
     
+    gamemode = data.get('gamemode', 'storyteller')
     user_instructions = data.get('instructions')
-    player_information = data.get('player_information')
-    player_action = data.get('user_action', '')
-    player_equipment = data.get('player_equipment', '')
-    player_item = data.get('player_item', '')
-    recent_action = data.get('recent_action', '')
-    recent_outcome = data.get('recent_outcome', '')
     story_essentials = data.get('story_essentials', 'None.')
     summary = data.get('summary', 'None.')
     context_cards = data.get('context_cards', 'None.')
+    player_information = data.get('player_information', '')
+    player_equipment = data.get('player_equipment', '')
+    player_action = data.get('player_action', '')
+    player_item = data.get('player_item', '')
+    recent_action = data.get('recent_action', '')
+    recent_outcome = data.get('recent_outcome', '')
     use_d20 = data.get('use_d20', False)
 
     top_p = data.get('top_p', 0.9)
@@ -265,6 +271,15 @@ def continue_story():
     # Validate environment configuration
     if not api_url or not api_key:
         return jsonify({"error": "API_URL or API_KEY not set."}), 500
+    
+    full_instructions = ''
+
+    if (gamemode == 'rpg'):
+        full_instructions = RPG_SYS_PROMPT
+    elif (gamemode == 'storyteller'):
+        full_instructions = STORYTELLER_SYS_PROMPT
+    else:
+        return jsonify({"error": f"Gamemode '{gamemode}' not recognized."}), 500
     
     # Get relevant memories for recent content
     relevant_memories = database.get_relevant_memories(recent_story[-2000:], story_id, 2)
@@ -298,8 +313,6 @@ def continue_story():
         ("\n\n[Player Action]\n" + player_action if player_action else "") +
         ("\n\n[Action Outcome]\n" + outcome if outcome else "")
     )
-    
-    full_instructions = GENERATION_SYS_PROMPT
 
     if (player_action):
         full_instructions += CHARACTER_ACTION_SYS_PROMPT

@@ -2,6 +2,8 @@
 import ContextCards from './ContextCards.vue';
 import FileMenu from './FileMenu.vue';
 import PlayerCard from './PlayerCard.vue';
+import Inventory from './Inventory.vue';
+import ActionRow from './ActionRow.vue';
 
 // Approximate to 4 characters per token for simple tokens-to-chars conversion.
 // Real token amount may vary based on language and content.
@@ -12,10 +14,14 @@ export default {
   components: {
     ContextCards,
     FileMenu,
-    PlayerCard
+    PlayerCard,
+    Inventory,
+    ActionRow
   },
   emits: ['loading-changed'],
   props: {
+    // From SettingsMenu
+    gamemode: String,
     main_model: String,
     mem_model: String,
     use_local: Boolean,
@@ -25,7 +31,7 @@ export default {
     temperature: Number,
     max_tokens: Number,
     summarize: Boolean,
-    memorize: Boolean
+    memorize: Boolean,
   },
   data() {
     return {
@@ -49,30 +55,15 @@ export default {
       // Recent story content (i.e. content within the context window) 
       // is displayed in the editor
       story_editor_content: '',
-      action_input: '',
       recent_action: '',
       recent_outcome: '',
       outcome_counter: 0,
-      player_equipment_str: '',
-      player_inventory: [],
-      action_type: 'custom',
-      selected_item: '',
-      use_d20: false
+      player_inventory: []
     }
   },
   methods: {
     setActiveTab(tab) {
       this.active_tab = tab;
-    },
-    updatePlayerInventory(inventory) {
-      this.player_inventory = inventory || [];
-      const player_equipment = this.player_inventory.filter(item => item.equipped);
-
-      var str = '';
-      for (const equipment of player_equipment) {
-        str += '- ' + equipment.name + ': ' + equipment.content; 
-      }
-      this.player_equipment_str = str;
     },
     // Extract past content between cursor and beginning of recent content,
     // i.e. content that has fallen out of the context window. Overlap with recent  
@@ -119,33 +110,64 @@ export default {
         // Sync content with editor for any user edits before continuing story
         this.syncContentWithEditor();
 
-        const user_action = this.action_input.trim();
-        const is_new_action = user_action !== '';
-
-        // Reset previous action context when a new action is provided.
-        if (is_new_action) {
-          this.recent_action = '';
-          this.recent_outcome = '';
-          this.outcome_counter = 0;
-        }
-
-        // Get item used in action
-        const item = this.selected_item;
-        var user_item = '';
-        if (action_type === 'use') {
-          user_item = item.name;
-          
-          // Add used item to context
-          if (!item.equipped) {
-            player_equipment_str += '\n- ' + user_item + ': ' + item.content;
-          }
-        }
-
-        // Get player information
-        player_information = this.$refs.playerMenu.getPlayerStr();
-
         // Get relevant context cards based on found keywords in recent story
         const context_cards = this.$refs.contextCards.getMatchingContextCards(recent_story);
+
+        var payload = {
+          gamemode: this.gamemode,
+          model: this.main_model,
+          instructions: this.instructions,
+          summary: this.summary,
+          story_essentials: this.story_essentials,
+          context_cards: context_cards,
+          recent_story: recent_story,
+          top_p: this.top_p,
+          temperature: this.temperature,
+          max_tokens: this.max_tokens
+        }
+
+        let is_new_action = false;
+        let player_action = '';
+        let action_type = '';
+        let selected_item = null;
+        let use_d20 = false;
+
+        // Get RPG elements if relevant
+        if (this.gamemode === 'rpg') {
+          const action = this.$refs.actionRow.getPlayerAction();
+
+          player_action = action.player_action;
+          selected_item = action.selected_item;
+          use_d20 = action.use_d20;
+          action_type = action.action_type;
+
+          is_new_action = player_action !== '';
+
+          // Reset previous action context when a new action is provided.
+          if (is_new_action) {
+            this.recent_action = '';
+            this.recent_outcome = '';
+            this.outcome_counter = 0;
+          }
+
+          // Get player information
+          const player_information = this.$refs.playerCard.getPlayerStr();
+          // Get relevant items
+          const player_equipment = this.$refs.inventory.getInventoryStr(true);
+
+          const rpg_payload = {
+            player_information: player_information,
+            player_equipment: player_equipment,
+            player_action: player_action,
+            player_item: item_name,
+            recent_action: this.recent_action,
+            recent_outcome: this.recent_outcome,
+            use_d20: this.use_d20,
+          }
+
+          // Merge payloads
+          payload = { ...payload, ...rpg_payload };
+        }
 
         // Use POST for continue action
         const res = await fetch('/api/continue', {
@@ -153,24 +175,7 @@ export default {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            model: this.main_model,
-            instructions: this.instructions,
-            summary: this.summary,
-            story_essentials: this.story_essentials,
-            context_cards: context_cards,
-            recent_story: recent_story,
-            player_information: player_information,
-            player_equipment: this.player_equipment_str,
-            player_action: user_action,
-            player_item: this.user_item,
-            recent_action: this.recent_action,
-            recent_outcome: this.recent_outcome,
-            use_d20: this.use_d20,
-            top_p: this.top_p || 0.9,
-            temperature: this.temperature || 0.8,
-            max_tokens: this.max_tokens || 200
-          })
+          body: JSON.stringify(payload)
         });
         const data = await res.json();
 
@@ -197,8 +202,8 @@ export default {
 
         // Sync content with user action
         if (is_new_action) {
-          this.recent_action = user_action;
-          this.content += user_action + '\n\n';
+          this.recent_action = player_action;
+          this.content += player_action + '\n\n';
         }
 
         this.content += continued_content;
@@ -209,12 +214,12 @@ export default {
         }
         
         // Outcome of user action (success, failure, etc.)
-        if (data.outcome && data.outcome !== '') {
+        if (data.outcome) {
           this.recent_outcome = data.outcome;
         }
 
         // Keep action/outcome context for a maximum of 3 turns.
-        if (this.recent_action !== '') {
+        if (this.recent_action) {
           this.outcome_counter++;
         }
         if (this.outcome_counter >= 3) {
@@ -222,12 +227,14 @@ export default {
           this.recent_action = '';
           this.outcome_counter = 0;
         }
-        this.action_input = '';
-        this.use_d20 = false;
+
+        // Clear action after use without resetting selected item and action type.
+        // This allows user to easily make another action with the same item.
+        this.$refs.actionRow.reset(false);
 
         // Remove perishable items after use
-        if (action_type === 'use' && item.type === 'perishable') {
-          this.$refs.contextCards.removeCard(item.id);
+        if (action_type === 'use' && selected_item.type === 'perishable') {
+          this.$refs.inventory.removeItem(selected_item.id);
         }
         
         // Scroll to bottom to show new content
@@ -404,6 +411,7 @@ export default {
         }
         
         const context_cards = this.$refs.contextCards.cards || [];
+        const player_information = this.$refs.playerCard.getPlayer() || [];
 
         // Use POST to save story
         const res = await fetch('/api/save', {
@@ -420,7 +428,9 @@ export default {
             story_essentials: this.story_essentials,
             memory_cursor: this.memory_cursor,
             summary_cursor: this.summary_cursor,
-            context_cards: context_cards
+            context_cards: context_cards,
+            player_information: player_information,
+            inventory: this.player_inventory
           })
         });
         const data = await res.json();
@@ -441,8 +451,7 @@ export default {
         this.active_requests--;
       }
     },
-    // Function to load the story from backend API.
-    // If file is not found or filename is empty/invalid, creates a new story instead.
+    // Function to load the story from backend API
     async loadStory(story_id = null) {
       try {
         this.active_requests++;
@@ -450,7 +459,7 @@ export default {
 
         const id = story_id || this.story_id;
         if (!id) {
-          this.status_message = 'Please select a saved story to load.';
+          this.status_message = 'Error loading file: Story ID missing.';
           return;
         }
 
@@ -471,11 +480,18 @@ export default {
         this.memory_cursor = data.memory_cursor || 0;
         this.summary_cursor = data.summary_cursor || 0;
         this.$refs.contextCards.cards = data.context_cards || [];
-        this.updatePlayerInventory(this.$refs.contextCards.getPlayerInventory());
-        this.action_input = '';
+        this.$refs.inventory.inventory = data.inventory || [];
         this.recent_action = '';
         this.recent_outcome = '';
         this.outcome_counter = 0;
+
+        // Get player information
+        const player_information = data.player_information || [];
+        this.$refs.playerCard.name = player_information.player_name || '';
+        this.$refs.playerCard.description = player_information.player_description || '';
+
+        // Reset ActionRow
+        this.$refs.actionRow.reset();
 
         // Scroll to bottom after loading story
         this.$nextTick(() => {
@@ -489,6 +505,7 @@ export default {
         this.active_requests--;
       }
     },
+    // Create a new story with random ID and empty fields
     async createNewStory() {
       this.story_id = crypto.getRandomValues(new Uint32Array(1))[0];
       this.story_name = this.story_name || '';
@@ -499,19 +516,17 @@ export default {
       this.memory_cursor = 0;
       this.summary_cursor = 0;
       this.$refs.contextCards.cards = [];
-      this.action_input = '';
       this.recent_action = '';
       this.recent_outcome = '';
       this.outcome_counter = 0;
-      this.player_equipment = [];
-      this.player_inventory = [];
-      
+
+      // Reset player information
+      this.$refs.playerCard.reset();   
+
+      // Reset ActionRow
+      this.$refs.actionRow.reset();
+
       this.status_message = 'New story initialized with ID '  + this.story_id + '.';
-    }
-  },
-  mounted() {
-    if (this.$refs.contextCards) {
-      this.updatePlayerInventory(this.$refs.contextCards.getPlayerInventory());
     }
   },
   computed: {
@@ -594,10 +609,11 @@ export default {
   </button>
 
   <button 
-    :class="{ active: active_tab === 'player_card' }"
-    @click="setActiveTab('player_card')"
+    v-if="gamemode === 'rpg'"
+    :class="{ active: active_tab === 'player' }"
+    @click="setActiveTab('player')"
   >
-    Player Card
+    Player
   </button>
 
   <button 
@@ -675,50 +691,26 @@ export default {
         cols="80" 
         placeholder="Paste or write story text here.">
         </textarea>
-
-        <div class="action-controls-row">
-          <select v-model="action_type">
-            <option value="other">Custom</option>
-            <option value="do">Do</option>
-            <option value="say">Say</option>
-            <option value="use">Use</option>
-            <option value="get">Get</option>
-          </select>
-
-          <select v-if="action_type === 'use'" v-model="selected_item">
-            <option value="">Select an item...</option>
-            <option v-for="item in player_inventory" :key="item.id" :value="item">
-              {{ item.name }}
-            </option>
-          </select>
-
-          <input
-            v-model="action_input"
-            type="text"
-            spellcheck="true"
-            placeholder="Next character action"
-          />
-
-          <label>🎲</label>
-          <input v-model="use_d20" type="checkbox" class="custom-checkbox" />
-          <span title="D20: If checked, actions will have a random chance to succeed or fail.">
-            ⓘ
-          </span>
-        </div>
-
-        <div>
-          <button @click="continueStory" :disabled="isLoading">Continue Story</button>
-        </div>
+        <ActionRow
+          ref="actionRow"
+          v-if="gamemode === 'rpg'"
+          :gamemode="gamemode"
+          :inventory="player_inventory"
+        />
       </div>
+
+      <button @click="continueStory" :disabled="isLoading">Continue Story</button>
+
       <p class="status">{{ status_message }}</p>
     </div>
 
     <div class="container" v-show="active_tab === 'context_cards'">
-      <ContextCards ref="contextCards" @inventory-updated="updatePlayerInventory" />
+      <ContextCards ref="contextCards" />
     </div>
 
-    <div class="container" v-show="active_tab === 'player_card'">
-      <PlayerCard ref="playerCard" :inventory="player_inventory" />
+    <div class="container" v-show="active_tab === 'player'">
+      <PlayerCard ref="playerCard" />
+      <Inventory ref="inventory" :inventory="player_inventory" />
     </div>
 
     <div class="container" v-show="active_tab === 'sent_context'">
@@ -766,48 +758,5 @@ export default {
   background: #9a2bef;
   color: white;
   font-weight: bold;
-}
-
-/* Reserve space for Continue button */
-.tab-footer-space {
-  height: 42px;
-}
-
-.action-input-row {
-  display: flex;
-  width: 100%;
-  gap: 8px;
-}
-.action-input-row input {
-  flex: 1;
-  width: 100%;
-}
-
-.action-controls-row {
-  display: flex;
-  width: 100%;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.action-controls-row select {
-  min-width: 120px;
-}
-
-.action-controls-row input[type="text"] {
-  flex: 1;
-}
-
-.action-controls-row input[type="checkbox"] {
-  margin: 0 4px;
-}
-
-.action-controls-row label {
-  margin-right: 4px;
-}
-
-.action-controls-row span {
-  margin-left: 2px;
 }
 </style>
