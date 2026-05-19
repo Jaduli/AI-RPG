@@ -47,4 +47,7 @@ export default {
 </template>
 
 <style>
+input {
+  margin-bottom: 30px;
+}
 </style>

@@ -17,23 +17,23 @@ export default {
 
 <template>
     <div class="item">
-        <h3>{{ item.name }} <span class="item-type">({{ item.type }})</span></h3>
-        
-        <label v-if="type !== 'perishable'">
-          Equipped: 
-          <input v-model="item.equipped" type="checkbox" class="custom-checkbox" />
-        </label>
+      <h3>{{ item.name }} <span class="item-type">({{ item.type }})</span></h3>
+      
+      <label v-if="item.type !== 'perishable'">
+        Equipped: 
+        <input v-model="item.equipped" type="checkbox" class="custom-checkbox" />
+      </label>
 
-        <button @click="collapse = !collapse">{{ collapse ? 'Edit' : 'Collapse' }}</button>
-        <div v-if="!collapse">          
-          <h4>Name</h4>
-          <input type="text" v-model="item.name" maxlength="25" />
+      <button @click="collapse = !collapse">{{ collapse ? 'Edit' : 'Collapse' }}</button>
+      <div v-if="!collapse">          
+        <h4>Name</h4>
+        <input type="text" v-model="item.name" maxlength="25" />
 
-          <h4>Content</h4>
-          <textarea v-model="item.content" />
+        <h4>Content</h4>
+        <textarea v-model="item.content" />
 
-          <button class="btn btn-danger" @click="$emit('remove')">Discard Item</button>
-        </div>
+        <button class="btn btn-danger" @click="$emit('remove')">Discard Item</button>
+      </div>
     </div>
 </template>
 

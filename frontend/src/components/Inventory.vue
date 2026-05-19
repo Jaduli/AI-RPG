@@ -19,6 +19,11 @@ export default {
     // and type-specific values.
     addItem() {
       const type = this.type
+
+      // Perishables cannot be equipped, only used
+      if (type === 'perishable') {
+        this.equipped = false;
+      }
       var payload = {
         id: Date.now(),
         name: this.name,
@@ -110,8 +115,8 @@ export default {
 
       <button @click="addItem">Add Item</button>
     </div>
-    <h3>Existing Cards</h3>
     <div class="container">
+      <h2>Inventory</h2>
       <label>Filter: 
         <select v-model="selected_type">
           <option value="all">All</option>

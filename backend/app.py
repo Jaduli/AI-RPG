@@ -92,13 +92,15 @@ def load_file():
             summary_cursor = data.get("summary_cursor", 0)
             context_cards = data.get("context_cards", [])
             inventory = data.get("inventory", [])
+            player = data.get("player", [])
     except Exception as e:
         # Internal Server Error
         return jsonify({"error": str(e)}), 500
 
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
                     "summary": summary, "story_essentials": story_essentials, "memory_cursor": memory_cursor,
-                    "summary_cursor":summary_cursor, "context_cards": context_cards, "inventory": inventory})
+                    "summary_cursor":summary_cursor, "context_cards": context_cards, "inventory": inventory,
+                    "player": player})
 
 """
 /save
@@ -151,6 +153,7 @@ def save_file():
     summary_cursor = data.get("summary_cursor", 0)
     context_cards = data.get("context_cards", [])
     inventory = data.get("inventory", [])
+    player = data.get("player_information", [])
 
     # Build payload
     save_data = {
@@ -162,7 +165,8 @@ def save_file():
         "memory_cursor": memory_cursor,
         "summary_cursor": summary_cursor,
         "context_cards": context_cards,
-        "inventory": inventory
+        "inventory": inventory,
+        "player": player
     }
 
     # Serialize to JSON

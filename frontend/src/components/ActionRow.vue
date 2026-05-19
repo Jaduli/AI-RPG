@@ -83,7 +83,7 @@ export default {
         if (!action.endsWith('"') || !action.startsWith('"')) {
           action = '"' + action + '"'
         }
-        return 'You say: ' + action;
+        return 'You say ' + action;
       }
 
       if (type === 'do') {
@@ -116,14 +116,14 @@ export default {
 
 <template>
   <div class="action-controls-row">
-    <select v-model="action_type">
+    <select class="action-select" v-model="action_type">
       <option value="custom">Custom</option>
       <option value="do">Do</option>
       <option value="say">Say</option>
       <option value="use">Use</option>
     </select>
 
-    <select v-if="action_type === 'use'" v-model="selected_item">
+    <select class="item-select" v-if="action_type === 'use'" v-model="selected_item">
       <option value="">Select an item...</option>
       <option v-for="item in inventory" :key="item.id" :value="item">
         {{ item.name }}
@@ -163,8 +163,13 @@ export default {
   margin-bottom: 10px;
 }
 
-.action-controls-row select {
-  width: 100px;
+.action-select {
+  min-width: 50px;
+  max-width: 100px;
+}
+.item-select {
+  min-width: 50px;
+  max-width: 150px;
 }
 
 .action-controls-row input[type="text"] {

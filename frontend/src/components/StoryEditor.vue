@@ -43,7 +43,7 @@ export default {
       instructions: '', // Special instructions for the AI to use
       content: '',
       summary: '',
-      story_essentials: '',
+      essential_context: '',
       sent_context: '', // Full context sent for story generation
       status_message: '',
       // Values
@@ -117,7 +117,7 @@ export default {
           model: this.main_model,
           instructions: this.instructions,
           summary: this.summary,
-          story_essentials: this.story_essentials,
+          essential_context: this.essential_context,
           context_cards: context_cards,
           recent_story: recent_story,
           top_p: this.top_p,
@@ -425,7 +425,7 @@ export default {
             instructions: this.instructions,
             content: this.content,
             summary: this.summary,
-            story_essentials: this.story_essentials,
+            essential_context: this.essential_context,
             memory_cursor: this.memory_cursor,
             summary_cursor: this.summary_cursor,
             context_cards: context_cards,
@@ -476,7 +476,7 @@ export default {
         this.instructions = data.instructions || '';
         this.content = data.content || '';
         this.summary = data.summary || '';
-        this.story_essentials = data.story_essentials || '';
+        this.essential_context = data.essential_context || '';
         this.memory_cursor = data.memory_cursor || 0;
         this.summary_cursor = data.summary_cursor || 0;
         this.$refs.contextCards.cards = data.context_cards || [];
@@ -486,7 +486,7 @@ export default {
         this.outcome_counter = 0;
 
         // Get player information
-        const player_information = data.player_information || [];
+        const player_information = data.player || [];
         this.$refs.playerCard.name = player_information.player_name || '';
         this.$refs.playerCard.description = player_information.player_description || '';
 
@@ -512,10 +512,11 @@ export default {
       this.instructions = '';
       this.content = '';
       this.summary = '';
-      this.story_essentials = '';
+      this.essential_context = '';
       this.memory_cursor = 0;
       this.summary_cursor = 0;
       this.$refs.contextCards.cards = [];
+      this.$refs.inventory.inventory = [];
       this.recent_action = '';
       this.recent_outcome = '';
       this.outcome_counter = 0;
@@ -663,7 +664,7 @@ export default {
         <h4>Context used in story generation. Fields are automatically updated when edited.</h4>
       </div>
       <div class="container">
-        <h2>Storytelling Instructions</h2>
+        <h2>Generation Instructions</h2>
         <textarea 
         v-model="instructions" 
         rows="10" 
@@ -672,8 +673,8 @@ export default {
         </textarea>
       </div>
       <div class="container">
-        <h2>Story Essentials</h2>
-        <textarea v-model="story_essentials" 
+        <h2>Essential Context</h2>
+        <textarea v-model="essential_context" 
         rows="10" 
         cols="80" 
         placeholder="Key plot points, character details, or world-building elements. This will always be used as context in story generation.">

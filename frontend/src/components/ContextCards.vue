@@ -40,7 +40,7 @@ export default {
       if (type === 'character' && this.create_memories) {
         payload.create_memories = this.create_memories;
       }
-      payload.keywords = this.keywords.split(',').map(k => k.trim())
+      payload.keywords = this.keywords.split(',')
       
       this.cards.push(payload);
       this.name = '';

@@ -40,6 +40,9 @@ export default {
     }
   },
   methods: {
+    closeSettings() {
+      this.show_settings = false;
+    },
     // Load backend config before starting the app. If backend is not ready, a new call
     // will be made every 2 seconds until a connection is made. This prevents frontend
     // errors due to backend being unavailable.
@@ -79,6 +82,16 @@ export default {
   async mounted() {
     // Load backend config
     this.loadConfig();
+    // Add ESC key handler for closing modal
+    window.addEventListener('keydown', this.handleEscKey);
+  },
+  beforeUnmount() {
+    window.removeEventListener('keydown', this.handleEscKey);
+  },
+  handleEscKey(e) {
+    if (e.key === 'Escape') {
+      this.closeSettings();
+    }
   }
 }
 </script>
@@ -86,7 +99,13 @@ export default {
 <template>
   <!-- App is loaded only after backend config is ready -->
   <div v-if="config_ready" class="app-container">
-    <h1>AI Storyteller</h1>
+    <div class="app-header">
+      <h1>AI Storyteller</h1>
+      <button @click="show_settings = !show_settings" class="settings-btn" title="Settings">
+        ⚙️
+      </button>
+    </div>
+
     <StoryEditor class="story-editor"
       :gamemode="gamemode"
       :main_model="main_model"
@@ -101,12 +120,13 @@ export default {
       :memorize="memorize"
       @loading-changed="story_is_loading = $event"
     />
-    <button @click="show_settings = !show_settings">
-      {{ show_settings ? 'Hide Settings' : 'Show Settings' }}
-    </button>
-    <SettingsMenu
-      v-if="show_settings"
-      
+    
+    <!-- Settings Modal Backdrop -->
+    <div v-if="show_settings" class="modal-backdrop" @click="closeSettings"></div>
+    
+    <!-- Settings Modal -->
+    <div v-if="show_settings" class="modal-container">
+      <SettingsMenu
       :gamemode="gamemode"
       :main_model="main_model"
       :mem_model="mem_model"
@@ -132,7 +152,9 @@ export default {
       @update:max_tokens="max_tokens = $event"
       @update:summarize="summarize = $event"
       @update:memorize="memorize = $event"
-    />
+      @close="closeSettings"
+      />
+    </div>
   </div>
   <div v-else>
     <p>Loading backend configuration, please wait...</p>
@@ -218,5 +240,60 @@ select:focus {
   outline: none;
   border: 1px solid #aa3bff;
   box-shadow: 0 0 5px rgba(170, 59, 255, 0.3);
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.app-header h1 {
+  margin: 0;
+  flex: 1;
+}
+
+.settings-btn {
+  background: none;
+  border: none;
+  color: #aa3bff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1000;
+}
+
+.settings-btn:hover {
+  background: rgba(170, 59, 255, 0.1);
+  color: #fff;
+}
+
+.settings-btn:active {
+  transform: scale(0.95);
 }
 </style>

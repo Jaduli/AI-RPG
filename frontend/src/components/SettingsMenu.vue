@@ -127,49 +127,49 @@ export default {
 </script>
 
 <template>
-  <div class="container">
-    <h2>Settings</h2>
+  <div class="container modal-settings">
+    <div class="modal-header">
+      <h2>Settings</h2>
+      <button class="close-btn" @click="$emit('close')" title="Close settings (ESC)">✕</button>
+    </div>
 
-    <div>
-      <label>Gamemode: </label>
+    <label>Gamemode: 
       <select v-model="gamemodeVal">
         <option value="rpg">RPG</option>
         <option value="storyteller">Storyteller</option>
       </select>
-    </div>
+    </label>
 
-    <div>
-      <label>Main Model Name: </label>
+    <label>Main Model Name: 
       <input v-model="mainModelVal" 
       type="text" 
       placeholder="llama-3.1-8b-instant"
       />
-    </div>
+    </label>
 
-    <div v-if="show_local_toggle">
-      <label>Use Local AI: </label>
+    <label v-if="show_local_toggle">Use Local AI: 
       <input v-model="localVal" type="checkbox" class="custom-checkbox" />
-    </div>
+    </label>
 
-    <div v-if="!use_local">
-      <label>Memorize/Summarize Model Name: </label>
+    <label v-if="!use_local">Secondary Model Name: 
       <input v-model="memModelVal" 
       type="text" 
       placeholder="llama-3.1-8b-instant"
       />
-    </div>
+      <span title="Secondary model will be used for context creation, e.g. for summaries and memories.">
+        ⓘ
+      </span>
+    </label>
 
-    <div>
-      <label>Summarize Story: </label>
+    <label>Summarize Story: 
       <input v-model="summarizeVal" type="checkbox" class="custom-checkbox" />
-    </div>
-    <div>
-      <label>Create Memories: </label>
-      <input v-model="memorizeVal" type="checkbox" class="custom-checkbox" />
-    </div>
+    </label>
 
-    <div>
-      <label>Recent Story Token Limit: </label>
+    <label>Create Memories: 
+      <input v-model="memorizeVal" type="checkbox" class="custom-checkbox" />
+    </label>
+
+    <label>Editor Token Limit: 
       <input 
         v-model.number="temp_context_length"
         type="number" 
@@ -178,46 +178,82 @@ export default {
         placeholder="4000"
       />
       <button @click="setContextLength(temp_context_length)" :disabled="is_loading">Set Limit</button>
-      <span title="Setting the limit will update the editor to display content with new context length.">
-        ⓘ
-      </span>
-    </div>
+    </label>
 
-    <div>
-      <label>Top P: </label>
+    <label>Top P: 
       <input v-model.number="topPVal" 
       type="number" 
       step="0.1" 
       min="0" 
       max="1"
       placeholder="0.9" />
-    </div>
+    </label>
 
-    <div>
-      <label>Temperature: </label>
+    <label>Temperature: 
       <input v-model.number="temperatureVal" 
       type="number" 
       step="0.1" 
       min="0" 
       max="2"
       placeholder="0.8" />
-    </div>
+    </label>
 
-    <div>
-      <label>Maximum Returned Tokens: </label>
+    <label>Maximum Returned Tokens: 
       <input v-model.number="maxTokensVal" 
       type="number" 
       min="10"
       max="1000"
       placeholder="200" />
-    </div>
+    </label>
 
-    <div>
-      <label>Show API Call Token Usage: </label>
+    <label>Show API Call Token Usage: 
       <input v-model="tokenVal" type="checkbox" class="custom-checkbox" />
-    </div>
+    </label>
   </div>
 </template>
 
 <style scoped>
+.modal-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #aa3bff;
+}
+
+.modal-header h2 {
+  margin: 0;
+  flex: 1;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #aa3bff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(170, 59, 255, 0.2);
+  color: #fff;
+}
 </style>

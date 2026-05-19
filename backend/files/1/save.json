@@ -100,36 +100,36 @@
       "content": "An unassuming but durable sword inherited from your father. Good for slashing, not for much else.",
       "equipped": true,
       "id": 1779037213334,
-      "type": "weapon",
-      "name": "Inherited Steel Sword"
+      "name": "Inherited Steel Sword",
+      "type": "weapon"
     },
     {
       "content": "Armor that has seen better days, but provides some protection from physical attacks and cold weather. Poor protection against magic.",
       "equipped": true,
       "id": 1779037327232,
-      "type": "apparel",
-      "name": "Worn Leather Armor"
+      "name": "Worn Leather Armor",
+      "type": "apparel"
     },
     {
       "content": "A handful of dried meat, ready to eat. Lowers hunger.",
       "equipped": false,
       "id": 1779037392186,
-      "type": "perishable",
-      "name": "Dried Meat"
+      "name": "Dried Meat",
+      "type": "perishable"
     },
     {
       "content": "A magical health potion that can cure ailments in a pinch. Tastes like strawberries.",
       "equipped": false,
       "id": 1779037459484,
-      "type": "perishable",
-      "name": "Health Potion"
+      "name": "Health Potion",
+      "type": "perishable"
     },
     {
       "content": "Clean bandages that can be used to stop bleeding and provide protection against infection.",
       "equipped": false,
       "id": 1779037533014,
-      "type": "perishable",
-      "name": "Bandages"
-    }    
+      "name": "Bandages",
+      "type": "perishable"
+    }
   ]
 }
