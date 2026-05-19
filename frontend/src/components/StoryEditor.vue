@@ -245,7 +245,7 @@ export default {
         this.status_message = '';
 
         if (this.show_token_use && data.tokens_total) {
-          this.status_message = 'Total tokens used for continue action: ' + data.tokens_total
+          this.status_message = 'Total tokens used for continue action: ' + data.tokens_total;
         }
         // Automatically summarize (only happens if enough content is past the recent story context window)
         if (this.summarize) {
@@ -326,7 +326,7 @@ export default {
         this.summary_cursor = cutoff_index;
 
         if (this.show_token_use && data.tokens_total) {
-          this.status_message = 'Total tokens used for summary action: ' + data.tokens_total
+          this.status_message = 'Total tokens used for summary action: ' + data.tokens_total;
         }
       } catch (err) {
         this.status_message = 'Error summarizing story: ' + (err.message || err);
@@ -382,7 +382,7 @@ export default {
         this.memory_cursor = cutoff_index;
 
         if (this.show_token_use && data.tokens_total) {
-          this.status_message = 'Total tokens used for memory action: ' + data.tokens_total
+          this.status_message = 'Total tokens used for memory action: ' + data.tokens_total;
         }
       } catch (err) {
         this.status_message = 'Error creating memory: ' + (err.message || err);
@@ -713,7 +713,11 @@ export default {
     </div>
 
     <div class="container" v-show="active_tab === 'context_cards'">
-      <ContextCards ref="contextCards" />
+      <ContextCards
+        ref="contextCards"
+        :mem_model="mem_model"
+        :use_local="use_local"
+      />
     </div>
 
     <div class="container" v-show="active_tab === 'player'">

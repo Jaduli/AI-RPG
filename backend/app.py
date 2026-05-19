@@ -4,9 +4,25 @@ import json
 import requests
 import re
 import os
-from default_prompts import STORYTELLER_SYS_PROMPT, RPG_SYS_PROMPT, CHARACTER_ACTION_SYS_PROMPT, RECENT_ACTION_SYS_PROMPT, SUMMARIZATION_SYS_PROMPT, MEMORY_SYS_PROMPT, OUTCOME_SYS_PROMPT
 import utils
 import database
+from prompts.asset_generation import (
+    GENERATE_CHARACTER_SYS_PROMPT,
+    GENERATE_LOCATION_SYS_PROMPT,
+    GENERATE_ITEM_SYS_PROMPT,
+    GENERATE_OTHER_SYS_PROMPT,
+)
+from prompts.memory import (
+    SUMMARIZATION_SYS_PROMPT, 
+    MEMORY_SYS_PROMPT
+)
+from prompts.rpg import (
+    RPG_SYS_PROMPT, 
+    PLAYER_ACTION_SYS_PROMPT, 
+    RECENT_ACTION_SYS_PROMPT, 
+    OUTCOME_SYS_PROMPT
+)
+from prompts.storyteller import STORYTELLER_SYS_PROMPT
 
 # Maximum file size for save files
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
@@ -87,7 +103,7 @@ def load_file():
             instructions = data.get("instructions", '')
             content = data.get("content", '')
             summary = data.get("summary", '')
-            story_essentials = data.get("story_essentials", '')
+            essential_context = data.get("essential_context", '')
             memory_cursor = data.get("memory_cursor", 0)
             summary_cursor = data.get("summary_cursor", 0)
             context_cards = data.get("context_cards", [])
@@ -98,7 +114,7 @@ def load_file():
         return jsonify({"error": str(e)}), 500
 
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
-                    "summary": summary, "story_essentials": story_essentials, "memory_cursor": memory_cursor,
+                    "summary": summary, "essential_context": essential_context, "memory_cursor": memory_cursor,
                     "summary_cursor":summary_cursor, "context_cards": context_cards, "inventory": inventory,
                     "player": player})
 
@@ -148,7 +164,7 @@ def save_file():
     instructions = data.get("instructions", '')
     content = data.get("content", '')
     summary = data.get("summary", '')
-    story_essentials = data.get("story_essentials", '')
+    essential_context = data.get("essential_context", '')
     memory_cursor = data.get("memory_cursor", 0)
     summary_cursor = data.get("summary_cursor", 0)
     context_cards = data.get("context_cards", [])
@@ -161,7 +177,7 @@ def save_file():
         "instructions": instructions,
         "content": content,
         "summary": summary,
-        "story_essentials": story_essentials,
+        "essential_context": essential_context,
         "memory_cursor": memory_cursor,
         "summary_cursor": summary_cursor,
         "context_cards": context_cards,
@@ -257,7 +273,7 @@ def continue_story():
     
     gamemode = data.get('gamemode', 'storyteller')
     user_instructions = data.get('instructions')
-    story_essentials = data.get('story_essentials', 'None.')
+    essential_context = data.get('essential_context', 'None.')
     summary = data.get('summary', 'None.')
     context_cards = data.get('context_cards', 'None.')
     player_information = data.get('player_information', '')
@@ -304,7 +320,7 @@ def continue_story():
     # Context ordered based on which content is most likely to stay static (unedited).
     # This will increase rate of cache hits in API call -> cheaper responses (if supported by API provider).
     full_prompt = (
-        "[Essential Story Information]\n" + story_essentials +
+        "[Essential Story Information]\n" + essential_context +
         ("\n\n[Player Information]\n" + player_information if player_information else "") +
         ("\n\n[Player Equipment]\n" + player_equipment if player_equipment else "") +
         ("\n\n[Story Summary]\n" + summary if summary else "") +
@@ -319,7 +335,7 @@ def continue_story():
     )
 
     if (player_action):
-        full_instructions += CHARACTER_ACTION_SYS_PROMPT
+        full_instructions += PLAYER_ACTION_SYS_PROMPT
     elif (recent_action):
         full_instructions += RECENT_ACTION_SYS_PROMPT
 
@@ -441,6 +457,9 @@ def summarize():
             "max_tokens": 1000
         }
 
+        if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+            payload["thinking"] = {"type": "disabled"}
+
         # Call external AI API with error handling
         result, error = utils.call_ai_api(api_url, headers, payload)
 
@@ -543,6 +562,9 @@ def memorize():
             "max_tokens": 200
         }
 
+        if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+            payload["thinking"] = {"type": "disabled"}
+
         # Call external AI API with error handling
         result, error = utils.call_ai_api(api_url, headers, payload)
 
@@ -560,6 +582,118 @@ def memorize():
 
     return jsonify({"memory": trimmed, "tokens_total": tokens_total})
 
+"""
+/generate_asset
+
+Generates a story asset (e.g. character, location, or item) using local or cloud AI.
+Returns 400 for missing/invalid JSON or missing asset type; 
+API call errors with appropriate status codes (from utils.call_ai_api);
+500 for server or API key errors, or if AI API returns empty content.
+"""
+@app.route('/api/generate_asset', methods=['POST'])
+def generate_asset():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Missing or invalid JSON body."}), 400
+
+    asset_type = data.get('type')
+    if not asset_type or asset_type.strip() == '':
+        return jsonify({"error": "Missing asset type."}), 400
+    
+    name = data.get('name', '')
+    context = data.get('context', '')
+
+    content = ''
+    if name:
+        content = '[Generation Context]\n\nName:' + name
+
+        if context:
+            content += '\n\nContext:' + context
+    
+    local = data.get('local')
+
+    model = data.get('model')
+    if not model:
+        return jsonify({"error": "Model is required."}), 400
+    
+    new_asset = ''
+    sys_prompt = ''
+    tokens_total = -1
+
+    match asset_type:
+        case 'character':
+            sys_prompt = GENERATE_CHARACTER_SYS_PROMPT
+        case 'location':
+            sys_prompt = GENERATE_LOCATION_SYS_PROMPT
+        case 'item':
+            sys_prompt = GENERATE_ITEM_SYS_PROMPT
+        case _:
+            sys_prompt = GENERATE_OTHER_SYS_PROMPT
+
+    if (local and local == True and LOCAL_AI_ENABLED):
+        # Local memorization using Ollama API
+        response = requests.post(OLLAMA_URL, json={
+            "model": OLLAMA_MODEL,
+            "messages": [
+                {"role": "system", "content": sys_prompt},
+                {"role": "user", "content": content}
+            ],
+            "options": {
+                "temperature": 1.1, # Average temperature for good consistency & creativity
+                "num_predict": 200,
+                "num_ctx": 8192
+            },
+            "stream": False
+        })
+
+        if response.status_code == 200:
+            try:
+                response_data = response.json()
+            except ValueError:
+                return jsonify({"error": "Invalid JSON response from local AI service.", "detail": response.text}), 502
+
+            new_asset = response_data.get("message", {}).get("content", '').strip()
+
+            tokens_total = response_data.get("prompt_eval_count", 0) + response_data.get("eval_count", 0)
+
+        else:
+            return jsonify({"error": response.text}), response.status_code
+    # Default to cloud
+    else:
+        if not api_url or not api_key:
+            return jsonify({"error": "API_URL or API_KEY not set."}), 500
+
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": sys_prompt},
+                {"role": "user", "content": content}
+            ],
+            "temperature": 1.1,
+            "max_tokens": 200
+        }
+
+        if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+            payload["thinking"] = {"type": "disabled"}
+
+        # Call external AI API with error handling
+        result, error = utils.call_ai_api(api_url, headers, payload)
+
+        if error:
+            message, status = error
+            return jsonify({"error": message}), status
+
+        new_asset = result["choices"][0]["message"]["content"]
+
+        tokens_total = result['usage']['total_tokens']
+
+    trimmed = utils.trim_incomplete_sentences(new_asset)
+
+    app.logger.info("Tokens used in asset generation: %s", tokens_total)
+
+    return jsonify({"generated_content": trimmed, "tokens_total": tokens_total})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

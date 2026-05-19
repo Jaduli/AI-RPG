@@ -2,9 +2,15 @@
 import ContextCard from './ContextCard.vue';
 
 export default {
+  props: {
+    mem_model: String,
+    use_local: Boolean,
+    show_token_use: Boolean
+  },
   data() {
     return {
       collapse: false,
+      loading: false,
       cards: [],
       name: '',
       content: '',
@@ -46,6 +52,39 @@ export default {
       this.name = '';
       this.content = '';
       this.keywords = '';
+    },
+    async generateNewCard() {
+      try {
+        this.loading = true;
+
+        const res = await fetch('/api/generate_asset', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: this.mem_model,
+            local: this.use_local,
+            type: this.type,
+            name: this.name
+          })
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          this.content = 'Backend error creating content: ' + data.error;
+          return;
+        }
+        if (!data.generated_content) {
+          this.content = 'Error: backend returned empty content.';
+          return;
+        }
+        this.content = data.generated_content;
+      } catch (err) {
+        this.content = 'Error creating content: ' + (err.message || err);
+      } finally {
+        this.loading = false;
+      }
     },
     // Get matching context cards based on keywords in recent story content
     getMatchingContextCards(text) {
@@ -129,24 +168,10 @@ export default {
           <option value="other">Other</option>
           <option value="character">Character</option>
           <option value="location">Location</option>
-          <option value="object">Object</option>
+          <option value="item">Item</option>
         </select>
+        <button @click="generateNewCard"  :disabled="loading">Generate Content</button>
       </label>
-
-      <!-- Type-specific values -->
-      <div v-if="type === 'character'">
-        <label>Create Character Memories: </label>
-        <input v-model="create_memories" type="checkbox" class="custom-checkbox" />
-      </div>
-
-      <div v-if="type === 'location'">
-        <label>Parent Location:</label>
-        <input type="text" v-model="parent_location" maxlength="200" />
-      </div>
-      <div v-if="type === 'location'">
-        <label>Child Locations (comma-seperated):</label>
-        <input type="text" v-model="child_locations" maxlength="200" />
-      </div>
 
       <h4>Content</h4>
       <textarea v-model="content" />
@@ -154,7 +179,20 @@ export default {
       <h4>Keywords (comma-separated)</h4>
       <input type="text" v-model="keywords" maxlength="200" />
 
-      <button @click="addCard">Add Card</button>
+      <!-- Type-specific values -->
+      <label v-if="type === 'character'">Create Character Memories: 
+        <input v-model="create_memories" type="checkbox" class="custom-checkbox" />
+      </label>
+
+      <label v-if="type === 'location'">Parent Location: 
+        <input type="text" v-model="parent_location" maxlength="200" />
+      </label>
+
+      <label v-if="type === 'location'">Child Locations (comma-seperated): 
+        <input type="text" v-model="child_locations" maxlength="300" />
+      </label>
+
+      <button @click="addCard" :disabled="loading">Add Card</button>
     </div>
     <div class="info-container">
     <h3>Existing Cards</h3>
