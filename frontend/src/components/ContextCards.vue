@@ -157,10 +157,10 @@ export default {
         const data = await res.json();
 
         if (data.error) {
-          throw new Error('Backend error creating content: ' + data.error);
+          throw new Error(data.error);
         }
         if (!data.generated_content) {
-          throw new Error('Error creating content: backend returned empty content.');
+          throw new Error('Backend returned empty asset content.');
         }
         this.content = data.generated_content;
 
@@ -177,7 +177,7 @@ export default {
       try {
         await this.generateContent();
       } catch (err) {
-        this.content = err.message || String(err);
+        this.content = 'Error generating content: ' + (err.message || String(err));
       }
     },
     // Adds a new card based on given context, type, and name. Used in
@@ -272,13 +272,13 @@ export default {
         const data = await res.json();
 
         if (data.error) {
-          throw new Error('Backend error creating character memory: ' + data.error);
+          throw new Error(data.error);
         }
         
         const memory = data.new_memory;
 
         if (!memory) {
-          throw new Error('Error creating character memory: backend returned empty content.');
+          throw new Error('Backend returned empty character memory.');
         }
         // Keep a maximum of 10 memories per character
         if (!Array.isArray(character.character_memories)) {

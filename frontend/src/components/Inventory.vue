@@ -95,19 +95,16 @@ export default {
         const data = await res.json();
 
         if (data.error) {
-          throw new Error('Backend error creating item: ' + data.error);
-          return false;
+          throw new Error(data.error);
         }
         if (!data.generated_content) {
-          throw new Error('Error: backend returned empty content.');
-          return false;
+          throw new Error('Backend returned empty item content.');
         }
         this.content = data.generated_content;
 
         this.addItem();
       } catch (err) {
-        throw new Error('Error creating content: ' + (err.message || err));
-        return false;
+        throw new Error(err.message || err);
       } finally {
         this.loading = false;
       }

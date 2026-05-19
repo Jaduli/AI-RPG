@@ -363,8 +363,7 @@ def continue_story():
     }
 
     # Disable "thinking" phase for DeepSeek models to reduce output token use 
-    # -> cheaper responses.
-    # Can be removed for better storytelling quality if cost is not a concern.
+    # -> cheaper & faster responses.
     # May become redundant if model names are changed by API provider.
     if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
         payload["thinking"] = {"type": "disabled"}

@@ -67,14 +67,8 @@ export default {
     // Formats user action to be appropriate for story generation
     getFormattedAction() {
       const type = this.action_type;
-      let user_input = this.user_input.trim();
-
-      // RPG elements added only if gamemode is rpg.
-      if (this.gamemode !== 'rpg') {
-        return user_input;
-      }
-
       const item = this.selected_item;
+      let user_input = this.user_input.trim();
 
       // If item is selected without a user action, fallback to general
       // use item message.
@@ -86,7 +80,7 @@ export default {
         return '';
       }
 
-      // If action is new, story is continued with appropriate
+      // If action type is new, story is continued with appropriate
       // user action for given story asset.
       if (type === 'new') {
         asset_type = this.new_asset_type;
@@ -122,7 +116,7 @@ export default {
       }
 
       if (type === 'do') {
-        // Add "You" if missing (e.g. 'open the door -> You open the door')
+        // Add "You" if missing (e.g. open the door -> You open the door)
         if (!/^you\b/i.test(action.trim())) {
           return 'You ' + user_input;
         }
@@ -134,11 +128,14 @@ export default {
       return user_input;
     },
     // Returns formatted player action and values for selected item, D20 toggle,
-    // and action type.
+    // and action type. Generates a new asset if action type is set to 'new'.
     async getPlayerAction(context = '') {
       if (this.action_type === 'new') {
         // Create new asset before continuing the story
         await this.createNewAsset(context);
+
+        // Disable D20 for 'new' actions
+        this.use_d20 = false;
       }
 
       let item = null;
@@ -163,10 +160,10 @@ export default {
       const contextCards = parent.$refs.contextCards;
 
       if (!name) {
-        throw new Error('Error: Please set name for new story asset.');
+        throw new Error('Please set name for new story asset.');
         return;
       }
-      
+
       // Clear context if asset name is not found in context (i.e. context is irrelevant)
       if (!context.toLowerCase().includes(name.toLowerCase())) {
         context = '';
@@ -197,11 +194,7 @@ export default {
           return;
         }
         // Generate and add new context card
-        const action = await contextCards.generateContextCard(type, name, context, this.new_character_memories);
-
-        if (!action) {
-          throw new Error("Error: Creating asset failed. Check Context Cards tab.");
-        }
+        await contextCards.generateContextCard(type, name, context, this.new_character_memories);
 
         // Set status message
         if (only_active && ['location', 'character', 'item'].includes(type)) {
@@ -213,7 +206,7 @@ export default {
         // Reset input for next action
         this.reset(false);
       } catch (err) {
-        throw new Error('Error creating asset: ' + (err.message || err));
+        throw new Error(err.message || err);
       } finally {
         this.loading = false;
         parent.active_requests--;

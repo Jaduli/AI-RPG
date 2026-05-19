@@ -196,22 +196,22 @@ export default {
         }
 
         const continued_content = data.continued_content || '';
+
         if (continued_content.trim() === '') {
           this.status_message = 'Error: Continue action returned empty content.';
           return;
         }
 
-        // Append new content to story with proper spacing (\n\n + new content)
+        // Append new content to story with proper spacing (\n\n + new content).
         // Count existing newlines at end of text
         const matching_count = recent_story.match(/\n*$/)[0].length;
 
         // Add 0-2 newlines based on existing count. This ensures \n\n in case of
         // 0-2 existing newlines but does not remove newlines above the limit.
         const newline_count = Math.max(0, 2 - matching_count);
-
         this.content += '\n'.repeat(newline_count);
 
-        // Sync content with user action
+        // Sync content with player action
         if (is_new_action) {
           this.recent_action = player_action;
           this.content += player_action + '\n\n';
@@ -224,12 +224,12 @@ export default {
           this.sent_context = data.full_context;
         }
         
-        // Outcome of user action (success, failure, etc.)
+        // D20 outcome of player action (success, failure, etc.)
         if (data.outcome) {
           this.recent_outcome = data.outcome;
         }
 
-        // Keep action/outcome context for a maximum of 3 turns.
+        // Use action/outcome context for a maximum of 3 turns.
         if (this.recent_action) {
           this.outcome_counter++;
         }
