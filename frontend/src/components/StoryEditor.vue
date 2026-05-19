@@ -109,8 +109,11 @@ export default {
         // Sync content with editor for any user edits before continuing story
         this.syncContentWithEditor();
 
-        // Get relevant context cards based on found keywords in recent story
-        const context_cards = this.$refs.contextCards.getMatchingContextCards(recent_story);
+        // Most recent content to be used for context card matching
+        const most_recent_content = recent_story.slice(-2500).trim();
+
+        // Get relevant context cards based on found keywords
+        const context_cards = this.$refs.contextCards.getMatchingContextCardsStr(most_recent_content);
 
         let payload = {
           gamemode: this.gamemode,
@@ -133,6 +136,7 @@ export default {
 
         // Get RPG elements if relevant
         if (this.gamemode === 'rpg') {
+          // Get action & generate new asset if action type is 'new'
           let action = await this.$refs.actionRow.getPlayerAction();
           // Stop if errors occur during new asset generation.
           // Error messages are handled in child components.
@@ -141,8 +145,7 @@ export default {
           }
           // Use 30 % chance to create new memory for one character found in
           // most recent story content. 
-          const memory_content = recent_story.slice(-2000).trim();
-          action = this.$refs.contextCards.addCharacterMemory(memory_content, 0.3);
+          action = await this.$refs.contextCards.addCharacterMemory(most_recent_content, 0.3);
           // Stop if errors occur during memory generation.
           if (!action) {
             return;
@@ -672,10 +675,6 @@ export default {
     </div>
 
     <div v-show="active_tab === 'story_context'">
-      <div class="info-container">
-        <h3>Context Fields</h3>
-        <h4>Context used in story generation. Fields are automatically updated when edited.</h4>
-      </div>
       <div class="container">
         <h2>Generation Instructions</h2>
         <textarea 

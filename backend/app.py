@@ -606,7 +606,7 @@ def generate_asset():
     if not asset_type or asset_type.strip() == '':
         return jsonify({"error": "Missing asset type."}), 400
     
-    local = data.get('local')
+    local = data.get('local', False)
     name = data.get('name', '')
     context = data.get('context', '')
 
@@ -616,7 +616,7 @@ def generate_asset():
 
         # Only use context if name is given
         if context:
-            content += '\n\nContext:' + context
+            content += '\n\nContext: ' + context
     
     new_asset = ''
     sys_prompt = ''
@@ -632,7 +632,7 @@ def generate_asset():
         case _:
             sys_prompt = GENERATE_OTHER_SYS_PROMPT
 
-    if (local and local == True and LOCAL_AI_ENABLED):
+    if (local == True and LOCAL_AI_ENABLED):
         # Local memorization using Ollama API
         response = requests.post(OLLAMA_URL, json={
             "model": OLLAMA_MODEL,
@@ -715,7 +715,7 @@ def generate_character_memory():
     if not model:
         return jsonify({"error": "Model is required."}), 400
 
-    local = data.get('local')
+    local = data.get('local', False)
     gamemode = data.get('gamemode', '')
     player = data.get('player', '')
     character_name = data.get('character_name', '')
@@ -741,7 +741,7 @@ def generate_character_memory():
     if gamemode == 'rpg':
         sys_prompt = CHARACTER_MEMORY_RPG_SYS_PROMPT
 
-    if (local and local == True and LOCAL_AI_ENABLED):
+    if (local == True and LOCAL_AI_ENABLED):
         # Local memorization using Ollama API
         response = requests.post(OLLAMA_URL, json={
             "model": OLLAMA_MODEL,

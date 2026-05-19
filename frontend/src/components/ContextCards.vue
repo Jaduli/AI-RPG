@@ -56,9 +56,10 @@ export default {
       this.keywords = '';
     },
     // Get matching context cards based on keywords in recent story content.
+    // Cards are formatted to a string to be used in story generation.
     // If card type is character and its memories are enabled, up to 3 random
-    // character memories are added to context.
-    getMatchingContextCards(text) {
+    // memories are added as context for each character.
+    getMatchingContextCardsStr(text) {
       const lower_text = text.toLowerCase();
       const matching = [];
 
@@ -131,6 +132,15 @@ export default {
       try {
         this.loading = true;
 
+        const parent = this.$parent;
+        parent.active_requests++;
+        
+        // If this is not the only active component, do not edit parent messages
+        const only_active = parent.active_requests === 1;
+
+        if (only_active) {
+          parent.status_message = 'Generating content...';
+        }
         const res = await fetch('/api/generate_asset', {
           method: 'POST',
           headers: {
@@ -155,19 +165,25 @@ export default {
           return false;
         }
         this.content = data.generated_content;
+
+        if (only_active) {
+          parent.status_message = '';
+        }
         return true;
       } catch (err) {
         this.content = 'Error creating content: ' + (err.message || err);
         return false;
       } finally {
         this.loading = false;
+        parent.active_requests--;
       }
     },
     // Adds a new card based on given context, type, and name. Used in
     // ActionRow to create new cards based on recent story and user input.
-    async addGeneratedCard(type = 'other', name = '', context = '') {
+    async generateContextCard(type = 'other', name = '', context = '', character_memories = false) {
       this.name = name.trim();
       this.type = type;
+      this.create_memories = character_memories;
 
       // Add name as keyword
       this.keywords = name;
@@ -175,12 +191,18 @@ export default {
       // Clear other values
       this.parent_location = '';
       this.child_locations = '';
-      this.create_memories = false;
+
+      // Only include most recent story as context if name is found
+      if (!context.lower.includes(name.toLowerCase())) {
+        context = '';
+      }
 
       // Generate content with AI and add new card
       const generated = await this.generateContent(context);
+
+      // Return if errors occur during generation
       if (!generated) {
-        throw new Error(this.content || 'Asset generation failed.');
+        return;
       }
       this.addCard();
     },
@@ -293,7 +315,7 @@ export default {
           <option value="location">Location</option>
           <option value="item">Item</option>
         </select>
-        <button @click="generateContent"  :disabled="loading">Generate Content</button>
+        <button @click="generateContent()"  :disabled="loading">Generate Content</button>
       </label>
 
       <h4>Content</h4>
@@ -333,6 +355,11 @@ export default {
         <option value="other">Other</option>
       </select>
     </label>
+
+    <p v-if="sortedCards.length === 0">
+      No Cards.
+    </p>
+
     <ContextCard
       v-for="card in sortedCards"
       :key="card.id"

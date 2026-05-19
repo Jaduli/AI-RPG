@@ -225,6 +225,8 @@ button:disabled {
   padding: 5px;
   background: #1a1a2e;
   color: #fff;
+  width: 80%;
+  margin: 0 auto;
 }
 
 select {

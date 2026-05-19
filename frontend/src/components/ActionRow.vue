@@ -8,6 +8,7 @@ export default {
       user_input: '',
       selected_item: null,
       new_asset_type: 'other',
+      new_character_memories: true,
       new_item_type: 'other',
       new_item_equipped: false,
       input_placeholder: 'Input action'
@@ -32,33 +33,9 @@ export default {
         this.new_item_equipped = false;
       }
     },
-    // Returns formatted player action and values for selected item, D20 toggle,
-    // and action type.
-    getPlayerAction() {
-      if (this.action_type === 'new') {
-        // Create new asset before continuing the story
-        const cont = this.createNewAsset();
-
-        // Return if errors occur during asset generation.
-        if (!cont) return;
-      }
-
-      let item = null;
-      if (this.action_type === 'use') {
-        item = this.selected_item;
-      }
-
-      const formatted_action = this.getFormattedAction(this.user_input);
-      return {
-        player_action: formatted_action,
-        selected_item: item,
-        use_d20: this.use_d20,
-        action_type: this.action_type
-      };
-    },
     // Edits dialogue from first person to second person. This allows
     // RPG-style gameplay for user actions (e.g. "I open the door")
-    // while keeping the story in second person.
+    // while keeping the story itself in second person.
     firstToSecondPerson(text) {
       // Split while keeping quoted text (dialogue) unedited
       const parts = text.split(/(".*?")/g);
@@ -92,10 +69,6 @@ export default {
       const type = this.action_type;
       let user_input = this.user_input.trim();
 
-      if (!user_input) {
-        return '';
-      }
-
       // RPG elements added only if gamemode is rpg.
       if (this.gamemode !== 'rpg') {
         return user_input;
@@ -106,7 +79,11 @@ export default {
       // If item is selected without a user action, fallback to general
       // use item message.
       if (type === 'use' && item && !user_input) {
-        return `You use item '${user_input}'.`
+        return `You use item '${item.name}'.`
+      }
+      // Otherwise if user input is empty, continue the story without an action
+      if (!user_input) {
+        return '';
       }
 
       // If action is new, story is continued with appropriate
@@ -129,6 +106,8 @@ export default {
         return `You learn about ${user_input}.`
       }
 
+      // The following edit user input directly.
+
       // Add punctuation if missing
       if (!/[.!?"]$/.test(user_input)) {
         user_input += '.';
@@ -145,7 +124,7 @@ export default {
       if (type === 'do') {
         // Add "You" if missing (e.g. 'open the door -> You open the door')
         if (!/^you\b/i.test(action.trim())) {
-          user_input = 'You ' + user_input;
+          return 'You ' + user_input;
         }
       }
 
@@ -154,6 +133,30 @@ export default {
 
       return user_input;
     },
+    // Returns formatted player action and values for selected item, D20 toggle,
+    // and action type.
+    async getPlayerAction() {
+      if (this.action_type === 'new') {
+        // Create new asset before continuing the story
+        const cont = await this.createNewAsset();
+
+        // Return if errors occur during asset generation.
+        if (!cont) return;
+      }
+
+      let item = null;
+      if (this.action_type === 'use') {
+        item = this.selected_item;
+      }
+
+      const formatted_action = this.getFormattedAction(this.user_input);
+      return {
+        player_action: formatted_action,
+        selected_item: item,
+        use_d20: this.use_d20,
+        action_type: this.action_type
+      };
+    },
     async createNewAsset() {
       const parent = this.$parent;
       const type = this.new_asset_type;
@@ -161,18 +164,20 @@ export default {
       const contextCards = parent.$refs.contextCards;
 
       if (!name) {
-        parent.status_message = 'Error: please set name for new story asset.';
+        parent.status_message = 'Error: Please set name for new story asset.';
         return;
       }
 
       // Get most recent story content to use as context for asset generation
-      const context = parent.story_editor_content.slice(-500).trim();
+      const context = parent.story_editor_content.slice(-1000).trim();
 
-      // Use active_requests to disable other actions
+      // Use active_requests to disable buttons
       parent.active_requests++;
       this.loading = true;
       parent.status_message = 'Generating new asset...';
 
+      // If this is not the only active component, do not edit parent messages
+      const only_active = parent.active_requests === 1;
       try {
         if (type === 'inventory item') {
           // Generate new item and add to inventory
@@ -182,26 +187,28 @@ export default {
           if (!add) {
             return;
           }
-
           // Change status message
-          if (this.new_item_equipped) {
+          if (only_active && this.new_item_equipped) {
             parent.status_message = `Equipped item '${name}'.`;
           }
-          else {
+          else if (only_active) {
             parent.status_message = `Got item '${name}'.`;
           }
-
           this.reset(false);
           return;
         }
         // Generate and add new context card
-        await contextCards.addGeneratedCard(type, name, context);
+        const action = await contextCards.generateContextCard(type, name, context, this.new_character_memories);
+
+        if (!action) {
+          parent.status_message = "Error: Creating asset failed. Check Context Cards tab."
+        }
 
         // Set status message
-        if (['location', 'character', 'item'].includes(type)) {
+        if (only_active && ['location', 'character', 'item'].includes(type)) {
           parent.status_message = `Created new ${type} card called '${name}'.`;
         }
-        else {
+        else if (only_active) {
           parent.status_message = `Created new card called '${name}'.`;
         }
         // Reset input for next action
@@ -277,6 +284,16 @@ export default {
         type="checkbox"
         class="custom-checkbox"
         title="Equip item."
+      />
+    </label>
+
+    <label v-if="new_asset_type === 'character'">
+      📖: 
+      <input
+        v-model="new_character_memories"
+        type="checkbox"
+        class="custom-checkbox"
+        title="Enable memory generation for character."
       />
     </label>
 

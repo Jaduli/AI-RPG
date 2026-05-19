@@ -82,7 +82,7 @@ export default {
             </button>
 
             <div v-if="show_memories" class="memory-list">
-              <p v-if="!card.character_memories || card.character_memories.length === 0" class="empty-memory">
+              <p v-if="!card.character_memories || card.character_memories.length === 0">
                 No memories.
               </p>
 
@@ -141,10 +141,6 @@ export default {
 }
 .memory-item textarea {
   min-height: 70px;
-}
-.empty-memory {
-  margin: 0 0 5px;
-  color: #ccc;
 }
 .card-type {
   font-size: 0.7em;

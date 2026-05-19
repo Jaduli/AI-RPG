@@ -15,7 +15,7 @@ export default {
     getPlayer() {
       return {name: this.name, description: this.description};
     },
-    // Returns string of player name and description to use in context
+    // Returns string of player name and description to use in story generation
     getPlayerStr() {
       let str = '';
 
@@ -23,7 +23,7 @@ export default {
         str += 'Player name: ' + this.name + '\n\n';
       }
       if (this.description) {
-        str += 'Player Description:\n' + this.description + '\n\n';
+        str += 'Player Description:\n' + this.description;
       }
       return str;  
     }
