@@ -607,6 +607,7 @@ def generate_asset():
     if name:
         content = '[Generation Context]\n\nName:' + name
 
+        # Only use context if name is given
         if context:
             content += '\n\nContext:' + context
     

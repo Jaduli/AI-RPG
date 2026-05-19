@@ -53,39 +53,7 @@ export default {
       this.content = '';
       this.keywords = '';
     },
-    async generateNewCard() {
-      try {
-        this.loading = true;
 
-        const res = await fetch('/api/generate_asset', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model: this.mem_model,
-            local: this.use_local,
-            type: this.type,
-            name: this.name
-          })
-        });
-        const data = await res.json();
-
-        if (data.error) {
-          this.content = 'Backend error creating content: ' + data.error;
-          return;
-        }
-        if (!data.generated_content) {
-          this.content = 'Error: backend returned empty content.';
-          return;
-        }
-        this.content = data.generated_content;
-      } catch (err) {
-        this.content = 'Error creating content: ' + (err.message || err);
-      } finally {
-        this.loading = false;
-      }
-    },
     // Get matching context cards based on keywords in recent story content
     getMatchingContextCards(text) {
       const lower_text = text.toLowerCase();
@@ -139,7 +107,66 @@ export default {
     },
     removeCard(id) {
       this.cards = this.cards.filter(card => card.id !== id);
-    }
+    },
+    // Generate content with local or cloud AI. Can be done with or
+    // without a name inserted.
+    async generateContent(context = '') {
+      try {
+        this.loading = true;
+
+        const res = await fetch('/api/generate_asset', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: this.mem_model,
+            local: this.use_local,
+            type: this.type,
+            name: this.name,
+            context: context
+          })
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          this.content = 'Backend error creating content: ' + data.error;
+          return false;
+        }
+        if (!data.generated_content) {
+          this.content = 'Error: backend returned empty content.';
+          return false;
+        }
+        this.content = data.generated_content;
+        return true;
+      } catch (err) {
+        this.content = 'Error creating content: ' + (err.message || err);
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+    // Adds a new card based on given context, type, and name. Used in
+    // ActionRow to create new cards based on recent story and user input.
+    async addGeneratedCard(type = 'other', name = '', context = '') {
+      this.name = name.trim();
+      this.type = type;
+
+      // Add name as keyword
+      this.keywords = name;
+
+      // Clear other values
+      this.parent_location = '';
+      this.child_locations = '';
+      this.create_memories = false;
+
+      // Generate content with AI and add new card
+      const generated = await this.generateContent(context);
+      if (!generated) {
+        throw new Error(this.content || 'Asset generation failed.');
+      }
+      this.addCard();
+    },
   },
   computed: {
     // Display cards from newest to oldest, filtered by selected type
@@ -170,7 +197,7 @@ export default {
           <option value="location">Location</option>
           <option value="item">Item</option>
         </select>
-        <button @click="generateNewCard"  :disabled="loading">Generate Content</button>
+        <button @click="generateContent"  :disabled="loading">Generate Content</button>
       </label>
 
       <h4>Content</h4>

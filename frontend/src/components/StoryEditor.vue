@@ -135,6 +135,12 @@ export default {
         if (this.gamemode === 'rpg') {
           const action = this.$refs.actionRow.getPlayerAction();
 
+          // Stop if errors occur during new asset generation.
+          // Error messages are handled in component.
+          if (!action) {
+            return;
+          }
+
           player_action = action.player_action;
           selected_item = action.selected_item;
           use_d20 = action.use_d20;
@@ -487,8 +493,8 @@ export default {
 
         // Get player information
         const player_information = data.player || [];
-        this.$refs.playerCard.name = player_information.player_name || '';
-        this.$refs.playerCard.description = player_information.player_description || '';
+        this.$refs.playerCard.name = player_information.name || '';
+        this.$refs.playerCard.description = player_information.description || '';
 
         // Reset ActionRow
         this.$refs.actionRow.reset();
@@ -706,10 +712,8 @@ export default {
           :gamemode="gamemode"
         />
       </div>
-
-      <button @click="continueStory" :disabled="isLoading">Continue Story</button>
-
       <p class="status">{{ status_message }}</p>
+      <button @click="continueStory" :disabled="isLoading">Continue Story</button>
     </div>
 
     <div class="container" v-show="active_tab === 'context_cards'">

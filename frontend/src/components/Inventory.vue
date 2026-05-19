@@ -69,7 +69,51 @@ export default {
     },
     removeItem(id) {
       this.inventory = this.inventory.filter(item => item.id !== id);
-    }
+    },
+    // Generate new item with local or cloud AI and add to Inventory
+    async generateInventoryItem(type = 'other', name = '', context = '', equipped = false) {
+      const parent = this.$parent;
+
+      this.name = name;
+      this.type = type;
+      this.equipped = equipped;
+
+      try {
+        const res = await fetch('/api/generate_asset', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: parent.mem_model,
+            local: parent.use_local,
+            type: 'item',
+            name: name,
+            context: context
+          })
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          parent.status_message = 'Backend error creating item: ' + data.error;
+          return false;
+        }
+        if (!data.generated_content) {
+          parent.status_message =  'Error: backend returned empty content.';
+          return false;
+        }
+        this.content = data.generated_content;
+
+        this.addItem();
+
+        return true;
+      } catch (err) {
+        parent.status_message = 'Error creating content: ' + (err.message || err);
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
   },
   computed: {
     // Display inventory from newest to oldest, filtered by selected type
