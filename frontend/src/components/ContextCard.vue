@@ -63,38 +63,40 @@ export default {
           <h4>Keywords (comma-separated)</h4>
           <input type="text" v-model="card.keywords" maxlength="200" />
 
-          <div class="info-container">
-            <h3>Character Memories</h3>
-            <h4>
-              Character memories can be automatically created as the story progresses.
-              Up to three random memories for each relevant character will be used in story generation.
-            </h4>
-          </div>
+          <div v-if="card.type === 'character'">
+            <div class="info-container">
+              <h3>Character Memories</h3>
+              <h4>
+                Character memories can be automatically created as the story progresses.
+                Up to three random memories for each relevant character will be used in story generation.
+              </h4>
+            </div>
 
-          <div v-if="card.type === 'character'" class="checkbox-field">
-            <label>Create Character Memories: </label>
-            <input v-model="card.create_memories" type="checkbox" class="custom-checkbox" />
-          </div>
+            <div class="checkbox-field">
+              <label>Create Character Memories: </label>
+              <input v-model="card.create_memories" type="checkbox" class="custom-checkbox" />
+            </div>
 
-          <div v-if="card.type === 'character' && card.create_memories" class="memory-section">
-            <button type="button" @click="show_memories = !show_memories">
-              {{ show_memories ? 'Hide Memories' : 'Show Memories' }}
-            </button>
+            <div v-if="card.create_memories" class="memory-section">
+              <button type="button" @click="show_memories = !show_memories">
+                {{ show_memories ? 'Hide Memories' : 'Show Memories' }}
+              </button>
 
-            <div v-if="show_memories" class="memory-list">
-              <p v-if="!card.character_memories || card.character_memories.length === 0">
-                No memories.
-              </p>
+              <div v-if="show_memories" class="memory-list">
+                <p v-if="!card.character_memories || card.character_memories.length === 0">
+                  No memories.
+                </p>
 
-              <div
-                v-for="(memory, index) in card.character_memories"
-                :key="index"
-                class="memory-item"
-              >
-                <textarea v-model="card.character_memories[index]" />
-                <button type="button" class="btn btn-danger" @click="removeMemory(index)">
-                  Remove
-                </button>
+                <div
+                  v-for="(memory, index) in card.character_memories"
+                  :key="index"
+                  class="memory-item"
+                >
+                  <textarea v-model="card.character_memories[index]" />
+                  <button type="button" class="btn btn-danger" @click="removeMemory(index)">
+                    Remove
+                  </button>
+                </div>
               </div>
             </div>
           </div>

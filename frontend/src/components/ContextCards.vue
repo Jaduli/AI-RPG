@@ -129,15 +129,15 @@ export default {
     // Generate content with local or cloud AI. Can be done with or
     // without a name inserted.
     async generateContent(context = '') {
+      const parent = this.$parent;
+      const only_active = parent.active_requests === 0;
+
       try {
         this.loading = true;
 
-        const parent = this.$parent;
         parent.active_requests++;
         
         // If this is not the only active component, do not edit parent messages
-        const only_active = parent.active_requests === 1;
-
         if (only_active) {
           parent.status_message = 'Generating content...';
         }
@@ -157,25 +157,27 @@ export default {
         const data = await res.json();
 
         if (data.error) {
-          this.content = 'Backend error creating content: ' + data.error;
-          return false;
+          throw new Error('Backend error creating content: ' + data.error);
         }
         if (!data.generated_content) {
-          this.content = 'Error: backend returned empty content.';
-          return false;
+          throw new Error('Error creating content: backend returned empty content.');
         }
         this.content = data.generated_content;
 
         if (only_active) {
           parent.status_message = '';
         }
-        return true;
-      } catch (err) {
-        this.content = 'Error creating content: ' + (err.message || err);
-        return false;
+        return;
       } finally {
         this.loading = false;
         parent.active_requests--;
+      }
+    },
+    async handleGenerateContent() {
+      try {
+        await this.generateContent();
+      } catch (err) {
+        this.content = err.message || String(err);
       }
     },
     // Adds a new card based on given context, type, and name. Used in
@@ -192,19 +194,10 @@ export default {
       this.parent_location = '';
       this.child_locations = '';
 
-      // Only include most recent story as context if name is found
-      if (!context.lower.includes(name.toLowerCase())) {
-        context = '';
-      }
-
       // Generate content with AI and add new card
-      const generated = await this.generateContent(context);
-
-      // Return if errors occur during generation
-      if (!generated) {
-        return;
-      }
+      await this.generateContent(context);
       this.addCard();
+      return;
     },
     // Generate and add memories for existing characters found in given content.
     // Each continue action has a set chance of creating a character memory
@@ -216,23 +209,42 @@ export default {
       const gamemode = parent.gamemode; // Gamemode affects generation prompt
 
       // Get characters with memory creation turned on
-      const characters = this.cards.filter(card => card.create_memories === true);
+      let characters = this.cards.filter(card => card.create_memories === true);
 
-      // Create memory for first character found in content
-      const character = characters.find(character =>
-        content.includes(character.name)
-      )
-      // Return if no character found (not an error -> return true)
-      if (!character) return true;
+      if (characters.length === 0) return;
+      
+      // Randomize order to prevent creating memories only for oldest characters
+      characters = [...characters].sort(() => Math.random() - 0.5)
 
-      // Only create memory sometimes (avoids exessive memory generation)
-      if (Math.random() > chance) return true;
+      let character = null;
+      const lower_content = content.trim().toLowerCase();
 
-      parent.status_message = 'Creating character memory...';
+      // Try to find one relevant character from text
+      for (const char of characters) {
+        if (char.keywords.length === 0) continue; // skip empty keyword fields
+
+        // Check if any character keyword is found in content
+        for (const keyword of char.keywords) {
+          if (lower_content.includes(keyword.trim().toLowerCase())) {
+            character = char;
+            break;
+          }
+          // Stop if relevant character found
+          if (character) break;
+        }
+      }
+
+      // Return if no character found
+      if (!character) return;
+
+      // Avoid memory generation every time a character is found
+      if (Math.random() > chance) return;
+
+      parent.status_message = 'Generating character memory...';
       try {
         this.loading = true;
 
-        // Get most recent story content to use as context for asset generation
+        // Get most recent story content to use as context for memory generation
         const recent_story = parent.story_editor_content.slice(-1000).trim();
 
         const player = '';
@@ -260,27 +272,23 @@ export default {
         const data = await res.json();
 
         if (data.error) {
-          parent.status_message = 'Backend error creating character memory: ' + data.error;
-          return false;
+          throw new Error('Backend error creating character memory: ' + data.error);
         }
         
         const memory = data.new_memory;
 
         if (!memory) {
-          parent.status_message = 'Error creating character memory: backend returned empty content.';
-          return false;
+          throw new Error('Error creating character memory: backend returned empty content.');
         }
         // Keep a maximum of 10 memories per character
-        if (this.character_memories.length > 10) {
-          // Remove the oldest memory
-          this.character_memories.shift();
+        if (!Array.isArray(character.character_memories)) {
+          character.character_memories = [];
         }
-        this.character_memories.push(memory);
-
-        return true;
-      } catch (err) {
-        parent.status_message = 'Error creating character memory: ' + (err.message || err);
-        return false;
+        if (character.character_memories.length > 10) {
+          // Remove the oldest memory
+          character.character_memories.shift();
+        }
+        character.character_memories.push(memory);
       } finally {
         this.loading = false;
       }
@@ -315,7 +323,7 @@ export default {
           <option value="location">Location</option>
           <option value="item">Item</option>
         </select>
-        <button @click="generateContent()"  :disabled="loading">Generate Content</button>
+        <button @click="handleGenerateContent"  :disabled="loading">Generate Content</button>
       </label>
 
       <h4>Content</h4>

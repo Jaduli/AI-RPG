@@ -95,20 +95,18 @@ export default {
         const data = await res.json();
 
         if (data.error) {
-          parent.status_message = 'Backend error creating item: ' + data.error;
+          throw new Error('Backend error creating item: ' + data.error);
           return false;
         }
         if (!data.generated_content) {
-          parent.status_message =  'Error: backend returned empty content.';
+          throw new Error('Error: backend returned empty content.');
           return false;
         }
         this.content = data.generated_content;
 
         this.addItem();
-
-        return true;
       } catch (err) {
-        parent.status_message = 'Error creating content: ' + (err.message || err);
+        throw new Error('Error creating content: ' + (err.message || err));
         return false;
       } finally {
         this.loading = false;
@@ -170,6 +168,11 @@ export default {
           <option value="other">Other</option>
         </select>
       </label>
+
+      <p v-if="sortedItems.length === 0">
+        No Items.
+      </p>
+
       <InventoryItem
         v-for="item in sortedItems"
         :key="item.id"

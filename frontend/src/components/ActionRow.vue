@@ -135,13 +135,10 @@ export default {
     },
     // Returns formatted player action and values for selected item, D20 toggle,
     // and action type.
-    async getPlayerAction() {
+    async getPlayerAction(context = '') {
       if (this.action_type === 'new') {
         // Create new asset before continuing the story
-        const cont = await this.createNewAsset();
-
-        // Return if errors occur during asset generation.
-        if (!cont) return;
+        await this.createNewAsset(context);
       }
 
       let item = null;
@@ -157,27 +154,29 @@ export default {
         action_type: this.action_type
       };
     },
-    async createNewAsset() {
+    async createNewAsset(context = '') {
       const parent = this.$parent;
+      const only_active = parent.active_requests === 0;
+
       const type = this.new_asset_type;
       const name = this.user_input.trim();
       const contextCards = parent.$refs.contextCards;
 
       if (!name) {
-        parent.status_message = 'Error: Please set name for new story asset.';
+        throw new Error('Error: Please set name for new story asset.');
         return;
       }
-
-      // Get most recent story content to use as context for asset generation
-      const context = parent.story_editor_content.slice(-1000).trim();
+      
+      // Clear context if asset name is not found in context (i.e. context is irrelevant)
+      if (!context.toLowerCase().includes(name.toLowerCase())) {
+        context = '';
+      }
 
       // Use active_requests to disable buttons
       parent.active_requests++;
       this.loading = true;
       parent.status_message = 'Generating new asset...';
 
-      // If this is not the only active component, do not edit parent messages
-      const only_active = parent.active_requests === 1;
       try {
         if (type === 'inventory item') {
           // Generate new item and add to inventory
@@ -187,7 +186,7 @@ export default {
           if (!add) {
             return;
           }
-          // Change status message
+          // Change status message if this is only active request
           if (only_active && this.new_item_equipped) {
             parent.status_message = `Equipped item '${name}'.`;
           }
@@ -201,7 +200,7 @@ export default {
         const action = await contextCards.generateContextCard(type, name, context, this.new_character_memories);
 
         if (!action) {
-          parent.status_message = "Error: Creating asset failed. Check Context Cards tab."
+          throw new Error("Error: Creating asset failed. Check Context Cards tab.");
         }
 
         // Set status message
@@ -214,7 +213,7 @@ export default {
         // Reset input for next action
         this.reset(false);
       } catch (err) {
-        parent.status_message = 'Error creating asset: ' + (err.message || err);
+        throw new Error('Error creating asset: ' + (err.message || err));
       } finally {
         this.loading = false;
         parent.active_requests--;
@@ -297,7 +296,7 @@ export default {
       />
     </label>
 
-    <button v-if="action_type === 'new'" @click="createNewAsset" :disabled="loading">Add</button>
+    <button v-if="action_type === 'new'" @click="createNewAsset()" :disabled="loading">Add</button>
 
     <label v-if="action_type !== 'new'">
       <input 

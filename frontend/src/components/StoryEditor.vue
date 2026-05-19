@@ -109,11 +109,18 @@ export default {
         // Sync content with editor for any user edits before continuing story
         this.syncContentWithEditor();
 
-        // Most recent content to be used for context card matching
-        const most_recent_content = recent_story.slice(-2500).trim();
+        // More recent content to be used for context card matching
+        const more_recent_content = recent_story.slice(-2500).trim();
 
         // Get relevant context cards based on found keywords
-        const context_cards = this.$refs.contextCards.getMatchingContextCardsStr(most_recent_content);
+        const context_cards = this.$refs.contextCards.getMatchingContextCardsStr(more_recent_content);
+
+        // Most recent content to be used for character memory and asset generation
+        const most_recent_content = recent_story.slice(-1000).trim();
+        
+        // Use 30 % chance to create new memory for one relevant character found in
+        // most recent story content (if memory creation is enabled for character). 
+        await this.$refs.contextCards.addCharacterMemory(most_recent_content, 0.3);
 
         let payload = {
           gamemode: this.gamemode,
@@ -136,20 +143,9 @@ export default {
 
         // Get RPG elements if relevant
         if (this.gamemode === 'rpg') {
-          // Get action & generate new asset if action type is 'new'
-          let action = await this.$refs.actionRow.getPlayerAction();
-          // Stop if errors occur during new asset generation.
-          // Error messages are handled in child components.
-          if (!action) {
-            return;
-          }
-          // Use 30 % chance to create new memory for one character found in
-          // most recent story content. 
-          action = await this.$refs.contextCards.addCharacterMemory(most_recent_content, 0.3);
-          // Stop if errors occur during memory generation.
-          if (!action) {
-            return;
-          }
+          // Get player action. If action is set to 'new', also generates
+          // a new asset with most recent story as context.
+          await this.$refs.actionRow.getPlayerAction(most_recent_content);
 
           player_action = action.player_action;
           selected_item = action.selected_item;
@@ -158,16 +154,16 @@ export default {
 
           is_new_action = player_action !== '';
 
-          // Reset previous action context when a new action is provided.
+          // Reset previous action context when a new action is provided
           if (is_new_action) {
             this.recent_action = '';
             this.recent_outcome = '';
             this.outcome_counter = 0;
           }
 
-          // Get player information
+          // Get player information (as string)
           const player_information = this.$refs.playerCard.getPlayerStr();
-          // Get relevant items
+          // Get equipped inventory items (as string)
           const player_equipment = this.$refs.inventory.getInventoryStr(true);
 
           const rpg_payload = {
