@@ -24,7 +24,7 @@ export default {
       if (type === 'perishable') {
         this.equipped = false;
       }
-      var payload = {
+      let payload = {
         id: Date.now(),
         name: this.name,
         type: type,

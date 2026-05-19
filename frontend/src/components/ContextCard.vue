@@ -2,7 +2,9 @@
 export default {
   data() {
     return {
-      collapse: true
+      collapse: true,
+      show_memories: false,
+      new_memory: ''
     }
   },
   props: {
@@ -12,6 +14,11 @@ export default {
     }
   },
   emits: ['remove'],
+  methods: {
+    removeMemory(index) {
+      this.card.character_memories.splice(index, 1);
+    }
+  },
   computed: {
     keywordsString: {
       get() {
@@ -53,13 +60,44 @@ export default {
             </div>
           </div>
 
+          <h4>Keywords (comma-separated)</h4>
+          <input type="text" v-model="card.keywords" maxlength="200" />
+
+          <div class="info-container">
+            <h3>Character Memories</h3>
+            <h4>
+              Character memories can be automatically created as the story progresses.
+              Up to three random memories for each relevant character will be used in story generation.
+            </h4>
+          </div>
+
           <div v-if="card.type === 'character'" class="checkbox-field">
             <label>Create Character Memories: </label>
             <input v-model="card.create_memories" type="checkbox" class="custom-checkbox" />
           </div>
 
-          <h4>Keywords (comma-separated)</h4>
-          <input type="text" v-model="card.keywords" maxlength="200" />
+          <div v-if="card.type === 'character' && card.create_memories" class="memory-section">
+            <button type="button" @click="show_memories = !show_memories">
+              {{ show_memories ? 'Hide Memories' : 'Show Memories' }}
+            </button>
+
+            <div v-if="show_memories" class="memory-list">
+              <p v-if="!card.character_memories || card.character_memories.length === 0" class="empty-memory">
+                No memories.
+              </p>
+
+              <div
+                v-for="(memory, index) in card.character_memories"
+                :key="index"
+                class="memory-item"
+              >
+                <textarea v-model="card.character_memories[index]" />
+                <button type="button" class="btn btn-danger" @click="removeMemory(index)">
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
 
           <button class="btn btn-danger" @click="$emit('remove')">Delete Card</button>
         </div>
@@ -85,6 +123,28 @@ export default {
 }
 .context-card button {
   margin-bottom: 10px;
+}
+.memory-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.memory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.memory-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.memory-item textarea {
+  min-height: 70px;
+}
+.empty-memory {
+  margin: 0 0 5px;
+  color: #ccc;
 }
 .card-type {
   font-size: 0.7em;

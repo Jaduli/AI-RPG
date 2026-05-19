@@ -21,7 +21,8 @@ export default {
       parent_location: '',
       child_locations: '',
       equipped: false,
-      create_memories: true
+      create_memories: true,
+      character_memories: []
     }
   },
   components: { ContextCard },
@@ -30,7 +31,7 @@ export default {
     // and type-specific values.
     addCard() {
       const type = this.type
-      var payload = {
+      let payload = {
         id: Date.now(),
         name: this.name,
         type: type,
@@ -45,6 +46,7 @@ export default {
       }
       if (type === 'character' && this.create_memories) {
         payload.create_memories = this.create_memories;
+        payload.character_memories = [];
       }
       payload.keywords = this.keywords.split(',')
       
@@ -53,8 +55,9 @@ export default {
       this.content = '';
       this.keywords = '';
     },
-
-    // Get matching context cards based on keywords in recent story content
+    // Get matching context cards based on keywords in recent story content.
+    // If card type is character and its memories are enabled, up to 3 random
+    // character memories are added to context.
     getMatchingContextCards(text) {
       const lower_text = text.toLowerCase();
       const matching = [];
@@ -65,12 +68,13 @@ export default {
         // Check if any keyword is in the text
         for (const keyword of card.keywords) {
           if (lower_text.includes(keyword.trim().toLowerCase())) {
-            payload = {
+            const payload = {
               name: card.name || '',
               type: card.type || '',
               content: card.content || '',
               parent_location: card.parent_location || '',
-              child_locations: card.child_locations || ''
+              child_locations: card.child_locations || '',
+              character_memories: card.character_memories || []
             };
             matching.push(payload);
             break; // Only add card once even if multiple keywords match
@@ -90,16 +94,29 @@ export default {
       //  A talented swordsman."
       let card_text = '';
       for (const card of matching) {
-        card_text += card.name + ', ';
-
-        card_text += card.type;
+        card_text += `${card.name}, ${card.type}`;
 
         if (card.parent_location) {
           card_text += ' in ' + card.parent_location;
         }
         card_text += ':\n' + card.content + '\n';
         if (card.child_locations) {
-          card_text += 'Locations within ' + card.name + ': ' + card.child_locations + '\n';
+          card_text += `Locations within ${card.name}: ${card.child_locations}\n`
+        }
+        if (card.character_memories) {
+          // Get up to three random character memories as context
+          const random_memories = [...card.character_memories]
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 3);
+
+          if (random_memories.length > 0) {
+            card_text += `Memories for ${card.name}:\n`
+            
+            for (const memory of random_memories) {
+              card_text += `-  ${memory}\n`;
+            }
+            card_text += '\n';
+          }
         }
         card_text += '\n';
       }
@@ -167,6 +184,85 @@ export default {
       }
       this.addCard();
     },
+    // Generate and add memories for existing characters found in given content.
+    // Each continue action has a set chance of creating a character memory
+    // if a character name is found in generated content (default: 30%).
+    async addCharacterMemory(content, chance = 0.3) {
+      const parent = this.$parent;
+
+      // Get story content and gamemode from StoryEditor
+      const gamemode = parent.gamemode; // Gamemode affects generation prompt
+
+      // Get characters with memory creation turned on
+      const characters = this.cards.filter(card => card.create_memories === true);
+
+      // Create memory for first character found in content
+      const character = characters.find(character =>
+        content.includes(character.name)
+      )
+      // Return if no character found (not an error -> return true)
+      if (!character) return true;
+
+      // Only create memory sometimes (avoids exessive memory generation)
+      if (Math.random() > chance) return true;
+
+      parent.status_message = 'Creating character memory...';
+      try {
+        this.loading = true;
+
+        // Get most recent story content to use as context for asset generation
+        const recent_story = parent.story_editor_content.slice(-1000).trim();
+
+        const player = '';
+
+        if (gamemode === 'rpg') {
+          // Get player name from player card
+          const player = parent.playerCard.name;
+        }
+
+        const res = await fetch('/api/generate_character_memory', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: this.mem_model,
+            local: this.use_local,
+            gamemode: gamemode,
+            player: player,
+            character_name: character.name,
+            character_desctiption: character.content,
+            recent_story: recent_story
+          })
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          parent.status_message = 'Backend error creating character memory: ' + data.error;
+          return false;
+        }
+        
+        const memory = data.new_memory;
+
+        if (!memory) {
+          parent.status_message = 'Error creating character memory: backend returned empty content.';
+          return false;
+        }
+        // Keep a maximum of 10 memories per character
+        if (this.character_memories.length > 10) {
+          // Remove the oldest memory
+          this.character_memories.shift();
+        }
+        this.character_memories.push(memory);
+
+        return true;
+      } catch (err) {
+        parent.status_message = 'Error creating character memory: ' + (err.message || err);
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    }
   },
   computed: {
     // Display cards from newest to oldest, filtered by selected type

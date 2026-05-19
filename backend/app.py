@@ -10,11 +10,13 @@ from prompts.asset_generation import (
     GENERATE_CHARACTER_SYS_PROMPT,
     GENERATE_LOCATION_SYS_PROMPT,
     GENERATE_ITEM_SYS_PROMPT,
-    GENERATE_OTHER_SYS_PROMPT,
+    GENERATE_OTHER_SYS_PROMPT
 )
 from prompts.memory import (
     SUMMARIZATION_SYS_PROMPT, 
-    MEMORY_SYS_PROMPT
+    MEMORY_SYS_PROMPT,
+    CHARACTER_MEMORY_SYS_PROMPT,
+    CHARACTER_MEMORY_RPG_SYS_PROMPT
 )
 from prompts.rpg import (
     RPG_SYS_PROMPT, 
@@ -596,10 +598,15 @@ def generate_asset():
     if not data:
         return jsonify({"error": "Missing or invalid JSON body."}), 400
 
+    model = data.get('model')
+    if not model:
+        return jsonify({"error": "Model is required."}), 400
+
     asset_type = data.get('type')
     if not asset_type or asset_type.strip() == '':
         return jsonify({"error": "Missing asset type."}), 400
     
+    local = data.get('local')
     name = data.get('name', '')
     context = data.get('context', '')
 
@@ -610,12 +617,6 @@ def generate_asset():
         # Only use context if name is given
         if context:
             content += '\n\nContext:' + context
-    
-    local = data.get('local')
-
-    model = data.get('model')
-    if not model:
-        return jsonify({"error": "Model is required."}), 400
     
     new_asset = ''
     sys_prompt = ''
@@ -695,6 +696,113 @@ def generate_asset():
     app.logger.info("Tokens used in asset generation: %s", tokens_total)
 
     return jsonify({"generated_content": trimmed, "tokens_total": tokens_total})
+
+"""
+/generate_character_memory
+
+Generates a character memory using local or cloud AI.
+Returns 400 for missing/invalid JSON or missing asset type; 
+API call errors with appropriate status codes (from utils.call_ai_api);
+500 for server or API key errors, or if AI API returns empty content.
+"""
+@app.route('/api/generate_character_memory', methods=['POST'])
+def generate_character_memory():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Missing or invalid JSON body."}), 400
+
+    model = data.get('model')
+    if not model:
+        return jsonify({"error": "Model is required."}), 400
+
+    local = data.get('local')
+    gamemode = data.get('gamemode', '')
+    player = data.get('player', '')
+    character_name = data.get('character_name', '')
+    character_description = data.get('character_description', '')
+    recent_story = data.get('recent_story', '')
+
+    content = ''
+    
+    # Build context for memory
+    content += '[Player]\nPlayer Name: ' + player + '\n'
+
+    content += '\n[Character]\nCharacter Name: ' + character_name + '\n'
+    content += 'Character Description: ' + character_description + '\n'
+    
+    content += '\n[Recent Story]\n'
+    content += recent_story
+    
+    new_memory = ''
+    tokens_total = -1
+
+    sys_prompt = CHARACTER_MEMORY_SYS_PROMPT
+
+    if gamemode == 'rpg':
+        sys_prompt = CHARACTER_MEMORY_RPG_SYS_PROMPT
+
+    if (local and local == True and LOCAL_AI_ENABLED):
+        # Local memorization using Ollama API
+        response = requests.post(OLLAMA_URL, json={
+            "model": OLLAMA_MODEL,
+            "messages": [
+                {"role": "system", "content": sys_prompt},
+                {"role": "user", "content": content}
+            ],
+            "options": {
+                "temperature": 1.1, # Average temperature for good consistency & creativity
+                "num_predict": 50, # Small-ish limit as one memory should only be one sentence long
+                "num_ctx": 8192
+            },
+            "stream": False
+        })
+
+        if response.status_code == 200:
+            try:
+                response_data = response.json()
+            except ValueError:
+                return jsonify({"error": "Invalid JSON response from local AI service.", "detail": response.text}), 502
+
+            new_memory = response_data.get("message", {}).get("content", '').strip()
+
+            tokens_total = response_data.get("prompt_eval_count", 0) + response_data.get("eval_count", 0)
+
+        else:
+            return jsonify({"error": response.text}), response.status_code
+    # Default to cloud
+    else:
+        if not api_url or not api_key:
+            return jsonify({"error": "API_URL or API_KEY not set."}), 500
+
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": CHARACTER_MEMORY_SYS_PROMPT},
+                {"role": "user", "content": content}
+            ],
+            "temperature": 1.1,
+            "max_tokens": 50
+        }
+
+        if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+            payload["thinking"] = {"type": "disabled"}
+
+        # Call external AI API with error handling
+        result, error = utils.call_ai_api(api_url, headers, payload)
+
+        if error:
+            message, status = error
+            return jsonify({"error": message}), status
+
+        new_memory = result["choices"][0]["message"]["content"]
+
+        tokens_total = result['usage']['total_tokens']
+
+    app.logger.info("Tokens used in character memory generation: %s", tokens_total)
+
+    return jsonify({"new_memory": new_memory, "tokens_total": tokens_total})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -17,7 +17,7 @@ export default {
     },
     // Returns string of player name and description to use in context
     getPlayerStr() {
-      var str = '';
+      let str = '';
 
       if (this.name) {
         str += 'Player name: ' + this.name + '\n\n';

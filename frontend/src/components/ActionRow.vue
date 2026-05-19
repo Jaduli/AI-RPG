@@ -39,10 +39,11 @@ export default {
         // Create new asset before continuing the story
         const cont = this.createNewAsset();
 
+        // Return if errors occur during asset generation.
         if (!cont) return;
       }
 
-      var item = null;
+      let item = null;
       if (this.action_type === 'use') {
         item = this.selected_item;
       }
@@ -160,12 +161,7 @@ export default {
       const contextCards = parent.$refs.contextCards;
 
       if (!name) {
-        parent.status_message = 'Please set name for story asset.';
-        return;
-      }
-
-      if (!contextCards) {
-        parent.status_message = 'Error creating asset: context cards are not available.';
+        parent.status_message = 'Error: please set name for new story asset.';
         return;
       }
 
@@ -179,10 +175,10 @@ export default {
 
       try {
         if (type === 'inventory item') {
-          // Generate and add inventory new item
+          // Generate new item and add to inventory
           const add = await parent.$refs.inventory.generateInventoryItem(type, name, context, this.new_item_equipped);
           
-          // Return if errors generating new item
+          // Return if errors occur during generation
           if (!add) {
             return;
           }
@@ -208,9 +204,8 @@ export default {
         else {
           parent.status_message = `Created new card called '${name}'.`;
         }
-        
+        // Reset input for next action
         this.reset(false);
-
       } catch (err) {
         parent.status_message = 'Error creating asset: ' + (err.message || err);
       } finally {
@@ -257,7 +252,7 @@ export default {
       <option value="other">Other</option>
       <option value="character">Character</option>
       <option value="location">Location</option>
-      <option value="item">Item (card)</option>
+      <option value="item">Item (context card)</option>
       <option value="inventory item">Item (inventory)</option>
     </select>
 
@@ -275,7 +270,7 @@ export default {
       :placeholder="inputPlaceholder"
     />
 
-    <label v-if="new_asset_type === 'inventory item'">
+    <label v-if="new_asset_type === 'inventory item' && new_item_type !== 'perishable'">
       ⚔️: 
       <input
         v-model="new_item_equipped"
@@ -326,6 +321,11 @@ export default {
 .type-select {
   min-width: 50px;
   max-width: 150px;
+}
+
+.action-controls-row button {
+  height: 100%;
+  margin: 2px;
 }
 
 .action-controls-row input[type="text"] {

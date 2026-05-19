@@ -112,7 +112,7 @@ export default {
         // Get relevant context cards based on found keywords in recent story
         const context_cards = this.$refs.contextCards.getMatchingContextCards(recent_story);
 
-        var payload = {
+        let payload = {
           gamemode: this.gamemode,
           model: this.main_model,
           instructions: this.instructions,
@@ -133,10 +133,17 @@ export default {
 
         // Get RPG elements if relevant
         if (this.gamemode === 'rpg') {
-          const action = this.$refs.actionRow.getPlayerAction();
-
+          let action = await this.$refs.actionRow.getPlayerAction();
           // Stop if errors occur during new asset generation.
-          // Error messages are handled in component.
+          // Error messages are handled in child components.
+          if (!action) {
+            return;
+          }
+          // Use 30 % chance to create new memory for one character found in
+          // most recent story content. 
+          const memory_content = recent_story.slice(-2000).trim();
+          action = this.$refs.contextCards.addCharacterMemory(memory_content, 0.3);
+          // Stop if errors occur during memory generation.
           if (!action) {
             return;
           }
@@ -164,7 +171,7 @@ export default {
             player_information: player_information,
             player_equipment: player_equipment,
             player_action: player_action,
-            player_item: item_name,
+            player_item: selected_item.name,
             recent_action: this.recent_action,
             recent_outcome: this.recent_outcome,
             use_d20: this.use_d20,
@@ -283,7 +290,7 @@ export default {
       // from being lost between summary actions.
       const overlap = minimum_length_chars / 2;
 
-      var {past_content, cutoff_index} = this.extractPastContent(this.summary_cursor, overlap);
+      let {past_content, cutoff_index} = this.extractPastContent(this.summary_cursor, overlap);
 
       const content_length = past_content.length;
 
@@ -347,7 +354,7 @@ export default {
       const minimum_length_chars = 8000;
 
       // Use past story content for new memory (without overlap with recent story)
-      var {past_content, cutoff_index} = this.extractPastContent(this.memory_cursor);
+      let {past_content, cutoff_index} = this.extractPastContent(this.memory_cursor);
 
       const content_length = past_content.length;
 
