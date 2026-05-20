@@ -20,7 +20,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Pre-download sentence transformer store
+# Pre-download sentence transformer
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
 
 COPY . .

@@ -54,6 +54,7 @@ export default {
       this.name = '';
       this.content = '';
       this.keywords = '';
+      this.child_locations = '';
     },
     // Get matching context cards based on keywords in recent story content.
     // Cards are formatted to a string to be used in story generation.
@@ -317,7 +318,7 @@ export default {
 
   <div class="container">
     <div class="context-card" v-if="!collapse">
-      <h4>Name</h4>
+      <h4>Card Name</h4>
       <input type="text" v-model="name" maxlength="50" />
 
       <label>Type: 
@@ -328,9 +329,12 @@ export default {
           <option value="item">Item</option>
         </select>
         <button @click="handleGenerateContent"  :disabled="loading">Generate Content</button>
+        <span title="Card name and type will be used in content generation.">
+          ⓘ
+        </span>
       </label>
 
-      <h4>Content</h4>
+      <h4>Card Content</h4>
       <textarea v-model="content" />
 
       <h4>Keywords (comma-separated)</h4>
@@ -403,6 +407,9 @@ export default {
 }
 .context-card textarea {
   min-height: 120px;
+}
+.context-card input {
+  margin: 4px;
 }
 .context-card button {
   margin-bottom: 10px;

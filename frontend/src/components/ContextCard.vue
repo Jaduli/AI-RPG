@@ -66,10 +66,6 @@ export default {
           <div v-if="card.type === 'character'">
             <div class="info-container">
               <h3>Character Memories</h3>
-              <h4>
-                Character memories can be automatically created as the story progresses.
-                Up to three random memories for each relevant character will be used in story generation.
-              </h4>
             </div>
 
             <div class="checkbox-field">

@@ -1,5 +1,5 @@
 <script>
-import InventoryItem from './InventoryItem.vue';
+import InventoryItem from './PlayerItem.vue';
 
 export default {
   data() {
@@ -15,8 +15,7 @@ export default {
   },
   components: { InventoryItem },
   methods: {
-    // Add item with id, name, content, keywords (comma separated),
-    // and type-specific values.
+    // Add item with id, name, type, content, and equipped value
     addItem() {
       const type = this.type
 
@@ -130,13 +129,13 @@ export default {
     <h2>Add Inventory Item</h2>
     <button @click="collapse = !collapse">{{ collapse ? 'Expand' : 'Collapse' }}</button>
   </div>
-  
+
   <div class="container">    
     <div class="item" v-if="!collapse">
-      <h4>Name</h4>
+      <h4>Item Name</h4>
       <input type="text" v-model="name" maxlength="25" />
       
-      <label>Item Type: 
+      <label>Type: 
         <select v-model="type">
           <option value="other">Other</option>
           <option value="perishable">Perishable</option>
@@ -156,7 +155,7 @@ export default {
       <label v-if="type !== 'perishable'">
         Equipped: 
         <input v-model="equipped" type="checkbox" class="custom-checkbox" />
-        <span title="Equipped items will always be used as context in story generation.">
+        <span title="Equipped items will always be included in context in story generation.">
           ⓘ
         </span>
       </label>

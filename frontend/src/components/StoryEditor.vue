@@ -109,11 +109,8 @@ export default {
         // Sync content with editor for any user edits before continuing story
         this.syncContentWithEditor();
 
-        // More recent content to be used for context card matching
-        const more_recent_content = recent_story.slice(-2500).trim();
-
-        // Get relevant context cards based on found keywords
-        const context_cards = this.$refs.contextCards.getMatchingContextCardsStr(more_recent_content);
+        // Get relevant context cards based on found keywords in recent story
+        const context_cards = this.$refs.contextCards.getMatchingContextCardsStr(recent_story);
 
         // Most recent content to be used for character memory and asset generation
         const most_recent_content = recent_story.slice(-1000).trim();

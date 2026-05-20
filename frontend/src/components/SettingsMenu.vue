@@ -156,7 +156,7 @@ export default {
       type="text" 
       placeholder="llama-3.1-8b-instant"
       />
-      <span title="Secondary model will be used for context generation, e.g. for memories and asset creation.">
+      <span title="Secondary model will be used for context generation, e.g. memory and asset creation.">
         ⓘ
       </span>
     </label>
@@ -169,7 +169,7 @@ export default {
       <input v-model="memorizeVal" type="checkbox" class="custom-checkbox" />
     </label>
 
-    <label>Editor Token Limit: 
+    <label>Recent Story Token Limit: 
       <input 
         v-model.number="temp_context_length"
         type="number" 
@@ -178,6 +178,9 @@ export default {
         placeholder="4000"
       />
       <button @click="setContextLength(temp_context_length)" :disabled="is_loading">Set Limit</button>
+      <span title="Setting the limit will automatically update Story Editor to show content with new limit.">
+        ⓘ
+      </span>
     </label>
 
     <label>Top P: 

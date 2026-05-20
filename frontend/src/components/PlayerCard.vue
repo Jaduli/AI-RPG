@@ -39,7 +39,7 @@ export default {
   </div>
 
   <div v-if="!collapse" class="player-container">
-    <h2>Name</h2>
+    <h2>Player Name</h2>
     <input 
       type="text" 
       v-model="name" 
@@ -50,7 +50,6 @@ export default {
     <textarea 
       v-model="description" 
       rows="10" 
-      cols="80" 
       placeholder="E.g. age, looks, class, reputation. Always included in story context.">
     </textarea>
   </div>
@@ -60,8 +59,7 @@ export default {
 .player-container {
   border: 1px solid #aa3bff;
   margin-bottom: 10px;
-}
-.player-container h2 {
-  margin-top: 10px;
+  border-radius: 5px;
+  padding: 15px;
 }
 </style>

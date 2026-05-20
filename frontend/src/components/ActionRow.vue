@@ -166,6 +166,11 @@ export default {
 
       if (!name) {
         throw new Error('Please set name for new story asset.');
+
+        // Show error as status message
+        if (only_active) {
+          parent.status_message = 'Please set name for new story asset.';
+        }
         return;
       }
 

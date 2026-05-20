@@ -170,7 +170,6 @@ export default {
 input, textarea {
   resize: none;
   padding: 8px;
-  margin: 3px;
   background: #0f0f1e;
   color: #fff;
   border: 1px solid #0f0f1e;

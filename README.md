@@ -1,4 +1,4 @@
-# AI-Storyteller
+# AI RPG application
 
 APPLICATION FEATURES
 
