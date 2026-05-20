@@ -8,7 +8,7 @@ export default {
     return {
       // Default settings //
 
-      // Mode determines which default prompt is used in storytelling.
+      // Mode determines which default prompt is used in story generation.
       // Currently available modes: 'rpg' and 'storyteller'
       gamemode: 'rpg',
       // Main model used for story continuation.
@@ -31,7 +31,7 @@ export default {
       top_p: 0.9,
       temperature: 1,
       // Max tokens controls the length of returned content in story generation.
-      max_tokens: 200,
+      max_tokens: 150,
       memorize: true,
       summarize: true,
       show_settings: false,
@@ -67,6 +67,10 @@ export default {
           this.mem_model = data.mem_model || this.mem_model;
 
           this.gamemode = data.gamemode || this.gamemode;
+
+          if (this.gamemode === 'storyteller') {
+            max_tokens = 200; // Longer output is better for storytelling
+          }
 
           this.config_ready = true;
         } catch (err) {
@@ -215,11 +219,6 @@ button:disabled {
   margin: 5px;
 }
 
-.custom-checkbox {
-  accent-color: #aa3bff;
-  cursor: pointer;
-}
-
 .info-container {
   border-radius: 5px;
   padding: 5px;
@@ -227,6 +226,21 @@ button:disabled {
   color: #fff;
   width: 80%;
   margin: 0 auto;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+}
+
+.custom-checkbox {
+  accent-color: #aa3bff;
+  cursor: pointer;
 }
 
 select {

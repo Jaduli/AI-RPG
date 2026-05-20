@@ -116,26 +116,26 @@ export default {
             for (const memory of random_memories) {
               card_text += `-  ${memory}\n`;
             }
-            card_text += '\n';
           }
         }
         card_text += '\n';
       }
-      return card_text;
+      return card_text.trim();
     },
     removeCard(id) {
       this.cards = this.cards.filter(card => card.id !== id);
     },
     // Generate content with local or cloud AI. Can be done with or
     // without a name inserted.
-    async generateContent(context = '') {
+    async generateContent(recent_story = '') {
       const parent = this.$parent;
       const only_active = parent.active_requests === 0;
 
       try {
         this.loading = true;
-
         parent.active_requests++;
+
+        const story_information = parent.essential_context;
         
         // If this is not the only active component, do not edit parent messages
         if (only_active) {
@@ -151,7 +151,8 @@ export default {
             local: this.use_local,
             type: this.type,
             name: this.name,
-            context: context
+            story_information: story_information,
+            recent_story: recent_story
           })
         });
         const data = await res.json();
@@ -180,9 +181,9 @@ export default {
         this.content = 'Error generating content: ' + (err.message || String(err));
       }
     },
-    // Adds a new card based on given context, type, and name. Used in
+    // Adds a new card based on given recent story, type, and name. Used in
     // ActionRow to create new cards based on recent story and user input.
-    async generateContextCard(type = 'other', name = '', context = '', character_memories = false) {
+    async generateContextCard(type = 'other', name = '', recent_story = '', character_memories = false) {
       this.name = name.trim();
       this.type = type;
       this.create_memories = character_memories;
@@ -195,7 +196,7 @@ export default {
       this.child_locations = '';
 
       // Generate content with AI and add new card
-      await this.generateContent(context);
+      await this.generateContent(recent_story);
       this.addCard();
       return;
     },
@@ -244,8 +245,8 @@ export default {
       try {
         this.loading = true;
 
-        // Get most recent story content to use as context for memory generation
-        const recent_story = parent.story_editor_content.slice(-1000).trim();
+        // Get story information to use as context for memory generation
+        const story_context =  parent.essential_context;
 
         const player = '';
 
@@ -263,6 +264,7 @@ export default {
             model: this.mem_model,
             local: this.use_local,
             gamemode: gamemode,
+            story_context: story_context,
             player: player,
             character_name: character.name,
             character_desctiption: character.content,

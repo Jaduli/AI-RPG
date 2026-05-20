@@ -71,9 +71,10 @@ export default {
       this.inventory = this.inventory.filter(item => item.id !== id);
     },
     // Generate new item with local or cloud AI and add to Inventory
-    async generateInventoryItem(type = 'other', name = '', context = '', equipped = false) {
+    async generateInventoryItem(type = 'other', name = '', recent_story = '', equipped = false) {
       const parent = this.$parent;
-
+      const story_information = parent.essential_context;
+      
       this.name = name;
       this.type = type;
       this.equipped = equipped;
@@ -89,7 +90,8 @@ export default {
             local: parent.use_local,
             type: 'item',
             name: name,
-            context: context
+            story_information: story_information,
+            recent_story: recent_story
           })
         });
         const data = await res.json();
@@ -125,8 +127,10 @@ export default {
 
 <template>
   <div class="inventory">
-    <h2>Add New Item</h2>
-    <button @click="collapse = !collapse">{{ collapse ? 'Expand' : 'Collapse' }}</button>
+    <div class="header-row">
+      <h2>Add Inventory Item</h2>
+      <button @click="collapse = !collapse">{{ collapse ? 'Expand' : 'Collapse' }}</button>
+    </div>
     
     <div class="item" v-if="!collapse">
       <h4>Name</h4>
@@ -139,6 +143,11 @@ export default {
           <option value="weapon">Weapon</option>
           <option value="apparel">Armor/apparel</option>
         </select>
+        <label v-if="type === 'perishable'">
+          <span title="Perishable items will be discarded automatically after use.">
+            ⓘ
+          </span>
+        </label>
       </label>
 
       <h4>Item Information</h4>
@@ -147,7 +156,7 @@ export default {
       <label v-if="type !== 'perishable'">
         Equipped: 
         <input v-model="equipped" type="checkbox" class="custom-checkbox" />
-        <span title="Equipped inventory will always be used in story context.">
+        <span title="Equipped items will always be used as context in story generation.">
           ⓘ
         </span>
       </label>

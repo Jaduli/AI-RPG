@@ -2,6 +2,7 @@
 export default {
   data() {
     return {
+      collapse: false,
       name: '',
       description: ''
     }
@@ -32,22 +33,35 @@ export default {
 </script>
 
 <template>
-    <h2>Player Name</h2>
-    <input type="text" 
-    v-model="name" 
-    maxlength="50"/>
+  <div class="header-row">
+    <h2>Player Information</h2>
+    <button @click="collapse = !collapse">{{ collapse ? 'Expand' : 'Collapse' }}</button>
+  </div>
 
-    <h2>Player Description</h2>
+  <div v-if="!collapse" class="player-container">
+    <h2>Name</h2>
+    <input 
+      type="text" 
+      v-model="name" 
+      maxlength="50"
+    />
+
+    <h2>Description</h2>
     <textarea 
-    v-model="description" 
-    rows="10" 
-    cols="80" 
-    placeholder="E.g. age, looks, class, reputation. Always included in story context.">
+      v-model="description" 
+      rows="10" 
+      cols="80" 
+      placeholder="E.g. age, looks, class, reputation. Always included in story context.">
     </textarea>
+  </div>
 </template>
 
 <style>
-input {
-  margin-bottom: 30px;
+.player-container {
+  border: 1px solid #aa3bff;
+  margin-bottom: 10px;
+}
+.player-container h2 {
+  margin-top: 10px;
 }
 </style>

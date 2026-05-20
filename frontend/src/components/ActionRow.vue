@@ -129,10 +129,10 @@ export default {
     },
     // Returns formatted player action and values for selected item, D20 toggle,
     // and action type. Generates a new asset if action type is set to 'new'.
-    async getPlayerAction(context = '') {
+    async getPlayerAction(recent_story = '') {
       if (this.action_type === 'new') {
         // Create new asset before continuing the story
-        await this.createNewAsset(context);
+        await this.createNewAsset(recent_story);
 
         // Disable D20 for 'new' actions
         this.use_d20 = false;
@@ -151,7 +151,7 @@ export default {
         action_type: this.action_type
       };
     },
-    async createNewAsset(context = '') {
+    async createNewAsset(recent_story = '') {
       const parent = this.$parent;
       const only_active = parent.active_requests === 0;
 
@@ -159,14 +159,19 @@ export default {
       const name = this.user_input.trim();
       const contextCards = parent.$refs.contextCards;
 
+      // Get recent story if not already passed in function call
+      if (!recent_story) {
+        recent_story = parent.story_editor_content.split(-1000);
+      }
+
       if (!name) {
         throw new Error('Please set name for new story asset.');
         return;
       }
 
-      // Clear context if asset name is not found in context (i.e. context is irrelevant)
-      if (!context.toLowerCase().includes(name.toLowerCase())) {
-        context = '';
+      // Clear context if asset name is not found in recent story (i.e. context is irrelevant)
+      if (!recent_story.toLowerCase().includes(name.toLowerCase())) {
+        recent_story = '';
       }
 
       // Use active_requests to disable buttons
@@ -177,7 +182,7 @@ export default {
       try {
         if (type === 'inventory item') {
           // Generate new item and add to inventory
-          const add = await parent.$refs.inventory.generateInventoryItem(type, name, context, this.new_item_equipped);
+          const add = await parent.$refs.inventory.generateInventoryItem(type, name, recent_story, this.new_item_equipped);
           
           // Return if errors occur during generation
           if (!add) {
@@ -194,7 +199,7 @@ export default {
           return;
         }
         // Generate and add new context card
-        await contextCards.generateContextCard(type, name, context, this.new_character_memories);
+        await contextCards.generateContextCard(type, name, recent_story, this.new_character_memories);
 
         // Set status message
         if (only_active && ['location', 'character', 'item'].includes(type)) {

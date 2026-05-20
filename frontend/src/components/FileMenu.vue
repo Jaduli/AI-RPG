@@ -63,12 +63,6 @@ export default {
 .file-menu {
   margin-bottom: 16px;
 }
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
 .file-list {
   list-style: none;
   padding: 0;

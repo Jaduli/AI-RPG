@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1.7
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Avoid creating unnecesary .pyc files
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Better logging for debugging
+ENV PYTHONUNBUFFERED=1
+
+COPY requirements.txt .
+
+# Use cache to prevent reinstalling all requirements if one changes
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+COPY . .
+
+CMD ["python", "app.py"]

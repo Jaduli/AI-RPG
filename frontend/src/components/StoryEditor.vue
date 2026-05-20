@@ -145,7 +145,7 @@ export default {
         if (this.gamemode === 'rpg') {
           // Get player action. If action is set to 'new', also generates
           // a new asset with most recent story as context.
-          await this.$refs.actionRow.getPlayerAction(most_recent_content);
+          const action = await this.$refs.actionRow.getPlayerAction(most_recent_content);
 
           player_action = action.player_action;
           selected_item = action.selected_item;
@@ -223,31 +223,35 @@ export default {
         if (data.full_context) {
           this.sent_context = data.full_context;
         }
-        
-        // D20 outcome of player action (success, failure, etc.)
-        if (data.outcome) {
-          this.recent_outcome = data.outcome;
+
+        if (gamemode === 'rpg') {
+          // D20 outcome of player action (success, failure, etc.)
+          if (data.outcome) {
+            this.recent_outcome = data.outcome;
+          }
+
+          // Use action/outcome context for a maximum of 3 turns.
+          // This allows actions that have not yet completed to
+          // retain same outcome.
+          if (this.recent_action) {
+            this.outcome_counter++;
+          }
+          if (this.outcome_counter >= 3) {
+            this.recent_outcome = '';
+            this.recent_action = '';
+            this.outcome_counter = 0;
+          }
+
+          // Clear action after use without resetting selected item and action type.
+          // This allows player to easily make another action with the same item.
+          this.$refs.actionRow.reset(false);
+
+          // Remove perishable items after use
+          if (action_type === 'use' && selected_item.type === 'perishable') {
+            this.$refs.inventory.removeItem(selected_item.id);
+          }
         }
 
-        // Use action/outcome context for a maximum of 3 turns.
-        if (this.recent_action) {
-          this.outcome_counter++;
-        }
-        if (this.outcome_counter >= 3) {
-          this.recent_outcome = '';
-          this.recent_action = '';
-          this.outcome_counter = 0;
-        }
-
-        // Clear action after use without resetting selected item and action type.
-        // This allows user to easily make another action with the same item.
-        this.$refs.actionRow.reset(false);
-
-        // Remove perishable items after use
-        if (action_type === 'use' && selected_item.type === 'perishable') {
-          this.$refs.inventory.removeItem(selected_item.id);
-        }
-        
         // Scroll to bottom to show new content
         this.$nextTick(() => {
           const el = this.$refs.storyBox;
@@ -273,7 +277,7 @@ export default {
         } else {
           this.status_message = 'Please set story name to save and memorize story.'
         }
-      }catch (err) {
+      } catch (err) {
         this.status_message = 'Error continuing story: ' + (err.message || err);
       } finally {
         this.active_requests--;
@@ -362,8 +366,8 @@ export default {
         return;
       }
       // Prevent including too much content at once. Prioritize using newest story content.
-      if (content_length > 12000) {
-        past_content = past_content.slice(-12000);
+      if (content_length > 10000) {
+        past_content = past_content.slice(-10000);
       }
       try {
         this.active_requests++;
@@ -422,8 +426,14 @@ export default {
         }
         
         const context_cards = this.$refs.contextCards.cards || [];
-        const player_information = this.$refs.playerCard.getPlayer() || [];
-        const player_inventory = this.$refs.inventory.getInventory() || [];
+
+        let player_information = [];
+        let player_inventory = [];
+
+        if (gamemode === 'rpg') {
+          player_information = this.$refs.playerCard.getPlayer() || [];
+          player_inventory = this.$refs.inventory.getInventory() || [];
+        }
 
         // Use POST to save story
         const res = await fetch('/api/save', {
@@ -492,10 +502,11 @@ export default {
         this.memory_cursor = data.memory_cursor || 0;
         this.summary_cursor = data.summary_cursor || 0;
         this.$refs.contextCards.cards = data.context_cards || [];
-        this.$refs.inventory.inventory = data.inventory || [];
         this.recent_action = '';
         this.recent_outcome = '';
         this.outcome_counter = 0;
+
+        this.$refs.inventory.inventory = data.inventory || [];
 
         // Get player information
         const player_information = data.player || [];
@@ -528,16 +539,19 @@ export default {
       this.memory_cursor = 0;
       this.summary_cursor = 0;
       this.$refs.contextCards.cards = [];
-      this.$refs.inventory.inventory = [];
       this.recent_action = '';
       this.recent_outcome = '';
       this.outcome_counter = 0;
 
-      // Reset player information
-      this.$refs.playerCard.reset();   
+      if (gamemode === 'rpg') {
+        this.$refs.inventory.inventory = [];
+        
+        // Reset player information
+        this.$refs.playerCard.reset();   
 
-      // Reset ActionRow
-      this.$refs.actionRow.reset();
+        // Reset ActionRow
+        this.$refs.actionRow.reset();
+      }
 
       this.status_message = 'New story initialized with ID '  + this.story_id + '.';
     }
@@ -627,14 +641,6 @@ export default {
     @click="setActiveTab('player')"
   >
     Player
-  </button>
-
-  <button 
-    v-if="gamemode === 'rpg'"
-    :class="{ active: active_tab === 'inventory' }"
-    @click="setActiveTab('inventory')"
-  >
-    Inventory
   </button>
 
   <button 
@@ -728,9 +734,6 @@ export default {
 
     <div class="container" v-show="active_tab === 'player'">
       <PlayerCard ref="playerCard" />
-    </div>
-
-    <div class="container" v-show="active_tab === 'inventory'">
       <Inventory ref="inventory" />
     </div>
 

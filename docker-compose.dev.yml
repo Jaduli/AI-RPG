@@ -1,8 +1,12 @@
-# Local AI + GPU supported compose file (requires compatible NVIDIA GPU and drivers)
-# Run with `docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build`
+# Dev build which uses BuildKit for better cache by preventing reinstalling dependencies every time they change
+# -> Faster build and startup, allowing a more efficient developement environment. Runs on GPU mode.
+# Run with command: 
+# `COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build`
 services:
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.dev
     ports:
       - "5000:5000"
     volumes:

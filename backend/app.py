@@ -42,6 +42,7 @@ OLLAMA_MODEL = "llama3.1:8b"
 
 api_url = os.getenv("API_URL")
 api_key = os.getenv("API_KEY")
+
 api_main_model = os.getenv("API_MAIN_MODEL", None)
 api_mem_model = os.getenv("API_MEM_MODEL", None)
 env_gamemode = os.getenv("GAMEMODE", None)
@@ -109,16 +110,16 @@ def load_file():
             memory_cursor = data.get("memory_cursor", 0)
             summary_cursor = data.get("summary_cursor", 0)
             context_cards = data.get("context_cards", [])
-            inventory = data.get("inventory", [])
             player = data.get("player", [])
+            inventory = data.get("inventory", [])
     except Exception as e:
         # Internal Server Error
         return jsonify({"error": str(e)}), 500
 
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
                     "summary": summary, "essential_context": essential_context, "memory_cursor": memory_cursor,
-                    "summary_cursor":summary_cursor, "context_cards": context_cards, "inventory": inventory,
-                    "player": player})
+                    "summary_cursor":summary_cursor, "context_cards": context_cards, "player": player,
+                    "inventory": inventory})
 
 """
 /save
@@ -135,6 +136,7 @@ def save_file():
     # Validate story ID
     if not story_id:
         return jsonify({"error": "Story ID is required."}), 400
+    
     if not isinstance(story_id, int) or isinstance(story_id, bool) or story_id <= 0:
         return jsonify({"error": "Invalid story ID. ID must be a positive integer."}), 400
     
@@ -155,7 +157,7 @@ def save_file():
     if os.path.exists(save_path):
         backup_path = os.path.join(path, 'backup.json')
 
-        # If backup already exists, remove it (only keep one backup)
+        # If backup already exists, remove it
         if os.path.exists(backup_path):
             os.remove(backup_path)
 
@@ -183,8 +185,8 @@ def save_file():
         "memory_cursor": memory_cursor,
         "summary_cursor": summary_cursor,
         "context_cards": context_cards,
-        "inventory": inventory,
-        "player": player
+        "player": player,
+        "inventory": inventory
     }
 
     # Serialize to JSON
@@ -201,13 +203,13 @@ def save_file():
     with open(save_path, 'w', encoding='utf-8') as f:
         f.write(json_string)
 
-    return jsonify({"message": "File saved with ID " + str(story_id) + "."})
+    return jsonify({"message": f"File saved with ID {str(story_id)}."})
 
 
 """
 /get_save_files
 
-Returns list of saved story files with their associated story IDs.
+Returns list of saved story files with their associated name and story IDs.
 Returns 500 if error reading files.
 """
 @app.route('/api/get_save_files', methods=['GET'])
@@ -228,6 +230,7 @@ def get_save_files():
             try:
                 with open(save_file_path, 'r', encoding='utf-8') as f:
                     data = json.load(f)
+
                 story_name = data.get("story_name", '')
 
                 files.append({
@@ -270,10 +273,11 @@ def continue_story():
     # Validate story ID
     if not story_id:
         return jsonify({"error": "Story ID is required."}), 400
+    
     if not isinstance(story_id, int) or isinstance(story_id, bool) or story_id <= 0:
         return jsonify({"error": "Invalid story ID. ID must be a positive integer."}), 400
     
-    gamemode = data.get('gamemode', 'storyteller')
+    gamemode = data.get('gamemode')
     user_instructions = data.get('instructions')
     essential_context = data.get('essential_context', 'None.')
     summary = data.get('summary', 'None.')
@@ -301,10 +305,10 @@ def continue_story():
     elif (gamemode == 'storyteller'):
         full_instructions = STORYTELLER_SYS_PROMPT
     else:
-        return jsonify({"error": f"Gamemode '{gamemode}' not recognized."}), 500
+        return jsonify({"error": f"Game mode '{gamemode}' not recognized."}), 400
     
     # Get relevant memories for recent content
-    relevant_memories = database.get_relevant_memories(recent_story[-2000:], story_id, 2)
+    relevant_memories = database.get_relevant_memories(recent_story[-2000:], story_id, 3)
 
     # Get most recent memories for story
     recent_memories = database.get_recent_memories(story_id, 2)
@@ -345,7 +349,7 @@ def continue_story():
         full_instructions += OUTCOME_SYS_PROMPT
 
     if (user_instructions.strip() != ''):
-        full_instructions = (f"{full_instructions}\nSTORYTELLING:\n\n{user_instructions}")
+        full_instructions = (f"{full_instructions}\n{user_instructions}")
 
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
@@ -423,9 +427,9 @@ def summarize():
                 {"role": "user", "content": content}
             ],
             "options": {
-                "temperature": 0.2, # Low temperature for summary creation
+                "temperature": 0.2, # Low temperature for good consistency
                 "num_predict": 1000, # Token limit to prevent unnecessarily long responses
-                "num_ctx": 8192 # Use 8k token limit
+                "num_ctx": 8192 # Use 8k input token limit
             },
             "stream": False
         })
@@ -607,17 +611,21 @@ def generate_asset():
     
     local = data.get('local', False)
     name = data.get('name', '')
-    context = data.get('context', '')
+    story_information = data.get('story_information', '')
+    recent_story = data.get('recent_story', '')
 
     content = ''
-    if name:
-        content = '[Generation Context]\n\nName:' + name
+    if story_information:
+        content += '[Story Information]\n' + story_information + '\n\n'
 
-        # Only use context if name is given
-        if context:
-            content += '\n\nContext: ' + context
+    if name:
+        content += f'[Generation Context]\nNew {asset_type} name: ' + name
+
+        # Only use recent story as context if name is given
+        if recent_story:
+            content += '\n\nRecent story: ' + recent_story
     
-    new_asset = ''
+    generated_content = ''
     sys_prompt = ''
     tokens_total = -1
 
@@ -653,7 +661,7 @@ def generate_asset():
             except ValueError:
                 return jsonify({"error": "Invalid JSON response from local AI service.", "detail": response.text}), 502
 
-            new_asset = response_data.get("message", {}).get("content", '').strip()
+            generated_content = response_data.get("message", {}).get("content", '').strip()
 
             tokens_total = response_data.get("prompt_eval_count", 0) + response_data.get("eval_count", 0)
 
@@ -686,12 +694,13 @@ def generate_asset():
             message, status = error
             return jsonify({"error": message}), status
 
-        new_asset = result["choices"][0]["message"]["content"]
+        generated_content = result["choices"][0]["message"]["content"]
 
         tokens_total = result['usage']['total_tokens']
 
-    trimmed = utils.trim_incomplete_sentences(new_asset)
+    trimmed = utils.trim_incomplete_sentences(generated_content)
 
+    app.logger.info("Content used in asset generation:\n" + content)
     app.logger.info("Tokens used in asset generation: %s", tokens_total)
 
     return jsonify({"generated_content": trimmed, "tokens_total": tokens_total})
@@ -716,6 +725,7 @@ def generate_character_memory():
 
     local = data.get('local', False)
     gamemode = data.get('gamemode', '')
+    story_information = data.get('story_information', '')
     player = data.get('player', '')
     character_name = data.get('character_name', '')
     character_description = data.get('character_description', '')
@@ -724,10 +734,11 @@ def generate_character_memory():
     content = ''
     
     # Build context for memory
-    content += '[Player]\nPlayer Name: ' + player + '\n'
+    content += '[Story Information]\n' + story_information + '\n\n'
+    content += '[Player]\nPlayer Name: ' + player + '\n\n'
 
-    content += '\n[Character]\nCharacter Name: ' + character_name + '\n'
-    content += 'Character Description: ' + character_description + '\n'
+    content += '[Character]\nCharacter Name: ' + character_name + '\n'
+    content += 'Character Description: ' + character_description + '\n\n'
     
     content += '\n[Recent Story]\n'
     content += recent_story
@@ -749,7 +760,7 @@ def generate_character_memory():
                 {"role": "user", "content": content}
             ],
             "options": {
-                "temperature": 1.1, # Average temperature for good consistency & creativity
+                "temperature": 0.8, # Below average temperature for good consistency with some creativity
                 "num_predict": 50, # Small-ish limit as one memory should only be one sentence long
                 "num_ctx": 8192
             },
@@ -781,7 +792,7 @@ def generate_character_memory():
                 {"role": "system", "content": CHARACTER_MEMORY_SYS_PROMPT},
                 {"role": "user", "content": content}
             ],
-            "temperature": 1.1,
+            "temperature": 0.8,
             "max_tokens": 50
         }
 
@@ -799,6 +810,7 @@ def generate_character_memory():
 
         tokens_total = result['usage']['total_tokens']
 
+    app.logger.info("Content used in asset generation:\n" + content)
     app.logger.info("Tokens used in character memory generation: %s", tokens_total)
 
     return jsonify({"new_memory": new_memory, "tokens_total": tokens_total})

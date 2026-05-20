@@ -133,7 +133,7 @@ export default {
       <button class="close-btn" @click="$emit('close')" title="Close settings (ESC)">✕</button>
     </div>
 
-    <label>Gamemode: 
+    <label>Game Mode: 
       <select v-model="gamemodeVal">
         <option value="rpg">RPG</option>
         <option value="storyteller">Storyteller</option>
@@ -156,12 +156,12 @@ export default {
       type="text" 
       placeholder="llama-3.1-8b-instant"
       />
-      <span title="Secondary model will be used for context creation, e.g. for summaries and memories.">
+      <span title="Secondary model will be used for context generation, e.g. for memories and asset creation.">
         ⓘ
       </span>
     </label>
 
-    <label>Summarize Story: 
+    <label>Update Story Summary: 
       <input v-model="summarizeVal" type="checkbox" class="custom-checkbox" />
     </label>
 
