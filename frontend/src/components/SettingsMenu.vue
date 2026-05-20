@@ -178,7 +178,7 @@ export default {
         placeholder="4000"
       />
       <button @click="setContextLength(temp_context_length)" :disabled="is_loading">Set Limit</button>
-      <span title="Setting the limit will automatically update Story Editor to show content with new limit.">
+      <span title="Setting the limit will automatically update Story Editor to display content with new limit.">
         ⓘ
       </span>
     </label>

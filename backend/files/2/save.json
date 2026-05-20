@@ -8,38 +8,38 @@
   "summary_cursor": 0,
   "context_cards": [
     {
-      "id": 1779285668911,
-      "name": "Location Card Information",
-      "type": "location",
-      "content": "( Locations can have one parent and multiple child locations. \n\nExample chain: Kingdom -> Village -> Tavern. \n\nIf you are in Kingdom (i.e. at least one of its keywords is found in recent story), context will have name of Village (NOT content unless Village keyword is also found in recent story). If you are in Village, context will have names of both Kingdom and Tavern. If you are in Tavern, context will have name of Village. If you want Tavern to have names of both Kingdom and Village, add its parent as 'Village in Kingdom'. \n\nAI generated cards will not have parent or child locations. The location parent/child chain is made to be used for custom worlds/scenarios. )",
-      "parent_location": "Kingdom of Catania",
       "child_locations": "Nickel Palace, Beetroot Waterfall, Forest of Death",
+      "content": "( Locations can have one parent and multiple child locations. \n\nExample chain: Kingdom -> Village -> Tavern. \n\nIf you are in Kingdom (i.e. at least one of its keywords is found in recent story), context will include name of Village (NOT content unless Village keyword is also found in recent story). If you are in Village, context will have names of both Kingdom and Tavern. If you are in Tavern, context will have name of Village. If you want Tavern to have names of both Kingdom and Village, add its parent as 'Village in Kingdom'. \n\nAI generated cards will not have parent or child locations. The parent/child chain is made to be used for custom worlds/scenarios. )",
+      "id": 1779285668911,
       "keywords": [
         ""
-      ]
+      ],
+      "name": "Location Card Information",
+      "parent_location": "Kingdom of Catania",
+      "type": "location"
     },
     {
-      "id": 1779286103590,
-      "name": "Character Card Information",
-      "type": "character",
+      "character_memories": [],
       "content": "( If character memory creation is turned on, memories will randomly be generated each time a character is being interacted with (i.e. character keyword is found in most recent story). Memory generation uses Essential Context, character name, character card content, and most recent story to form a memory or thought the character has/could have regarding the player.\n\nWhen created, memories can be viewed and edited below. For each character, up to three random memories are used in story generation and a maximum of 10 memories are stored. Oldest memories get replaced if limit is reached. )",
       "create_memories": true,
-      "character_memories": [],
+      "id": 1779286103590,
       "keywords": [
         ""
-      ]
+      ],
+      "name": "Character Card Information",
+      "type": "character"
     },
     {
+      "content": "( Context cards will trigger if at least one of the card's keywords is found in recent story. Keywords should include a name and possibly some other words that are relevant to the card. Up to 10 context cards are triggered in a continue action. The card's name and content will be used as story context (NOT keywords).\n\nExample Card: Character is named 'Kieran Jones' who lives on Sunshine Ranch. Content for Kieran's card can include Kieran's description, interests, relationships and other important context relating to the character. \n\nExample keywords for Kieran's card: Kieran, Jones, Sunshine Ranch -> Any of these in recent story will trigger Kieran's card information to be included in story context.\n\nNote: As keywords are not included in context, the card content should also include information about the location separately, for example: Kieran lives on Sunshine Ranch.\n\nSunshine Ranch should have its own context card. This way, its context is included only when relevant to the story (i.e. its keyword is found in recent story). As 'Kieran' is also triggered along with Sunshine Ranch, the location card does not need a separate description about Kieran living there; context already contains that information from Kieran's card. \n\nIf the ranch's only keyword is 'Sunshine Ranch' (two words), 'Ranch' isn't enough to trigger the card. This is good if multiple ranches exist as locations in the story. If the whole story takes place on Sunshine Ranch, the keyword is better left as 'ranch'.\n\nUse list or story format to describe context card characters/objects/locations/etc. Story format example below.)\n\nLana is a good dog. Lana has black-and-white fur and brown eyes. Lana is an immortal god and she cannot be harmed in any way!",
       "id": 1779286523415,
+      "keywords": "Example card,<- card triggered if \"example card\" is found in recent story. Case and punctuation insensitive, e.g. \"ExamPLE cArd!\" in text will still trigger card.",
       "name": "Context Card Information",
-      "type": "other",
-      "content": "( Context cards will trigger if at least one of the card's keywords is found in recent story. Keywords should include a name and possibly some other words that are relevant to the card. Up to 10 context cards are triggered in a continue action. The card's name and content will be used as story context (NOT keywords).\n\nExample Card: Character is named 'Kieran Jones' who lives on Sunshine Ranch. Content for Kieran's card can include Kieran's description, interests, relationships and other important context relating to the character. \n\nExample keywords for Kieran's card: Kieran, Jones, Sunshine Ranch -> Any of these in recent story will trigger Kieran's information to be included in story context.\n\nNote: As keywords are not included in context, the card should also include information about the location separately. Example: Kieran lives on Sunshine Ranch.\n\nSunshine Ranch should have its own context card. This way, its context is included only when relevant to the story (i.e. its keyword is found in recent story). As 'Kieran' is also triggered along with Sunshine Ranch, the location card does not need a separate description about Kieran living there; context already contains that information from Kieran's card. \n\nIf the ranch's only keyword is 'Sunshine Ranch' (two words), 'Ranch' isn't enough to trigger the card. This is good if multiple ranches exist as locations in the story. If the whole story takes place on Sunshine Ranch, the keyword is better left as 'ranch'.\n\nUse list or story format to describe context card characters/objects/locations/etc. Story format example below.)\n\nLana is a good dog. Lana has black-and-white fur and brown eyes. Lana is an immortal god and she cannot be harmed in any way!",
-      "keywords": "Example card,<- card triggered if \"example card\" is found in editor content. Case and punctuation insensitive, e.g. \"ExamPLE cArd!\" in text will still trigger card."
+      "type": "other"
     }
   ],
   "player": {
     "name": "",
-    "description": "(Add relevant player details here in list or story format. List format examples below. Player description will always be used as context in story generation.)\n\nAge: \nGender: \nRace: {e.g. human, vampire, half-elf}\nClass: {e.g. rogue, healer, knight}\nSkin color: \nHair length/style and color: \nEye color: \nHeight: {in feet or adjective, e.g. short or tall}\nBuild: {e.g. lanky, muscular, average}\nOrigin: {e.g. Northerner, isekai'd, reborn}\nReputation: {e.g. famous, unknown, hero}\nParty members: {Add only names here. More detailed non-player character information should be added to Story Essentials (always included in context) or as a Context Card (only included in context if character is being interacted with).}\nMain quest:  {If you want a specific challenge or quest, e.g. 'Befriend a Dragon', add it here. Otherwise, you can do quests freely during gameplay.}"
+    "description": "(Add relevant player details here in list or story format. List format examples below. Player description will always be used as context in story generation.)\n\nAge: \nGender: \nRace: {e.g. human, vampire, half-elf}\nClass: {e.g. rogue, healer, knight}\nSkin color: \nHair length/style and color: \nEye color: \nHeight: {in feet or adjective, e.g. short or tall}\nBuild: {e.g. lanky, muscular, average}\nOrigin: {e.g. Northerner, isekai'd, reborn}\nReputation: {e.g. famous, unknown, hero}\nParty members: {Add only names here. More detailed non-player character information should be added to Story Essentials (always included in context) or as a Context Card (only included in context if character is being interacted with).}\nMain quest:  {If you want a specific challenge or quest, e.g. 'Befriend a Dragon', add it here. Otherwise, you can receive and do quests freely during gameplay.}"
   },
   "inventory": [
     {
@@ -63,5 +63,6 @@
       "name": "Dried meat",
       "type": "perishable"
     }
-  ]
+  ],
+  "skills": []
 }

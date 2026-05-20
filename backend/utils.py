@@ -37,7 +37,7 @@ def get_action_outcome(text):
       - "Critical failure." (10 %)
 
     "Advantage" and "disadvantage" words are detected as modifiers in the text  
-    and give +-15 % to success chance.
+    and give +-20 % to success chance (partial success and success adjusted equally).
     """
     if not isinstance(text, str):
         return None
@@ -46,33 +46,46 @@ def get_action_outcome(text):
     if not trimmed_text:
         return None
 
-    if not re.search(r'\b(?:try|wish|attempt)\b', trimmed_text, re.IGNORECASE):
-        return None
+    # Base chances
+    crit_failure = 0.10
+    failure = 0.40
+    partial = 0.20
+    success = 0.20
+    crit_success = 0.10
 
-    success_threshold = 0.5
+    # Modifiers
     if re.search(r'\bdisadvantage\b', trimmed_text, re.IGNORECASE):
-        success_threshold += 0.15
-    elif re.search(r'\badvantage\b', trimmed_text, re.IGNORECASE):
-        success_threshold -= 0.15
+        failure += 0.20      # -> 60 % chance
+        partial -= 0.05      # -> 15 % chance
+        success -= 0.10      # -> 10 % chance
+        crit_success -= 0.05 # -> 5 % chance
 
-    partial_threshold = success_threshold + 0.2
-    crit_success_threshold = 0.9
-    crit_failure_threshold = 0.1
+    elif re.search(r'\badvantage\b', trimmed_text, re.IGNORECASE):
+        failure -= 0.20
+        partial += 0.10
+        success += 0.10
 
     roll = random.random()
-    succeeded = roll > success_threshold
 
-    if succeeded:
-        if roll > crit_success_threshold:
-            return 'Critical success.'
-        if roll < partial_threshold:
-            return 'Partial success.'
-        return 'Success.'
+    threshold = 0
 
-    if roll < crit_failure_threshold:
+    threshold += crit_failure
+    if roll < threshold:
         return 'Critical failure.'
 
-    return 'Failure.'
+    threshold += failure
+    if roll < threshold:
+        return 'Failure.'
+
+    threshold += partial
+    if roll < threshold:
+        return 'Partial success.'
+
+    threshold += success
+    if roll < threshold:
+        return 'Success.'
+
+    return 'Critical success.'
 
 def call_ai_api(api_url, headers, payload):
     try:

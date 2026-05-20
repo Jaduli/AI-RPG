@@ -342,7 +342,7 @@ export default {
 
     <span 
       v-if="action_type === 'use' && selected_skill !== null"
-      title="Success chance of actions using skills depends on skill level.">
+      title="When using a skill, action success chance depends on skill level.">
       ⓘ
     </span>
   </div>
