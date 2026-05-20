@@ -157,6 +157,7 @@ export default {
 
           is_new_action = player_action !== '';
 
+          // Get outcome of skill use if a skill was selected for the action
           if (selected_skill) {
             outcome = this.$refs.skills.useSkill(selected_skill.id);
           }
@@ -178,6 +179,8 @@ export default {
             player_equipment,
             player_skills,
             player_action,
+            player_item: selected_item ? selected_item.name : '',
+            player_skill: selected_skill ? selected_skill.name : '',
             recent_action: this.recent_action,
             recent_outcome: this.recent_outcome,
             use_d20: this.use_d20,
@@ -236,19 +239,21 @@ export default {
           if (data.outcome) {
             this.recent_outcome = data.outcome;
           }
-          // Skill use outcome 
+          // Skill use outcome (success, failure, etc.).
+          // Skills use levels and are separate from D20.
           if (outcome) {
             this.recent_outcome = outcome;
           }
 
-          // Add XP to used skill (allows level up for skills)
+          // Add XP to used skill (allows leveling up).
+          // Outcome affects xp multiplier.
           if (selected_skill) {
             this.$refs.skills.addSkillXp(selected_skill.id, outcome);
           }
 
           // Use action/outcome context for a maximum of 3 turns.
           // This allows actions that have not yet completed to
-          // retain same outcome.
+          // retain the same outcome.
           if (this.recent_action) {
             this.outcome_counter++;
           }
@@ -258,8 +263,8 @@ export default {
             this.outcome_counter = 0;
           }
 
-          // Clear action after use without resetting selected item and action type.
-          // This allows player to easily make another action with the same item.
+          // Clear action after use without resetting selected item, skill, or action type.
+          // This allows player to easily make another action of the same type.
           this.$refs.actionRow.reset(false);
 
           // Remove perishable items after use
@@ -445,6 +450,7 @@ export default {
 
         const player_information = this.$refs.playerCard.getPlayer() || [];
         const player_inventory = this.$refs.inventory.getInventory() || [];
+        const player_skills = this.$refs.skills.getSkills() || [];
 
         // Use POST to save story
         const res = await fetch('/api/save', {
@@ -463,6 +469,7 @@ export default {
             summary_cursor: this.summary_cursor,
             context_cards: context_cards,
             player_information: player_information,
+            skills: player_skills,
             inventory: player_inventory
           })
         });
@@ -518,6 +525,7 @@ export default {
         this.outcome_counter = 0;
 
         this.$refs.inventory.inventory = data.inventory || [];
+        this.$refs.skills.skills = data.skills || [];
 
         // Get player information
         const player_information = data.player || [];
@@ -556,6 +564,7 @@ export default {
 
       if (gamemode === 'rpg') {
         this.$refs.inventory.inventory = [];
+        this.$refs.skills.skills = [];
         
         // Reset player information
         this.$refs.playerCard.reset();   
@@ -810,7 +819,7 @@ export default {
 }
 
 .subtab-header button {
-  border: 1px solid #aa3bff;
+  border: 1px solid #9a2bef;
 }
 
 .tab-header button:hover,

@@ -153,6 +153,12 @@ export default {
       if (this.action_type === 'use') {
         item = this.selected_item;
         skill = this.selected_skill;
+
+        if (skill) {
+          // Skills use an outcome chance depending on skill level,
+          // which is separate from D20
+          this.use_d20 = false;
+        }
       }
 
       const formatted_action = this.getFormattedAction(this.user_input);
@@ -241,7 +247,7 @@ export default {
       switch (this.action_type) {
         case 'do': return 'What do you do?';
         case 'say': return 'What do you say?';
-        case 'use': return 'How do you use the skill and/or item?';
+        case 'use': return 'How do you use skill and/or item?';
         case 'new': return 'Input name';
         default: return 'Input action';
       }
@@ -324,7 +330,7 @@ export default {
 
     <button v-if="action_type === 'new'" @click="createNewAsset()" :disabled="loading">Add</button>
 
-    <label v-if="action_type !== 'new'">
+    <label v-if="action_type !== 'new' && selected_skill === null">
       <input 
         v-model="use_d20" 
         type="checkbox" 
@@ -333,6 +339,12 @@ export default {
       />
       🎲
     </label>
+
+    <span 
+      v-if="action_type === 'use' && selected_skill !== null"
+      title="Success chance of actions using skills depends on skill level.">
+      ⓘ
+    </span>
   </div>
 </template>
 

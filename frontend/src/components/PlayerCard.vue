@@ -58,8 +58,13 @@ export default {
 <style>
 .player-container {
   border: 1px solid #aa3bff;
-  margin-bottom: 10px;
   border-radius: 5px;
-  padding: 15px;
+  padding: 5px;
+  background: #1a1a2e;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.player-container h2 {
+  margin: 10px 0 5px;
 }
 </style>

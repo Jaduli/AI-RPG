@@ -59,7 +59,7 @@ export default {
     // Get matching context cards based on keywords in recent story content.
     // Cards are formatted to a string to be used in story generation.
     // If card type is character and its memories are enabled, up to 3 random
-    // memories are added as context for each character.
+    // memories of given character are added as context.
     getMatchingContextCardsStr(text) {
       const lower_text = text.toLowerCase();
       const matching = [];
@@ -138,7 +138,7 @@ export default {
 
         const story_information = parent.essential_context;
         
-        // If this is not the only active component, do not edit parent messages
+        // Only edit status message if this is the only active component
         if (only_active) {
           parent.status_message = 'Generating content...';
         }

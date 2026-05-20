@@ -37,6 +37,8 @@ export default {
     getInventory() {
       return this.inventory;
     },
+    // Gets equipment as string formatted for story context.
+    // Item used by player is also added as context.
     getEquipmentStr(used_item = null) {
       if (this.inventory.length === 0) return '';
 

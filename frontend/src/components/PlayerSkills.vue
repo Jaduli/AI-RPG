@@ -73,7 +73,7 @@ export default {
 
       let gained_xp = 200; // Base xp
 
-      // Multiply xp based on outcome. Failure still gives good xp
+      // Multiply base xp based on outcome. Failure still gives good xp
       // to make leveling on lower levels easier.
       const outcome_multipliers = {
         'critical success': 1.5,
@@ -91,33 +91,37 @@ export default {
 
       if (skill.experience >= xp_required) {
         skill.level += 1;
-        skill.experience = Math.max(0, skill.experience - xp_required);
+        // Extra xp is carried to next level
+        skill.experience = skill.experience - xp_required;
         skill.proficiency = this.levelToProficiency(skill.level);
       }
     },
-    // Returns outcome for skill of given level.
+    // Returns outcome for skill of given level. Table of probabilities
+    // for each level and outcome can be seen in Project Documentation.
     getSkillOutcome(level) {
       // Roll between 0-100
       const roll = Math.random() * 100;
 
-      // Each level adds 1.2 % crit success chance
+      // Base crit success chance is 1 %, raised by 1.2 % for each level
       const crit_success = 1 + level * 1.2;
 
-      // Each level adds 4.5 % success chance
+      // Base success chance is 10 %, raised by 4.5 % for each level
       const success = 10 + level * 4.5;
 
       // Crit failure starts at 20 % on level 0 then lowers 2 %
       // for each level. A minimum 2 % chance is still applied.
       const crit_failure = Math.max(2, 20 - level * 2);
 
-      // Failure starts at then lowers 4 % each level.
+      // Failure starts at 50 % then lowers 4 % each level.
       // A minimum 15 % chance is still applied.
       const failure = Math.max(15, 50 - level * 4);
 
-      // Substract others from 100 to get partial succes chance
+      // Substract others from 100 to get partial succes chance.
+      // Value stays around 20 (%).
       const partial = 100 - crit_success - success - crit_failure - failure;
 
-      // Find which outcome roll belongs to
+      // Calculate which outcome roll belongs to by making higher 
+      // rolls mean better outcome.
       let threshold = 0;
 
       threshold += crit_failure;
@@ -184,7 +188,7 @@ export default {
       
       <label>Skill Level (0-10, novice to master): 
         <input type="number" v-model="level" min="0" max="10" />
-        <span title="Level affects success chance. Skills gain experience when used. Leveling up takes about (level + 2) actions.">
+        <span title="Level affects success chance when using skill. Skills gain experience when used, which improves success chance.">
           ⓘ
         </span>
       </label>

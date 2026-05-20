@@ -112,6 +112,7 @@ def load_file():
             context_cards = data.get("context_cards", [])
             player = data.get("player", [])
             inventory = data.get("inventory", [])
+            skills = data.get("skills", [])
     except Exception as e:
         # Internal Server Error
         return jsonify({"error": str(e)}), 500
@@ -119,7 +120,7 @@ def load_file():
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
                     "summary": summary, "essential_context": essential_context, "memory_cursor": memory_cursor,
                     "summary_cursor":summary_cursor, "context_cards": context_cards, "player": player,
-                    "inventory": inventory})
+                    "inventory": inventory, "skills": skills})
 
 """
 /save
@@ -172,8 +173,9 @@ def save_file():
     memory_cursor = data.get("memory_cursor", 0)
     summary_cursor = data.get("summary_cursor", 0)
     context_cards = data.get("context_cards", [])
-    inventory = data.get("inventory", [])
     player = data.get("player_information", [])
+    inventory = data.get("inventory", [])
+    skills = data.get("skills", [])
 
     # Build payload
     save_data = {
@@ -186,7 +188,8 @@ def save_file():
         "summary_cursor": summary_cursor,
         "context_cards": context_cards,
         "player": player,
-        "inventory": inventory
+        "inventory": inventory,
+        "skills": skills
     }
 
     # Serialize to JSON
@@ -286,6 +289,8 @@ def continue_story():
     player_equipment = data.get('player_equipment', '')
     player_skills = data.get('player_skills', '')
     player_action = data.get('player_action', '')
+    player_item = data.get('player_item', '')
+    player_skill = data.get('player_skill', '')
     recent_action = data.get('recent_action', '')
     recent_outcome = data.get('recent_outcome', '')
     use_d20 = data.get('use_d20', False)
@@ -336,6 +341,8 @@ def continue_story():
         ("\n\n[Recent Player Action]\n" + recent_action if recent_action else "") +
         ("\n\n[Recent Action Outcome]\n" + recent_outcome if recent_outcome else "") +
         "\n\n[Recent Story]\n" + recent_story +
+        ("\n\n[Player Uses Item]\n" + player_item if player_item else "") +
+        ("\n\n[Player Uses Skill]\n" + player_skill if player_skill else "") +
         ("\n\n[Player Action]\n" + player_action if player_action else "") +
         ("\n\n[Action Outcome]\n" + outcome if outcome else "")
     )
