@@ -37,19 +37,20 @@ export default {
     getInventory() {
       return this.inventory;
     },
-    getInventoryStr(only_equipped = false) {
+    getEquipmentStr(used_item = null) {
       if (this.inventory.length === 0) return '';
 
       let str = '';
       const grouped = {};
 
-      // Sort inventory by group
+      // Sort equipped items by group
       for (const item of this.inventory) {
-        if (only_equipped && !item.equipped) continue;
-        if (!grouped[item.type]) {
-          grouped[item.type] = [];
+        if (item.equipped || (used_item && item.id === used_item.id)) {
+          if (!grouped[item.type]) {
+            grouped[item.type] = [];
+          }
+          grouped[item.type].push(item);
         }
-        grouped[item.type].push(item);
       }
 
       for (const [type, items] of Object.entries(grouped)) {

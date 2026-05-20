@@ -7,6 +7,7 @@ export default {
       action_type: 'custom',
       user_input: '',
       selected_item: null,
+      selected_skill: null,
       new_asset_type: 'other',
       new_character_memories: true,
       new_item_type: 'other',
@@ -28,6 +29,7 @@ export default {
       if (all) {
         this.action_type = 'custom';
         this.selected_item = null;
+        this.selected_skill = null;
         this.new_asset_type = 'other';
         this.new_item_type = 'other';
         this.new_item_equipped = false;
@@ -68,11 +70,19 @@ export default {
     getFormattedAction() {
       const type = this.action_type;
       const item = this.selected_item;
+      const skill = this.selected_skill;
+      
       let user_input = this.user_input.trim();
 
-      // If item is selected without a user action, fallback to general
-      // use item message.
-      if (type === 'use' && item && !user_input) {
+      // If item and/or skill is selected without a user action, fallback to
+      // general use message.
+      if (type === 'use' && !user_input) {
+        if (skill && item) {
+          return `You use skill ${skill.name} with item '${item.name}'.`
+        }
+        if (skill) {
+          return `You use skill ${skill.name}.`
+        }
         return `You use item '${item.name}'.`
       }
       // Otherwise if user input is empty, continue the story without an action
@@ -139,14 +149,17 @@ export default {
       }
 
       let item = null;
+      let skill = null;
       if (this.action_type === 'use') {
         item = this.selected_item;
+        skill = this.selected_skill;
       }
 
       const formatted_action = this.getFormattedAction(this.user_input);
       return {
         player_action: formatted_action,
         selected_item: item,
+        selected_skill: skill,
         use_d20: this.use_d20,
         action_type: this.action_type
       };
@@ -228,13 +241,16 @@ export default {
       switch (this.action_type) {
         case 'do': return 'What do you do?';
         case 'say': return 'What do you say?';
-        case 'use': return 'How do you use the item?';
+        case 'use': return 'How do you use the skill and/or item?';
         case 'new': return 'Input name';
         default: return 'Input action';
       }
     },
     inventory() {
       return this.$parent.$refs.inventory?.inventory || [];
+    },
+    skills() {
+      return this.$parent.$refs.skills?.skills || [];
     }
   }
 }
@@ -250,8 +266,15 @@ export default {
       <option value="new">New</option>
     </select>
 
+    <select class="item-select" v-if="action_type === 'use'" v-model="selected_skill">
+      <option :value="null">Select a skill...</option>
+      <option v-for="skill in skills" :key="skill.id" :value="skill">
+        {{ skill.name }} ({{ skill.proficiency }})
+      </option>
+    </select>
+
     <select class="item-select" v-if="action_type === 'use'" v-model="selected_item">
-      <option value="">Select an item...</option>
+      <option :value="null">Select an item...</option>
       <option v-for="item in inventory" :key="item.id" :value="item">
         {{ item.name }}
       </option>

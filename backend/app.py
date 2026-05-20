@@ -284,8 +284,8 @@ def continue_story():
     context_cards = data.get('context_cards', 'None.')
     player_information = data.get('player_information', '')
     player_equipment = data.get('player_equipment', '')
+    player_skills = data.get('player_skills', '')
     player_action = data.get('player_action', '')
-    player_item = data.get('player_item', '')
     recent_action = data.get('recent_action', '')
     recent_outcome = data.get('recent_outcome', '')
     use_d20 = data.get('use_d20', False)
@@ -329,13 +329,13 @@ def continue_story():
         "[Essential Story Information]\n" + essential_context +
         ("\n\n[Player Information]\n" + player_information if player_information else "") +
         ("\n\n[Player Equipment]\n" + player_equipment if player_equipment else "") +
+        ("\n\n[Player Skills]\n" + player_skills if player_skills else "") +
         ("\n\n[Story Summary]\n" + summary if summary else "") +
         "\n\n[Past Memories]\n" + memory_block +
         ("\n\n[Relevant Context]\n" + context_cards if context_cards else "") +
         ("\n\n[Recent Player Action]\n" + recent_action if recent_action else "") +
         ("\n\n[Recent Action Outcome]\n" + recent_outcome if recent_outcome else "") +
         "\n\n[Recent Story]\n" + recent_story +
-        ("\n\n[Player Uses Item]\n" + player_item if player_item else "") +
         ("\n\n[Player Action]\n" + player_action if player_action else "") +
         ("\n\n[Action Outcome]\n" + outcome if outcome else "")
     )

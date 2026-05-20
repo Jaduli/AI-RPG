@@ -17,15 +17,12 @@ export default {
 
 <template>
     <div class="skill">
-      <h3>{{ skill.name }} <span class="skill-level">({{ skill.level }})</span></h3>
+      <h3>{{ skill.name }} <span class="skill-level">({{ skill.proficiency }})</span></h3>
 
       <button @click="collapse = !collapse">{{ collapse ? 'Edit' : 'Collapse' }}</button>
       <div v-if="!collapse">          
         <h4>Name</h4>
         <input type="text" v-model="skill.name" maxlength="25" />
-
-        <h4>Content</h4>
-        <textarea v-model="skill.content" />
 
         <button class="btn btn-danger" @click="$emit('remove')">Forget skill</button>
       </div>
@@ -52,7 +49,7 @@ export default {
 .skill button {
   margin-bottom: 10px;
 }
-.skill-type {
+.skill-level {
   font-size: 0.7em;
   color: #aa3bff;
   font-weight: normal;

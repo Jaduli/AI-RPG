@@ -2,7 +2,8 @@
 import ContextCards from './ContextCards.vue';
 import FileMenu from './FileMenu.vue';
 import PlayerCard from './PlayerCard.vue';
-import Inventory from './Inventory.vue';
+import Inventory from './PlayerInventory.vue';
+import Skills from './PlayerSkills.vue';
 import ActionRow from './ActionRow.vue';
 
 // Approximate to 4 characters per token for simple tokens-to-chars conversion.
@@ -16,6 +17,7 @@ export default {
     FileMenu,
     PlayerCard,
     Inventory,
+    Skills,
     ActionRow
   },
   emits: ['loading-changed'],
@@ -52,6 +54,7 @@ export default {
       active_requests: 0,
       memory_cursor: 0,
       summary_cursor: 0,
+      player_section: 'inventory',
       // Recent story content (i.e. content within the context window) 
       // is displayed in the editor
       story_editor_content: '',
@@ -136,6 +139,8 @@ export default {
         let player_action = '';
         let action_type = '';
         let selected_item = null;
+        let selected_skill = null;
+        let outcome = '';
         let use_d20 = false;
 
         // Get RPG elements if relevant
@@ -146,10 +151,15 @@ export default {
 
           player_action = action.player_action;
           selected_item = action.selected_item;
+          selected_skill = action.selected_skill;
           use_d20 = action.use_d20;
           action_type = action.action_type;
 
           is_new_action = player_action !== '';
+
+          if (selected_skill) {
+            outcome = this.$refs.skills.useSkill(selected_skill.id);
+          }
 
           // Reset previous action context when a new action is provided
           if (is_new_action) {
@@ -160,14 +170,14 @@ export default {
 
           // Get player information (as string)
           const player_information = this.$refs.playerCard.getPlayerStr();
-          // Get equipped inventory items (as string)
-          const player_equipment = this.$refs.inventory.getInventoryStr(true);
+          const player_equipment = this.$refs.inventory.getEquipmentStr(selected_item);
+          const player_skills = this.$refs.skills.getSkillsStr();
 
           const rpg_payload = {
-            player_information: player_information,
-            player_equipment: player_equipment,
-            player_action: player_action,
-            player_item: selected_item.name,
+            player_information,
+            player_equipment,
+            player_skills,
+            player_action,
             recent_action: this.recent_action,
             recent_outcome: this.recent_outcome,
             use_d20: this.use_d20,
@@ -222,9 +232,18 @@ export default {
         }
 
         if (gamemode === 'rpg') {
-          // D20 outcome of player action (success, failure, etc.)
+          // D20 action outcome of player action (success, failure, etc.)
           if (data.outcome) {
             this.recent_outcome = data.outcome;
+          }
+          // Skill use outcome 
+          if (outcome) {
+            this.recent_outcome = outcome;
+          }
+
+          // Add XP to used skill (allows level up for skills)
+          if (selected_skill) {
+            this.$refs.skills.addSkillXp(selected_skill.id, outcome);
           }
 
           // Use action/outcome context for a maximum of 3 turns.
@@ -726,7 +745,28 @@ export default {
 
     <div class="container" v-show="active_tab === 'player'">
       <PlayerCard ref="playerCard" />
-      <Inventory ref="inventory" />
+
+      <div class="subtab-header">
+        <button
+          :class="{ active: player_section === 'inventory' }"
+          @click="player_section = 'inventory'"
+        >
+          Inventory
+        </button>
+        <button
+          :class="{ active: player_section === 'skills' }"
+          @click="player_section = 'skills'"
+        >
+          Skills
+        </button>
+      </div>
+      
+      <div v-show="player_section === 'inventory'">
+        <Inventory ref="inventory" />
+      </div>
+      <div v-show="player_section === 'skills'">
+        <Skills ref="skills" />
+      </div>
     </div>
 
     <div class="container" v-show="active_tab === 'sent_context'">
@@ -757,7 +797,8 @@ export default {
   padding-top: 10px;
 }
 
-.tab-header button {
+.tab-header button,
+.subtab-header button {
   background: #1a1a2e;
   color: white;
   border: none;
@@ -767,10 +808,17 @@ export default {
   font-weight: bold;
   margin: 0px;
 }
-.tab-header button:hover {
+
+.subtab-header button {
+  border: 1px solid #aa3bff;
+}
+
+.tab-header button:hover,
+.subtab-header button:hover {
   background: #aa3bff;
 }
-.tab-header button.active {
+.tab-header button.active,
+.subtab-header button.active {
   background: #9a2bef;
   color: white;
   font-weight: bold;
