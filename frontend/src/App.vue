@@ -233,9 +233,9 @@ button:disabled {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   padding-bottom: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .custom-checkbox {

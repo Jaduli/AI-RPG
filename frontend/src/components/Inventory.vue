@@ -126,12 +126,12 @@ export default {
 </script>
 
 <template>
-  <div class="inventory">
-    <div class="header-row">
-      <h2>Add Inventory Item</h2>
-      <button @click="collapse = !collapse">{{ collapse ? 'Expand' : 'Collapse' }}</button>
-    </div>
-    
+  <div class="header-row">
+    <h2>Add Inventory Item</h2>
+    <button @click="collapse = !collapse">{{ collapse ? 'Expand' : 'Collapse' }}</button>
+  </div>
+  
+  <div class="container">    
     <div class="item" v-if="!collapse">
       <h4>Name</h4>
       <input type="text" v-model="name" maxlength="25" />
@@ -163,7 +163,10 @@ export default {
 
       <button @click="addItem">Add Item</button>
     </div>
-    <div class="container">
+  </div>
+
+  <div class="container">
+    <div class="header-row">
       <h2>Inventory</h2>
       <label>Filter: 
         <select v-model="selected_type">
@@ -174,18 +177,18 @@ export default {
           <option value="other">Other</option>
         </select>
       </label>
-
-      <p v-if="sortedItems.length === 0">
-        No Items.
-      </p>
-
-      <InventoryItem
-        v-for="item in sortedItems"
-        :key="item.id"
-        :item="item"
-        @remove="removeItem(item.id)"
-      />
     </div>
+
+    <p v-if="sortedItems.length === 0">
+      No Items.
+    </p>
+
+    <InventoryItem
+      v-for="item in sortedItems"
+      :key="item.id"
+      :item="item"
+      @remove="removeItem(item.id)"
+    />
   </div>
 </template>
 

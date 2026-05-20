@@ -9,3 +9,5 @@ backend/data/*
 .env
 .env.*
 !.env.example
+backend/Dockerfile.local
+docker-compose.local.yml

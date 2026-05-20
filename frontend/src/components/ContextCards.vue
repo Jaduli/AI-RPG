@@ -246,7 +246,7 @@ export default {
         this.loading = true;
 
         // Get story information to use as context for memory generation
-        const story_context =  parent.essential_context;
+        const story_information =  parent.essential_context;
 
         const player = '';
 
@@ -264,7 +264,7 @@ export default {
             model: this.mem_model,
             local: this.use_local,
             gamemode: gamemode,
-            story_context: story_context,
+            story_information: story_information,
             player: player,
             character_name: character.name,
             character_desctiption: character.content,
@@ -310,10 +310,12 @@ export default {
 </script>
 
 <template>
-  <div class="context-cards">
+  <div class="header-row">
     <h2>Add New Card</h2>
     <button @click="collapse = !collapse">{{ collapse ? 'Expand' : 'Collapse' }}</button>
+  </div>
 
+  <div class="container">
     <div class="context-card" v-if="!collapse">
       <h4>Name</h4>
       <input type="text" v-model="name" maxlength="50" />
@@ -349,14 +351,12 @@ export default {
 
       <button @click="addCard" :disabled="loading">Add Card</button>
     </div>
-    <div class="info-container">
-    <h3>Existing Cards</h3>
-    <h4>
-      Cards with keywords matching recent story content will be included as context in story generation.
-      Cards will automatically be saved when edited.
-    </h4>
-    </div>
-    <label>Filter: 
+  </div>
+  
+  <div class="container">
+    <div class="header-row">
+      <h2>Existing Cards</h2>
+      <label>Filter: 
       <select v-model="selected_type">
         <option value="all">All</option>
         <option value="character">Characters</option>
@@ -364,7 +364,8 @@ export default {
         <option value="object">Object</option>
         <option value="other">Other</option>
       </select>
-    </label>
+      </label>
+    </div>
 
     <p v-if="sortedCards.length === 0">
       No Cards.

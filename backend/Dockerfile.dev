@@ -10,12 +10,18 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Better logging for debugging
 ENV PYTHONUNBUFFERED=1
 
+# Location for HuggingFace models
+ENV HF_HOME=/models
+
 COPY requirements.txt .
 
 # Use cache to prevent reinstalling all requirements if one changes
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --upgrade pip && \
     pip install -r requirements.txt
+
+# Pre-download sentence transformer store
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
 
 COPY . .
 

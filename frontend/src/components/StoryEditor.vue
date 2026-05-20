@@ -427,13 +427,8 @@ export default {
         
         const context_cards = this.$refs.contextCards.cards || [];
 
-        let player_information = [];
-        let player_inventory = [];
-
-        if (gamemode === 'rpg') {
-          player_information = this.$refs.playerCard.getPlayer() || [];
-          player_inventory = this.$refs.inventory.getInventory() || [];
-        }
+        const player_information = this.$refs.playerCard.getPlayer() || [];
+        const player_inventory = this.$refs.inventory.getInventory() || [];
 
         // Use POST to save story
         const res = await fetch('/api/save', {
