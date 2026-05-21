@@ -19,15 +19,15 @@ IF STORY INFORMATION IS INCLUDED:
 - Do NOT repeat any already existing character information.
 
 IF GENERATION CONTEXT IS INCLUDED:
-- Stay consistent is appearance and personality of the named character in given context.
-- Include ALL critical character information from context to output (e.g. appearance, personality).
-- Ignore ALL content not directly relating to the named character.
+- Stay consistent in appearance and personality of the named character in given context.
+- Include ALL critical character information from context to output (e.g. appearance, personality...).
+- Ignore ALL content not directly related to the named character.
 - Do NOT include any temporary character thoughts or afflictions.
 OTHERWISE: Create a new character with a unique name.
 
 FORMATTING AND TONE:
 - Use third-person present tense.
-- Keep language evocative but economical — no lists, no tables, no dialogue.
+- No lists, no tables, no dialogue.
 - Avoid mechanical stats or implementation details; focus on narrative use.
 """
 
@@ -52,8 +52,8 @@ IF STORY INFORMATION IS INCLUDED:
 
 IF GENERATION CONTEXT IS INCLUDED:
 - Stay consistent with established content of the named location in given context.
-- Include ALL critical location information from context to output (e.g. region, appearance).
-- Ignore ALL content not directly relating to the named location.
+- Include ALL critical location information from context to output (e.g. region, appearance...).
+- Ignore ALL content not directly related to the named location.
 OTHERWISE: Create a new location with a unique name.
 
 FORMATTING AND TONE:
@@ -82,8 +82,8 @@ IF STORY INFORMATION IS INCLUDED:
 
 IF GENERATION CONTEXT IS INCLUDED:
 - Stay consistent with established content of the named item in given context.
-- Include ALL critical item information from context to output (e.g. appearance, origin).
-- Ignore ALL content not directly relating to the named item.
+- Include ALL critical item information from context to output (e.g. appearance, origin...).
+- Ignore ALL content not directly related to the named item.
 - If the item's use case is simple and clear, keep output length to one or two sentenses.
 - Example output: Bandages can be used to stop bleeding and to prevent infection.
 OTHERWISE: Create a new item with a unique name and description.
@@ -93,7 +93,7 @@ FORMATTING AND TONE:
 - Keep output narrative-focused and ready to drop into a scene.
 - Keep simple items simple. Do NOT add unnecessary details unless they appear in context.
 Examples of simple items: 'Apple', 'Basic Dagger', 'Boar Meat'.
-Examples of complex items: 'Book of Shadows', 'Claymore of Kieran', 'Historical Machine Gun'.
+Examples of complex items: 'Book of Shadows', 'Claymore of Kieran', 'Midnight Pendant'.
 """
 
 # Other creation
@@ -111,8 +111,8 @@ IF STORY INFORMATION IS INCLUDED:
 
 IF GENERATION CONTEXT IS INCLUDED:
 - Stay consistent with established content of the named asset in given context.
-- Include ALL critical asset information from context to output (e.g. appearance, origin).
-- Ignore ALL content not directly relating to the named asset.
+- Include ALL critical asset information from context to output (e.g. appearance, origin...).
+- Ignore ALL content not directly related to the named asset.
 OTHERWISE: Create a new asset with a unique name and description.
 
 CONTENT REQUIREMENTS (WHAT TO INCLUDE):

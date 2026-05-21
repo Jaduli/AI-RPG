@@ -4,27 +4,27 @@ export default {
     return {
       collapse: false,
       name: '',
-      description: ''
+      information: ''
     }
   },
   methods: {
     reset() {
       this.name = '';
-      this.description = '';
+      this.information = '';
     },
-    // Returns player name and description for saving
+    // Returns player name and information for saving
     getPlayer() {
-      return {name: this.name, description: this.description};
+      return {name: this.name, information: this.information};
     },
-    // Returns string of player name and description to use in story generation
+    // Returns string of player name and information to use in story generation
     getPlayerStr() {
       let str = '';
 
       if (this.name) {
         str += 'Player name: ' + this.name + '\n\n';
       }
-      if (this.description) {
-        str += 'Player Description:\n' + this.description;
+      if (this.information) {
+        str += 'Player information:\n' + this.information;
       }
       return str;  
     }
@@ -46,9 +46,9 @@ export default {
       maxlength="50"
     />
 
-    <h2>Description</h2>
+    <h2>Player Information</h2>
     <textarea 
-      v-model="description" 
+      v-model="information" 
       rows="10" 
       placeholder="E.g. age, looks, class, reputation. Always included in story context.">
     </textarea>

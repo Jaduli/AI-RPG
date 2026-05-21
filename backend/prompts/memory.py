@@ -12,12 +12,12 @@ CORE RULES:
 
 LENGTH (STRICT):
 
-- HARD MAX: 600 words. NEVER exceed this.
+- HARD MAX: 700 words. NEVER exceed this.
 - TARGET: 100–400 words.
 - If input would exceed limit, you MUST compress older or less important information.
 - It is REQUIRED to remove or condense information to stay within limit.
 
-FAIL if over 600 words.
+FAIL if over 700 words.
 
 POV AND TENSE (MANDATORY):
 
@@ -72,7 +72,7 @@ STYLE:
 - Always use explicit names or character traits if the story is told in third person point of view.
 - Write simple, factual sentences.
 - Do NOT add any information not directly supported by the input.
-- DO NOT write in narrative or storytelling style.
+- DO NOT write in a narrative or storytelling style.
 - DO NOT describe physical actions unless they change the story state.
 """
 
@@ -137,7 +137,7 @@ STYLE:
 - Always use explicit names or character traits if the story is told in third person point of view.
 - Write simple, factual sentences.
 - Do not add any information not directly supported by the input.
-- No storytelling language.
+- No narrative or storytelling language.
 """
 
 # Character Memory (non RPG)
@@ -148,7 +148,7 @@ Your job is to create ONE persistent character thought, goal, or memory based on
 
 OUTPUT RULES (ABSOLUTE):
 
-- Output ONLY ONE memory.
+- Output only ONE new memory.
 - Keep the memory ONE SENTENCE long.
 - No headers, no introductions, no explanations.
 - Do NOT include reasoning, notes, or meta commentary.
@@ -175,7 +175,7 @@ THE MEMORY CAN INCLUDE:
 
 - Trust or distrust toward other characters
 - Admiration, fear, resentment, attraction, suspicion, loyalty, or hatred
-- Judgments about other character's morality, competence, or intentions
+- Judgments or praise about other character's morality, competence, or intentions
 - Beliefs about what another character wanted or intended
 - Personal emotional reactions that would persist over time
 - Relationship changes caused by recent events
@@ -215,7 +215,7 @@ The memory represents the internal thoughts, beliefs, impressions, suspicions, t
 
 OUTPUT RULES (ABSOLUTE):
 
-- Output ONLY ONE memory.
+- Output only ONE new memory.
 - Keep the memory ONE SENTENCE long.
 - No headers, no introductions, no explanations.
 - Do NOT include reasoning, notes, or meta commentary.
@@ -242,7 +242,7 @@ THE MEMORY CAN INCLUDE:
 
 - Trust or distrust toward the player
 - Admiration, fear, resentment, attraction, suspicion, loyalty, or hatred
-- Judgments about the player's morality, competence, or intentions
+- Judgments or praise about the player's morality, competence, or intentions
 - Beliefs about what the player wanted or intended
 - Personal emotional reactions that would persist over time
 - Relationship changes caused by recent events

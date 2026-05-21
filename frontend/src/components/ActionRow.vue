@@ -32,7 +32,6 @@ export default {
       if (all) {
         this.action_type = 'custom';
         this.selected_item = null;
-        this.selected_skill = null;
         this.new_asset_type = 'other';
         this.new_item_type = 'other';
         this.new_item_equipped = false;
@@ -144,14 +143,6 @@ export default {
     // toggle, and action type. Returns null of no user action is made.
     // Also generates a new asset if action type is set to 'new'.
     async getPlayerAction(recent_story = '') {
-      if (this.action_type === 'new') {
-        // Create new asset before continuing the story
-        await this.createNewAsset(recent_story);
-
-        // Disable D20 for 'new' actions
-        this.use_d20 = false;
-      }
-
       let item = null;
       let skill = null;
       if (this.action_type === 'use') {
@@ -170,6 +161,14 @@ export default {
       // Return null if no user action
       if (!item && !skill && !formatted_action) {
         return null;
+      }
+
+      if (this.action_type === 'new') {
+        // Create new asset before continuing the story
+        await this.createNewAsset(recent_story);
+
+        // Disable D20 for 'new' actions
+        this.use_d20 = false;
       }
 
       return {
@@ -279,14 +278,14 @@ export default {
     </select>
 
     <select class="item-select" v-if="action_type === 'use'" v-model="selected_skill">
-      <option :value="null">Select a skill...</option>
+      <option :value="null">[Skill]</option>
       <option v-for="skill in skills" :key="skill.id" :value="skill">
         {{ skill.name }} ({{ skill.proficiency }})
       </option>
     </select>
 
     <select class="item-select" v-if="action_type === 'use'" v-model="selected_item">
-      <option :value="null">Select an item...</option>
+      <option :value="null">[Item]</option>
       <option v-for="item in inventory" :key="item.id" :value="item">
         {{ item.name }}
       </option>
