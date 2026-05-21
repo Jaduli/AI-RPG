@@ -30,14 +30,14 @@ def get_action_outcome(text):
     """
     Return a random outcome for action.
     Returns one of:
-      - "Success." (20 %)
-      - "Partial success." (20 %)
-      - "Critical success." (10 %)
-      - "Failure." (40 %)
-      - "Critical failure." (10 %)
+      - "success." (20 %)
+      - "partial success." (20 %)
+      - "critical success." (10 %)
+      - "failure." (40 %)
+      - "critical failure." (10 %)
 
     "Advantage" and "disadvantage" words are detected as modifiers in the text  
-    and give +-20 % to success chance (partial success and success adjusted equally).
+    and give +-20 % to success chance.
     """
     if not isinstance(text, str):
         return None
@@ -71,21 +71,21 @@ def get_action_outcome(text):
 
     threshold += crit_failure
     if roll < threshold:
-        return 'Critical failure.'
+        return 'critical failure.'
 
     threshold += failure
     if roll < threshold:
-        return 'Failure.'
+        return 'failure.'
 
     threshold += partial
     if roll < threshold:
-        return 'Partial success.'
+        return 'partial success.'
 
     threshold += success
     if roll < threshold:
-        return 'Success.'
+        return 'success.'
 
-    return 'Critical success.'
+    return 'critical success.'
 
 def call_ai_api(api_url, headers, payload):
     try:

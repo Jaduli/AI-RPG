@@ -149,17 +149,17 @@ export default {
           // a new asset with most recent story as context.
           const action = await this.$refs.actionRow.getPlayerAction(most_recent_content);
 
+          is_new_action = action !== null;
+
           player_action = action.player_action;
           selected_item = action.selected_item;
           selected_skill = action.selected_skill;
           use_d20 = action.use_d20;
           action_type = action.action_type;
 
-          is_new_action = player_action !== '';
-
-          // Get outcome of skill use if a skill was selected for the action
+          // Get skill outcome based on level if a skill was selected for the action
           if (selected_skill) {
-            outcome = this.$refs.skills.useSkill(selected_skill.id);
+            outcome = this.$refs.skills.getSkillOutcome(selected_skill.level);
           }
 
           // Reset previous action context when a new action is provided
@@ -263,7 +263,7 @@ export default {
             this.outcome_counter = 0;
           }
 
-          // Clear action after use without resetting selected item, skill, or action type.
+          // Clear action after use without resetting selected item or action type.
           // This allows player to easily make another action of the same type.
           this.$refs.actionRow.reset(false);
 

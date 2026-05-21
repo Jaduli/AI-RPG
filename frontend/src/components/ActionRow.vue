@@ -23,8 +23,11 @@ export default {
     reset(all = true) {
       this.user_input = '';
 
-      // D20 is generally not used two times consequently
+      // Outcome of D20 and skill actions is kept for three turns
+      // -> skills/D20 should not be used consecutively to let the
+      // action play out.
       this.use_d20 = false;
+      this.selected_skill = null;
       
       if (all) {
         this.action_type = 'custom';
@@ -137,8 +140,9 @@ export default {
 
       return user_input;
     },
-    // Returns formatted player action and values for selected item, D20 toggle,
-    // and action type. Generates a new asset if action type is set to 'new'.
+    // Returns formatted player action and values for selected item, D20 
+    // toggle, and action type. Returns null of no user action is made.
+    // Also generates a new asset if action type is set to 'new'.
     async getPlayerAction(recent_story = '') {
       if (this.action_type === 'new') {
         // Create new asset before continuing the story
@@ -162,6 +166,12 @@ export default {
       }
 
       const formatted_action = this.getFormattedAction(this.user_input);
+
+      // Return null if no user action
+      if (!item && !skill && !formatted_action) {
+        return null;
+      }
+
       return {
         player_action: formatted_action,
         selected_item: item,
@@ -178,19 +188,19 @@ export default {
       const name = this.user_input.trim();
       const contextCards = parent.$refs.contextCards;
 
-      // Get recent story if not already passed in function call
-      if (!recent_story) {
-        recent_story = parent.story_editor_content.split(-1000);
-      }
-
       if (!name) {
         throw new Error('Please set name for new story asset.');
 
         // Show error as status message
         if (only_active) {
-          parent.status_message = 'Please set name for new story asset.';
+          parent.status_message = 'Error: Please set name for new story asset.';
         }
         return;
+      }
+
+      // Get recent story if not already passed in function call
+      if (!recent_story) {
+        recent_story = parent.story_editor_content.split(-1000);
       }
 
       // Clear context if asset name is not found in recent story (i.e. context is irrelevant)
@@ -206,12 +216,8 @@ export default {
       try {
         if (type === 'inventory item') {
           // Generate new item and add to inventory
-          const add = await parent.$refs.inventory.generateInventoryItem(type, name, recent_story, this.new_item_equipped);
+          await parent.$refs.inventory.generateInventoryItem(type, name, recent_story, this.new_item_equipped);
           
-          // Return if errors occur during generation
-          if (!add) {
-            return;
-          }
           // Change status message if this is only active request
           if (only_active && this.new_item_equipped) {
             parent.status_message = `Equipped item '${name}'.`;

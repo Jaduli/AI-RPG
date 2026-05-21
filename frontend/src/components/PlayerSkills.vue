@@ -8,16 +8,14 @@ export default {
       name: '',
       level: 0,
       proficiency: '', // = level as a word, e.g. 'novice'
-      experience: 0,
       skills: []
     }
   },
   components: { Skill },
   methods: {
-    // Add skill with id, name, content, experience, and level
+    // Add skill with id, name, content, level, proficiency, and experience
     addSkill() {
       const level = this.level;
-      const experience = this.level * 1000;
       const proficiency = this.levelToProficiency(level)
 
       const payload = {
@@ -26,16 +24,15 @@ export default {
         content: this.content,
         level,
         proficiency,
-        experience
+        experience: 0
       };
       this.skills.push(payload);
       this.name = '';
       this.content = '';
       this.level = 0;
       this.proficiency = '';
-      this.experience = 0;
     },
-    // Formats a level from 0 to 10 to a matching word.
+    // Formats a level between 0 and 10 to a matching word.
     // Upgrades every 2 levels.
     levelToProficiency(level) {
       switch (true) {
@@ -56,22 +53,24 @@ export default {
       }
     },
     // Returns xp required for level up.
-    // Examples: 0->1 = 400, 1->2 = 600, 5->6 = 1400.
+    // Examples: 0->1 = 400, 1->2 = 606, 5->6 = 1566.
     // With this formula, it takes about (level + 2)
-    // actions to level up.
+    // actions to level up. Some non-linear growth is
+    // applied to make higher levels harder to obtain.
     // It should be noted that success gives higher xp gain,
     // making it easier to get xp on a higher levels.
     getLevelUpThreshold(level) {
-      return 400 + (level * 200);
+      return Math.floor(400 + (level * 200) * (1 + level / 30));
     },
     // Adds xp to skill based on action outcome. Levels up 
-    // skill if xp is over level up threshold.
-    // Returns true if level up, false if not.
+    // skill if xp is over level up threshold. XP is added
+    // but level up is not done if level is 10 (master).
     addSkillXp(id, outcome = '') {
       const skill = this.skills.find(skill => skill.id === id);
       if (!skill) return;
 
-      let gained_xp = 200; // Base xp
+       // Base xp is a random number between 100 and 300
+      let gained_xp = Math.floor(Math.random() * 201) + 100;
 
       // Multiply base xp based on outcome. Failure still gives good xp
       // to make leveling on lower levels easier.
@@ -89,6 +88,8 @@ export default {
 
       skill.experience += gained_xp
 
+      if (skill.level >= 10) return; // No level up beyond 10
+
       if (skill.experience >= xp_required) {
         skill.level += 1;
         // Extra xp is carried to next level
@@ -97,7 +98,7 @@ export default {
       }
     },
     // Returns outcome for skill of given level. Table of probabilities
-    // for each level and outcome can be seen in Project Documentation.
+    // for each level and outcome can be found in Project Documentation.
     getSkillOutcome(level) {
       // Roll between 0-100
       const roll = Math.random() * 100;
@@ -116,8 +117,8 @@ export default {
       // A minimum 15 % chance is still applied.
       const failure = Math.max(15, 50 - level * 4);
 
-      // Substract others from 100 to get partial succes chance.
-      // Value stays around 20 (%).
+      // Substract others from 100 to get partial success chance.
+      // Value stays around 20 %.
       const partial = 100 - crit_success - success - crit_failure - failure;
 
       // Calculate which outcome roll belongs to by making higher 
@@ -138,12 +139,6 @@ export default {
 
       return 'critical success';
     },
-    useSkill(id) {
-      const skill = this.skills.find(skill => skill.id === id);
-      const outcome = this.getSkillOutcome(skill.level);
-
-      return outcome;
-    },
     getSkills() {
       return this.skills;
     },
@@ -153,9 +148,7 @@ export default {
       let str = '[Player Skills & Proficiency]\n';
 
       for (const skill of this.skills) {
-        const proficiency = this.levelToProficiency(skill.level);
-
-        str += `- ${skill.name}, ${proficiency}\n`;
+        str += `- ${skill.name}, ${skill.proficiency}\n`;
       }
       return str;
     },
