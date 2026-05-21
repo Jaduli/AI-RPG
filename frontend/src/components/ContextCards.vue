@@ -90,10 +90,14 @@ export default {
       if (matching.length === 0) return '';
       
       // Format matching cards into a string to be included in the prompt.
-      // Example format
-      // "Colin, character:
-      //  A talented swordsman."
+      // Example formatted character card below.
+      //
+      // Colin, character:
+      // A talented swordsman.
+      // Memories for Colin:
+      // - "I enjoyed my conversation with Luna."
       let card_text = '';
+
       for (const card of matching) {
         card_text += `${card.name}, ${card.type}`;
 
@@ -114,7 +118,7 @@ export default {
             card_text += `Memories for ${card.name}:\n`
             
             for (const memory of random_memories) {
-              card_text += `-  ${memory}\n`;
+              card_text += `-  "${memory}"\n`;
             }
           }
         }
@@ -250,7 +254,7 @@ export default {
         // Get story information to use as context for memory generation
         const story_information =  parent.essential_context;
 
-        const player_name = '';
+        let player_name = '';
 
         if (gamemode === 'rpg') {
           // Get player name from player card

@@ -145,7 +145,7 @@ export default {
     getSkillsStr() {
       if (this.skills.length === 0) return '';
 
-      let str = '[Player Skills & Proficiency]\n';
+      let str = '';
 
       for (const skill of this.skills) {
         str += `- ${skill.name}, ${skill.proficiency}\n`;
