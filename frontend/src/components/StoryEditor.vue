@@ -530,7 +530,7 @@ export default {
         // Get player information
         const player_information = data.player || [];
         this.$refs.playerCard.name = player_information.name || '';
-        this.$refs.playerCard.description = player_information.description || '';
+        this.$refs.playerCard.information = player_information.information || '';
 
         // Reset ActionRow
         this.$refs.actionRow.reset();
