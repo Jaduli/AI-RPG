@@ -15,7 +15,7 @@
         "Lysa",
         "Kingdoms"
       ],
-      "name": "Eldoria",
+      "name": "Kingdom of Eldoria",
       "type": "location"
     },
     {
@@ -27,7 +27,7 @@
         "Anise",
         "Kingdoms"
       ],
-      "name": "Donvard",
+      "name": "Holy Kingdom of Donvard",
       "type": "location"
     },
     {
@@ -41,7 +41,7 @@
       "type": "character"
     },
     {
-      "child_locations": "Oakwood",
+      "child_locations": "Oakwood Village",
       "content": "A Northern Kingdom ruled by King Cairon. Dominated by woods and spirits. Arthinoran people are considered to be loyal and resilient.",
       "id": 1779030002049,
       "keywords": [
@@ -49,7 +49,7 @@
         "Cairon",
         "kingdoms"
       ],
-      "name": "Arthinora",
+      "name": "Kingdom of Arthinora",
       "type": "location"
     },
     {
@@ -59,19 +59,20 @@
       "keywords": [
         "Oakwood"
       ],
-      "name": "Oakwood",
+      "name": "Oakwood Village",
       "parent_location": "Kingdom of Arthinora",
       "type": "location"
     },
     {
-      "content": "A dapper and adventurous young man. Fenn has tousled brown hair, sun-tanned skin, and green eyes. Fenn wears light leather armor and is talented with his bow carved from dark wood.",
+      "content": "A dapper and adventurous young man. Fenn has tousled brown hair, sun-tanned skin, and green eyes. Fenn wears light leather armor and is talented at shooting bows. His most prized possession is his bow carved from a dark oak he once felled with his father.",
       "id": 1779030758848,
       "keywords": [
         "Fenn",
         "Oakwood"
       ],
       "name": "Fenn",
-      "type": "character"
+      "type": "character",
+      "create_memories": false
     },
     {
       "content": "A small but comfortable tavern with a kind but brutish owner, a woman named Maya. Oakwood Tavern offers a place to rest and eat for cheap. Residents of Oakwood often share gossip there.",
@@ -80,7 +81,7 @@
         "Oakwood Tavern"
       ],
       "name": "Oakwood Tavern",
-      "parent_location": "Oakwood",
+      "parent_location": "Oakwood Village",
       "type": "location"
     },
     {
@@ -95,6 +96,10 @@
       "type": "other"
     }
   ],
+  "player": {
+    "name": "Rohan",
+    "description": "You are a knight. You serve King Cairon in the Kingdom of Arthinora."
+  },
   "inventory": [
     {
       "content": "An unassuming but durable sword inherited from your father. Good for slashing, not for much else.",
@@ -132,8 +137,14 @@
       "type": "perishable"
     }
   ],
-  "player": {
-    "name": "Rohan",
-    "description": "You are a knight. You serve King Cairon in the Kingdom of Arthinora."
-  }
+  "skills": [
+    {
+      "id": 1779314453819,
+      "name": "Swordsmanship",
+      "content": "",
+      "level": 4,
+      "proficiency": "intermediate",
+      "experience": 4000
+    }
+  ]
 }

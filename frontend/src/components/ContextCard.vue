@@ -64,14 +64,12 @@ export default {
           <input type="text" v-model="card.keywords" maxlength="200" />
 
           <div v-if="card.type === 'character'">
-            <div class="info-container">
-              <h3>Character Memories</h3>
-            </div>
+            <h3>Character Memories</h3>
 
-            <div class="checkbox-field">
-              <label>Create Character Memories: </label>
-              <input v-model="card.create_memories" type="checkbox" class="custom-checkbox" />
-            </div>
+            <label>Create Character Memories: 
+            <input v-model="card.create_memories" type="checkbox" class="custom-checkbox" />
+            </label>
+
 
             <div v-if="card.create_memories" class="memory-section">
               <button type="button" @click="show_memories = !show_memories">

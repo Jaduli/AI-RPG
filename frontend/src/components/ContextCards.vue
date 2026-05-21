@@ -21,8 +21,7 @@ export default {
       parent_location: '',
       child_locations: '',
       equipped: false,
-      create_memories: true,
-      character_memories: []
+      create_memories: true
     }
   },
   components: { ContextCard },
@@ -204,6 +203,7 @@ export default {
     // Generate and add memories for existing characters found in given content.
     // Each continue action has a set chance of creating a character memory
     // if a character name is found in generated content (default: 30%).
+    // RPG mode uses player information and creates a memory relating to the player.
     async addCharacterMemory(content, chance = 0.3) {
       const parent = this.$parent;
 
@@ -231,9 +231,9 @@ export default {
             character = char;
             break;
           }
-          // Stop if relevant character found
-          if (character) break;
         }
+        // Stop if relevant character found
+        if (character) break;
       }
 
       // Return if no character found
@@ -245,15 +245,16 @@ export default {
       parent.status_message = 'Generating character memory...';
       try {
         this.loading = true;
+        parent.active_requests++;
 
         // Get story information to use as context for memory generation
         const story_information =  parent.essential_context;
 
-        const player = '';
+        const player_name = '';
 
         if (gamemode === 'rpg') {
           // Get player name from player card
-          const player = parent.playerCard.name;
+          player_name = parent.playerCard.name;
         }
 
         const res = await fetch('/api/generate_character_memory', {
@@ -266,7 +267,7 @@ export default {
             local: this.use_local,
             gamemode: gamemode,
             story_information: story_information,
-            player: player,
+            player_name: player_name,
             character_name: character.name,
             character_desctiption: character.content,
             recent_story: recent_story
@@ -294,6 +295,7 @@ export default {
         character.character_memories.push(memory);
       } finally {
         this.loading = false;
+        parent.active_requests--;
       }
     }
   },

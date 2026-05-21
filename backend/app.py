@@ -733,7 +733,7 @@ def generate_character_memory():
     local = data.get('local', False)
     gamemode = data.get('gamemode', '')
     story_information = data.get('story_information', '')
-    player = data.get('player', '')
+    player_name = data.get('player_name', '')
     character_name = data.get('character_name', '')
     character_description = data.get('character_description', '')
     recent_story = data.get('recent_story', '')
@@ -742,12 +742,12 @@ def generate_character_memory():
     
     # Build context for memory
     content += '[Story Information]\n' + story_information + '\n\n'
-    content += '[Player]\nPlayer Name: ' + player + '\n\n'
+    content += '[Player]\nPlayer Name: ' + player_name + '\n\n'
 
     content += '[Character]\nCharacter Name: ' + character_name + '\n'
     content += 'Character Description: ' + character_description + '\n\n'
     
-    content += '\n[Recent Story]\n'
+    content += '[Recent Story]\n'
     content += recent_story
     
     new_memory = ''
