@@ -144,6 +144,7 @@ export default {
   font-size: 0.7em;
   color: #aa3bff;
   font-weight: normal;
+  margin-right: 5px;
 }
 .context-card button {
   margin-bottom: 10px;

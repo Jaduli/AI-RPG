@@ -71,6 +71,7 @@ export default {
   font-size: 0.7em;
   color: #aa3bff;
   font-weight: normal;
+  margin-right: 5px;
 }
 .item-equipped {
   position: absolute;
@@ -78,7 +79,7 @@ export default {
   top: 0;  
   font-size: 0.7em;
   font-weight: normal;
-  margin-left: 10px;
+  margin-left: 5px;
 } 
 .item button {
   margin-bottom: 10px;
