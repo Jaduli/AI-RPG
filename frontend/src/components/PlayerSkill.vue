@@ -23,7 +23,7 @@ export default {
       <div v-if="!collapse">          
         <label>
           Name: 
-          <input type="text" v-model="skill.name" maxlength="25" />
+          <input class="skill-edit" type="text" v-model="skill.name" maxlength="25" />
         </label>
 
         <button class="btn btn-danger" @click="$emit('remove')">Forget skill</button>
@@ -42,8 +42,8 @@ export default {
   flex-direction: column;
   gap: 5px;
 }
-.skill input {
-  width: 70%;
+.skill-edit {
+  width: 50%;
 }
 .skill h4 {
   margin: 3px 0 3px;
