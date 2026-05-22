@@ -1,7 +1,7 @@
 {
   "story_name": "Isekai'd",
   "instructions": "STORYTELLING:\n- Do NOT assume the player knows any information about the world or its characters.",
-  "content": "( What to do before beginning the story: \n\n- Add your information in the 'Player' tab. Feel free to edit your inventory to what you wish to start with.\n\n- Add any skills you're interested in learning in the 'Skills' tab (or add them as they become relevant).\n\n- Replace any information within {} in the story beginning below.\n\n- Lastly, remove all text within the parentheses. Leave only the story beginning in the editor.\n\n- Remember that you can continue the story without a character action! Click the 'Continue' button once or twice before using a character action if you want to set the scene. After each user action, you should let your actions play out before using another one by continuing without a user action. If that sounds confusing, just play the game and figure out your favorite playstyle as you play.\n\nEnjoy the game! )\n\nIt is a day like any other. You are sitting at your computer, trying out some game made by your dear sister. You don't know what to expect: a buggy mess, AI slop, maybe even an actually good game?\n\nBefore you can find out, your world shifts.\n\nYour chair vanishes beneath you. Your stomach lurches as if gravity forgets which direction it belongs to. Sound stretches into a long, deafening hum. For one impossible instant, you glimpse things that should not exist: creatures made of light, water that shimmers like gold, skin that pulses with something other than blood.\n\nThen—\n\nSilence.\n\nYou are no longer home.\n\nNow you are in {choose a beginning location: Oakwood Village, Elventon Harbor, or the Holy City of Donvard}, though you do not know that. You arrive with nothing but the clothes you wear, the phone still in your pocket, and {anything else you have on you, add to inventory}.\n\n",
+  "content": "( What to do before beginning the story: \n\n- Add your information in the 'Player' tab. Feel free to edit your inventory to what you wish to start with.\n\n- Add any skills you're interested in learning in the 'Skills' tab (or add them as they become relevant).\n\n- Replace any information within {} in the story beginning below.\n\n- Lastly, remove all text within the parentheses. Leave only the story beginning in the editor.\n\n- Remember that you can continue the story without a character action! Click the 'Continue' button once or twice before using a character action if you want to set the scene. After each user action, you should let your actions play out before using another one by continuing without a user action. If that sounds confusing, just play the game and figure out your favorite playstyle as you play.\n\nEnjoy the game! )\n\nIt is a day like any other. You are sitting at your computer, trying out some game made by your dear sister. You don't know what to expect: a buggy mess, AI slop, maybe even an actually good game?\n\nBefore you can find out, your world shifts.\n\nYour chair vanishes beneath you. Your stomach lurches as if gravity forgets which direction it belongs to. Sound stretches into a long, deafening hum. For one impossible instant, you glimpse things that should not exist: creatures made of light, water that shimmers like gold, skin that pulses with something other than blood.\n\nThen—\n\nSilence.\n\nYou are no longer home.\n\nNow you are in {choose a beginning location: Oakwood Village, Elventon Harbor, or the Holy City of Donvard}, though you do not know that. You arrive with nothing but the clothes you wear, the phone still in your pocket, and {anything else you have on you, add to inventory}.",
   "summary": "",
   "essential_context": "Story Genres: Fantasy, Adventure.\n\n[World Information]\nWorld name: Pangea.\nPangea is a fantasy world with all kinds of creatures, from forest spirits to hungry wyverns to charming vampires. The most common race is human.\n\nThere are three kingdoms on Pangea.\nIn the North: Arthinora, led by King Rohan.\nIn the East: Donvard, led by elven Queen Lysa.\nIn the West: Eldoria, led by King Lionel.\n\nIn the South: Land of Kha, a desert clan known for their primal ways and use of blood magic. Led by the Khaen, their strongest fighter.\n\nWorld Events:\nKing Lionel of the Holy Kingdom of Donvard has declared war against the Kingdom of Arthinora.\nA dragon has been spotted flying over the hills of Eldoria.\nRumors say the Kha have been attempting to summon the form of an ancient god.",
   "memory_cursor": 0,
@@ -38,7 +38,7 @@
     },
     {
       "content": "A tall man in his fifties with a stature that demands order. Lionel has thinning blond hair and dark brown eyes. Lionel is known for his ruthless, uncaring nature; he takes what he needs no matter the way to get it. He cares little for the tricks of his son, Crown Prince Aylor, or his wife Queen Anise's religious concerns.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779029866153,
       "keywords": [
         "Lionel",
@@ -65,7 +65,7 @@
     {
       "child_locations": "Oakwood Tavern, Briarmarket Lane",
       "content": "A small settlement located in the woods near the border between Arthinora and Donvard. The village is a notable resting spot for those who travel to Arthinora from foreign lands. Its wood-and-stone cabins are unadorned but durable. Its people often craft gifts and perform rituals to appease the spirits that are said to live within the surrounding woods.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779030584611,
       "keywords": [
         "Oakwood"
@@ -77,7 +77,7 @@
     },
     {
       "content": "A dapper and adventurous man in his early twenties. Fenn has tousled brown hair, dark green eyes, and light skin with freckles. Fenn tends to wear light leather armor, and he is talented at shooting. Fenn's most priced possession is a bow carved from a dark oak he once felled with his father. After his father's death, Fenn inherited his family's cabin in Oakwood Village in Arthinora, but he has always felt a calling to explore the world.\n\nFenn's mother was secretly a werewolf, a side which he tries to hide despite Arthinoran's accepting nature towards half-breeds. Fenn fears the full moon and often disappears during it, though few who know him know if he truly is capable of transformation.\n\nFenn's ultimate dream is to one day see a dragon as he believes them to be the coolest thing to ever exist—he could talk for hours about dragons if given the chance, despite knowing little of them. Fenn has a dagger he often uses to carve small trinkets out of wood—sometimes for the forest spirits, sometimes to give as gifts to cheer others up.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779030758848,
       "keywords": [
         "Fenn",
@@ -90,7 +90,7 @@
     {
       "child_locations": "",
       "content": "A small but comfortable tavern with a kind but brutish owner, a woman named Maya. Oakwood Tavern offers a place to rest and eat for cheap. Residents of Oakwood often share gossip there.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779031113687,
       "keywords": [
         "Oakwood Tavern"
@@ -103,7 +103,7 @@
     {
       "child_locations": "Temple of the Golden Flame, The Royal Palace, The Explorer's Guild, The Sewers, House of Great Pleasures",
       "content": "The Holy City of Donvard is a sacred city built in a rugged valley. At the city's heart lies the magnificent Temple of the Golden Flame, a soaring structure dedicated to the worship of the Holy One, said to hold the power of purification within his radiating flame that burns eternally at the temple's apex. On the outskirts, refugees and outsiders live in slums often ignored by the royalty.\n\nThe city is alive with anticipation, as news of King Lionel's declaration spreads fear and determination among its inhabitants. Priests perform ritualistic cleansing rites to protect their city from impending conflict, while mercenaries and knights gather at the city gates, eager to depart for the battlefields. The Shine of the Kingdom, Prince Aylor, has been seen performing strange rituals within the Royal Palace's walls.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779379987498,
       "keywords": [
         "City of Donvard"
@@ -115,7 +115,7 @@
     },
     {
       "content": "The Temple of the Golden Flame is a grand, sun-scorched temple complex in the heart of the Holy City of Donvard. Its gleaming gold-stone architecture stands out amidst the arid landscape, reflecting the intense sunlight that bathes the surrounding dunes. At its center lies the eternal golden flame.\n\nThe temple is a hub for Donvard's devout followers, who flock here to pray for victory and bask in the radiance of the Golden Flame. Rumors whisper that the flame has begun to flicker ominously, as if sensing the tumultuous fate of their kingdom. Within the temple walls, monks train in martial arts and weave potent spells, fueling tensions between those who see the war effort as righteous sacrifice and those who view it as reckless aggression.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779380516018,
       "keywords": [
         "Golden Flame"
@@ -127,7 +127,7 @@
     },
     {
       "content": "The Royal Palace in Donvard is a grand fortress with gleaming white stone walls, surrounded by towering spires that pierce the grey Donvardian sky. The palace's main entrance, adorned with the symbol of the Holy Kingdom's golden sun, is flanked by imposing stone statues of lions. At night, torches and lanterns illuminate the cobblestone streets within the palace walls, casting a warm glow over the bustling crowds of knights, advisors, and guardsmen hurrying to attend to their duties.\n\nThe palace is known to host glamorous events, and the bravest and most ambitious of individuals are often invited. Prince Aylor, the Shine of the Kingdom, can often be seen performing rituals at night—some holy, others questionable.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779381373575,
       "keywords": [
         "Royal Palace"
@@ -162,7 +162,7 @@
     },
     {
       "content": "The Explorer's Guild is a storied institution in the heart of Donvard, its imposing stone façade bearing witness to countless quests and expeditions. Inside, rows of dusty maps line the walls, alongside an assortment of curious trinkets and relics gathered from far-flung corners of Pangea, each one telling a tale of bravery and perseverance. At the center of this treasure trove, Guildmaster Edgar stands tall, his piercing blue eyes always scanning the assembly for the next worthy adventurer.\n\nThis hub of Donvard's exploratory endeavors has long been a thorn in King Lionel's side, as Guildmaster Edgar remains committed to fostering understanding between nations through cooperation and mutual respect.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779382260280,
       "keywords": [
         "Explorer's Guild"
@@ -187,7 +187,7 @@
     },
     {
       "content": "The hidden passages beneath the city's streets, known as The Sewers, are a labyrinthine network of tunnels and chambers. As one navigates through its narrow alleys and caverns, the air grows thick with the stench of mold, damp earth, and something faintly sweet, hinting at the presence of dark magic. Rebels, spies, and secret societies all find hiding places among the crumbling structures.\n\nRumors swirl that some brave (or foolhardy) souls have begun to excavate hidden chambers deep within the sewers' depths, seeking long-lost artifacts and forbidden knowledge.\n\nNotable Characters: Lady Orc Jehane, Spy Malin",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779382844206,
       "keywords": [
         "the sewers"
@@ -284,7 +284,7 @@
     {
       "child_locations": "Moonlight Market, The Violet Assembly Hall, The Brineforge Yards, Serpentine Catacombs",
       "content": "Elventon Harbor is a bustling seaside port town located next to the Great Violet Sea in Eldoria. The ancient, weathered buildings seem to lean against one another, their wooden facades bearing intricate carvings of mermaids and sea serpents. A large stone statue of the long-forgotten elven King Maric stands sentinel over the harbor entrance, its eyes said to weep saltwater tears whenever a ship carrying Eldorian sailors sets sail for The Violet Reach, a dangerous section of sea beyond the harbor known for whirlpools, sea serpents, and disappearances.\n\nAs word spreads of the dragon's sighting over the hills, Elventon Harbor is abuzz with worried chatter and preparations for potential battle, and for prayers of a sacred hero to save the town. The town's inhabitants are predominantly elven Eldorians, fiercely proud of their history and craftsmanship.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779385817424,
       "keywords": [
         "Elventon",
@@ -297,7 +297,7 @@
     },
     {
       "content": "The Violet Assembly Hall is a majestic, ornate hall nestled among the dockside taverns and warehouses. Its intricately carved wooden façade glows with a soft, ethereal light emanating from within, illuminating the busy harbor streets at dusk. A sprawling silverwood tree, its branches adorned with tiny lanterns, towers above the Assembly Hall's central entrance.\n\nBuilt by the ancient elven councilors of Elventon as a sanctuary for travelers and diplomats alike, the Violet Assembly Hall has long been a hub for interkingdom negotiations and clandestine meetings. Despite the brewing war between Donvard and Arthinora, its hallowed halls remain a beacon of hope for peaceful resolutions, attracting envoys from far-flung lands seeking to broker fragile alliances amidst the gathering storm.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779386005404,
       "keywords": [
         "Assembly Hall"
@@ -357,7 +357,7 @@
     },
     {
       "content": "A narrow trading street where hunters, herbalists, trappers, and wandering merchants gather. Briarmarket Lane is a winding, cobblestone alleyway in the heart of Oakwood. Shuttered market stalls and timber-framed shops line its sides, their wooden signs creaking in the gentle breeze that wafts from the nearby forest. Amidst the bustle, the distinctive aroma of roasting chestnuts mingles with the scent of freshly brewed ale, drawing patrons to the cozy Briar's End tavern at the lane's far end.\n\nThis ancient thoroughfare has borne witness to Oakwood's history, from the village's early days as a humble trading post to its current status as a haven for travelers and artisans. Its proximity to the forest has also made it a hub for local hunters and woodworkers, who frequently meet with buyers at Briar's End or other nearby stalls.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779389251861,
       "keywords": [
         "Briarmarket"
@@ -381,7 +381,7 @@
     },
     {
       "content": "The ancient fortress walls of the Castle of Arthinora rise imposingly from the craggy hillside, a testament to the kingdom's rich history. A squat keep at its center, flanked by four watchtowers, guards the high gates adorned with the emblem of a black boar. The rugged exterior hides elegant halls and chambers within, where stone carvings depict the epic deeds of Arthinora's legendary founders, the royal family that is said to be watched by the spirits of the nearby Spiritwoods.\n\nAs a symbol of Arthinora's resilience, the castle has weathered countless battles against invading forces, yet time after time its invaders seem to face mysterious misfortunes. Castle guards, humans, half-orcs, and other breeds, stand watch over battlements worn smooth by generations of garrisons.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779390243731,
       "keywords": [
         "Castle of Arthinora"
@@ -405,7 +405,7 @@
     },
     {
       "content": "The Great Violet Sea is a majestic expanse of violet water, its surface shimmering with an otherworldly golden sheen. Historically, this was a sacred site for the ancient Eldorians, who believed that the sea's regal color held the essence of true power. The water is home to strange and rare creatures, such as the bioluminescent fish that light up the darkness at night. Fishermen claim to have seen these enchanted fish guiding lost sailors safely back to shore. Some say that the Great Violet Reach, the area beyond known seas, holds creatures that few men can see without becoming enchanted or killed.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779391052181,
       "keywords": [
         "Sea"
@@ -417,7 +417,7 @@
     },
     {
       "content": "A serene, mystical forest near the Castle of Arthinora. Towering trees, their trunks adorned with intricately carved wooden symbols, stretch towards the sky, while delicate vines weave through the branches like ethereal tapestries. A grand stone statue of Queen Ariana, Arthinora's spirit-blessed founder, stands sentinel at the forest's heart. The air is alive with whispers of ancient magic, drawing forest spirits and dryads to this sacred place where the queen once communed with nature. Despite the war raging beyond its borders, the Spiritwoods remain a sanctuary for those seeking solace in their connection to the natural world, though many say that only those of the Arthinora's royal line can ever return—the spirits may play tricks on those they consider unworthy, trapping their souls forever.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779391246289,
       "keywords": [
         "Spiritwoods"
@@ -429,7 +429,7 @@
     },
     {
       "content": "The labyrinthine Serpentine Catacombs lie hidden beneath Elveton Harbor's docks, their entrance guarded by two massive stone serpents. Within, the air is heavy with the scent of damp earth and old magic, as flickering torches cast eerie shadows on the walls. These subterranean tunnels have been a hub for secret meetings between smugglers and revolutionaries, drawing in those seeking to circumvent the sheen of the lands above.\n\nFor centuries, the Catacombs have played host to whispered plots and illicit trade, but the recent influx of rumors about an old god's awakening has many believing the tunnels will soon become a front in the coming conflict. Kha spies are said to move unseen through these corridors, searching for people or powerful artifacts to aid their dark summoning.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779391425899,
       "keywords": [
         "Serpentine",
@@ -478,7 +478,7 @@
     },
     {
       "content": "A lavish tavern and theater complex in the heart of Donvard's capital city, known for its extravagant entertainment and subtle intrigue. The grand building boasts ornate wooden facades, stained glass windows, and a sweeping marble staircase, illuminated by twinkling lanterns that cast a warm glow on the cobblestone streets. A sprawling garden to one side features beautifully manicured hedges, whispering fountains, and statues of ancient mythological figures, while an elegant concert hall occupies the rear of the property.\n\nFew know of the House of Pleasure's lower floors, where all are made to wear masks, and no speak of what happens there can be shared with the outside world.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779392645940,
       "keywords": [
         "House of Great Pleasures"
@@ -502,7 +502,7 @@
     },
     {
       "content": "A bustling hub of activity on the docks of Elventon Harbor. The smell of saltwater and exotic spices fills the air as vendors from all corners of Pangea hawk their wares to eager buyers. Towering above the stalls stands the grand ship, \"Moonwhisper's Fury\", its three masts proudly bearing the flag of Violet Dove of Eldoria.\n\nAs tensions rise between Arthinora and Donvard, some Eldorian sailors take advantage of the chaos to smuggle contraband into the kingdom. Local authorities turn a blind eye, allowing the illicit trade to flourish under the cover of night. The whispers of an impending war fuel paranoia among the population, but for now, merchants continue to haggle over goods, and rumors spread like wildfire through the crowded streets. A small stray wyvern is rumored to be nesting in the nearby harbor, causing some vendors to seek a man brave enough to defeat it.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779392984916,
       "keywords": [
         "Moonlight Market"
@@ -551,7 +551,7 @@
     },
     {
       "content": "Darkwood Manor is a foreboding, ancient estate shrouded in perpetual twilight. Towering cypress trees encircle its walls, their branches tangled like skeletal fingers. In the distance, a faint howling echoes through the darkness, as if the very woods themselves were lamenting the presence of this vampire stronghold. Darkwood Manor has been a refuge for creatures of the night for centuries, its stone façade bearing witness to countless midnight gatherings and clandestine rituals.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779394376334,
       "keywords": [
         "Darkwood Manor"
@@ -564,12 +564,9 @@
     {
       "child_locations": "Darkwood Manor",
       "content": "The Road of Winding Fate is a treacherous mountain pass in the northern kingdom of Arthinora, notorious for its steep cliffs that lead to the Northern Mountains. A colossal stone statue of the Boar's Fury stands guard at the midpoint of the pass, its eyes glowing like embers as it surveys the valleys below. This pivotal route connects the eastern valleys to Arthinora's capital city and has borne witness to centuries of turmoil, as Arthinoran clans have clashed with Donvardian invaders and Southern raiders alike.\n\nThe roads are often contested by roving packs of goblin and dwarf warriors, and the occasional fearsome wyvern. Some travelers talk of a hidden manor near the road, said to hold creatures that drink red and never see the light.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779394693506,
-      "keywords": [
-        "Roads of Arthinora",
-        "Winding Fate"
-      ],
+      "keywords": "Winding Fate, Roads of Arthinora",
       "memories": [],
       "name": "The Road of Winding Fate",
       "parent_location": "Arthinora",
@@ -578,7 +575,7 @@
     {
       "child_locations": "The Weeping Pines, The Great Stone Bridge",
       "content": "A network of sun-kissed highways that stretch across the lands of Eldoria. It is said that if one could see them from above, the roads would form the image of a rose bush. The roads are often patrolled by elven guards who work to withhold peace for safe travel, though some say that the elves' greed can make the guards look the other way if paid well. Many merchants and travelers cross the golden roads, often preferring them to that of the roads near the kingdom borders. Crossing the Great Stone Bridge is the fastest way to travel between Donvard and Eldoria.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779395815625,
       "keywords": [
         "Golden Roads"
@@ -590,7 +587,7 @@
     },
     {
       "content": "A majestic archway that spans the Silverbrook River between Donvard and Eldoria. A lone stone pedestal stands sentinel at the bridge's center, worn smooth by countless pilgrims' reverent hands, where a delicate silver bell seems to whisper prayers on the wind.\n\nThe Great Stone Bridge has stood witness to generations of Donvard's royal families crossing into Eldoria for alliances and diplomacy, though now its tranquility is disrupted by war drums beating in Arthinora. Travelers passing beneath the bridge speak of visions seen in the river's dark depths: a serpent coiled about the kingdom's heart, its scales glinting with a malevolent fire that seems to pulse with every heartbeat.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779395937255,
       "keywords": [
         "Great Stone Bridge",
@@ -602,12 +599,12 @@
       "type": "location"
     },
     {
-      "content": "The rugged white peak of The Silver Mountain stands sentinel against the grey skies, its granite surface weathered into a labyrinth of gleaming silver streaks and fissures that echo with ancient energy. No man has yet climbed the treacherous mountain as it is said to be ruled by the ancient spirits of Arthinoran royals.",
-      "create_memories": false,
+      "content": "Located in the most northern part of Pangea, the rugged white peak of Silver Mountain stands sentinel against the grey skies, its granite surface weathered into a labyrinth of gleaming silver streaks and fissures that echo with ancient energy. No man has yet climbed the treacherous mountain as it is said to be ruled by the ancient spirits of Arthinoran royals.",
+      "create_memories": true,
       "id": 1779396246861,
       "keywords": [],
       "memories": [],
-      "name": "The Silver Mountain",
+      "name": "Silver Mountain",
       "parent_location": "Arthinora",
       "type": "location"
     },
@@ -671,7 +668,7 @@
     },
     {
       "content": "A Werewolf territory located in a rugged expanse of wilderness in northern Arthinora. A dense thicket of pine trees dominates the landscape. The werewolves of this territory have learned to live in harmony with the land, their howls carrying on the wind at dawn and dusk.\n\nTheir existence is marked by a truce with King Rohan of Arthinora—the werewolves provide valuable hunting services for his kingdom in exchange for protection from human persecution. The Ironhart pack's leader, Alpha Warren, is a master strategist who walks a fine line between loyalty to Arthinora and allegiance to the pack's independence.",
-      "create_memories": false,
+      "create_memories": true,
       "id": 1779398233727,
       "keywords": [
         "Ironhart",

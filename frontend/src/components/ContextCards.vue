@@ -226,8 +226,8 @@ export default {
       return;
     },
     // Generate and add memories for existing context cards found in given content.
-    // Each continue action has a set chance of creating a memory
-    // if a card name is found in generated content (default: 30%).
+    // The first keyword is used for matching. Each continue action has a set chance
+    // of creating a memory if a card name is found in generated content (default: 30%).
     // RPG mode uses player information and creates a memory relating to the player.
     async addCardMemory(recent_story, type, chance = 0.3) {
       const parent = this.$parent;
@@ -246,24 +246,21 @@ export default {
       let card = null;
       const normalized_text = this.normalizeForMatch(recent_story);
 
-      // Try to find one relevant card from text
+      // Try to find one relevant card from text with the FIRST keyword.
+      // This avoids triggering the card e.g. if a character has the keyword
+      // of their home location.
       for (const c of cards) {
         if (c.keywords.length === 0) continue; // skip empty keyword fields
 
-        // Check if any card keyword is found in recent story
-        for (const keyword of c.keywords) {
-          let kw = (keyword || '').trim().toLowerCase();
-          if (!kw) continue;
+        // Check if first card keyword is found in recent story
+        let kw = (c.keywords[0] || '')
+        if (!kw) continue;
 
-          kw = this.normalizeForMatch(kw);
+        kw = this.normalizeForMatch(kw);
 
-          if (normalized_text.includes(kw)) {
-            card = c;
-            break;
-          }
+        if (normalized_text.includes(kw)) {
+          card = c;
         }
-        // Stop if relevant card found
-        if (card) break;
       }
 
       // Return if no card found

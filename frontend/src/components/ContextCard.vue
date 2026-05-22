@@ -78,6 +78,12 @@ export default {
               </button>
 
               <div v-if="show_memories" class="memory-list">
+                <label>Keyword for memory generation: {{ card.keywords[0] }}.
+                  <span title="The first set keyword will be used to generate memories.">
+                    ⓘ
+                  </span>
+                </label>
+
                 <p v-if="!card.memories || card.memories.length === 0">
                   No memories.
                 </p>
