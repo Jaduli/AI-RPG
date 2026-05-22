@@ -22,7 +22,7 @@ export default {
   computed: {
     keywordsString: {
       get() {
-        return Array.isArray(this.card.keywords) ? this.card.keywords.join(', ') : this.card.keywords;
+        return Array.isArray(this.card.keywords) ? this.card.keywords.join(',') : this.card.keywords;
       },
       set(value) {
         this.card.keywords = value.split(',');
@@ -61,7 +61,7 @@ export default {
           </div>
 
           <h4>Keywords (comma-separated)</h4>
-          <input type="text" v-model="card.keywords" maxlength="200" />
+          <input type="text" v-model="keywordsString" maxlength="200" />
 
           <div v-if="card.type === 'character' || card.type === 'location'">
             <h3>Memories</h3>
