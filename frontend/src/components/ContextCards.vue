@@ -35,7 +35,7 @@ export default {
         name: this.name,
         type: type,
         content: this.content,
-        
+        keywords: this.keywords
       };
       if (type === 'location') {
         payload.parent_location = this.parent_location.trim();
@@ -45,7 +45,11 @@ export default {
         payload.create_memories = this.create_memories;
         payload.memories = [];
       }
-      payload.keywords = this.keywords.split(',')
+      // Split, trim, and remove empty keywords to avoid accidental empty-string matches
+      payload.keywords = this.keywords
+        .split(',')
+        .map(k => k.trim())
+        .filter(k => k.length > 0);
       
       this.cards.push(payload);
       this.name = '';
@@ -53,20 +57,35 @@ export default {
       this.keywords = '';
       this.child_locations = '';
     },
+    // Function to normalize strings for matching keywords in story content. 
+    // It lowercases the string, removes punctuation, and adds spaces at the 
+    // start and end to prevent partial word matches.
+    // Function made with ChatGPT-5.
+    normalizeForMatch(str) {
+      return ' ' + (str || '').toLowerCase()
+        .replace(/[^\p{L}\p{N}\s']/gu, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() + ' ';
+    },
     // Get matching context cards based on keywords in recent story content.
     // Cards are formatted to a string to be used in story generation.
     // If card type is character and its memories are enabled, up to 3 random
     // memories of given character are added as context.
     getMatchingContextCardsStr(text) {
-      const lower_text = text.toLowerCase();
       const matching = [];
+      const normalized_text = this.normalizeForMatch(text);
 
       for (const card of this.cards) {
         if (card.keywords.length === 0) continue; // skip empty keyword fields
 
         // Check if any keyword is in the text
         for (const keyword of card.keywords) {
-          if (lower_text.includes(keyword.trim().toLowerCase())) {
+          let kw = (keyword || '').trim().toLowerCase();
+          if (!kw) continue; // skip empty keywords
+
+          kw = this.normalizeForMatch(kw);
+
+          if (normalized_text.includes(kw)) {
             const payload = {
               name: card.name || '',
               type: card.type || '',
@@ -225,7 +244,7 @@ export default {
       cards = [...cards].sort(() => Math.random() - 0.5)
 
       let card = null;
-      const lower_content = recent_story.trim().toLowerCase();
+      const normalized_text = this.normalizeForMatch(recent_story);
 
       // Try to find one relevant card from text
       for (const c of cards) {
@@ -233,7 +252,12 @@ export default {
 
         // Check if any card keyword is found in recent story
         for (const keyword of c.keywords) {
-          if (lower_content.includes(keyword.trim().toLowerCase())) {
+          let kw = (keyword || '').trim().toLowerCase();
+          if (!kw) continue;
+
+          kw = this.normalizeForMatch(kw);
+
+          if (normalized_text.includes(kw)) {
             card = c;
             break;
           }

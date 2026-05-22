@@ -107,7 +107,6 @@ export default {
       }
       try {
         this.active_requests++;
-        this.status_message = 'Continuing story...';
 
         // Sync content with editor for any user edits before continuing story
         this.syncContentWithEditor();
@@ -120,11 +119,13 @@ export default {
         
         // Use 30 % chance to create new memory for one relevant character or location is
         // found in most recent story content (if memory creation is enabled for asset). 
-        await this.$refs.contextCards.addCardMemory(most_recent_content, 'character', 0.2);
+        await this.$refs.contextCards.addCardMemory(most_recent_content, 'character', 0.3);
 
         // As location names appear less frequently in story content than characters, 
         // use a higher chance to create a new memory.
-        await this.$refs.contextCards.addCardMemory(most_recent_content, 'location', 0.4);
+        await this.$refs.contextCards.addCardMemory(most_recent_content, 'location', 0.5);
+
+        this.status_message = 'Continuing story...';
 
         let payload = {
           story_id: this.story_id,

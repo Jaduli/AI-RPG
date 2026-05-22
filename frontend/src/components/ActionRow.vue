@@ -146,6 +146,7 @@ export default {
     async getPlayerAction(recent_story = '') {
       let item = null;
       let skill = null;
+      
       if (this.action_type === 'use') {
         item = this.selected_item;
         skill = this.selected_skill;

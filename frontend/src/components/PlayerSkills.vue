@@ -148,7 +148,7 @@ export default {
       let str = '';
 
       for (const skill of this.skills) {
-        str += `- ${skill.name}, ${skill.proficiency}\n`;
+        str += `- ${skill.name}, ${skill.proficiency}.\n`;
       }
       return str.trim();
     },
