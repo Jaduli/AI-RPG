@@ -189,22 +189,20 @@ export default {
       const contextCards = parent.$refs.contextCards;
 
       if (!name) {
-        throw new Error('Please set name for new story asset.');
-
         // Show error as status message
         if (only_active) {
           parent.status_message = 'Error: Please set name for new story asset.';
         }
-        return;
+        throw new Error('Please set name for new story asset.');
       }
 
       // Get recent story if not already passed in function call
       if (!recent_story) {
-        recent_story = parent.story_editor_content.split(-1000);
+        recent_story = parent.story_editor_content.slice(-1000);
       }
 
       // Clear context if asset name is not found in recent story (i.e. context is irrelevant)
-      if (!recent_story.toLowerCase().includes(name.toLowerCase())) {
+      if (typeof(recent_story) !== 'string' || !recent_story.toLowerCase().includes(name.toLowerCase())) {
         recent_story = '';
       }
 
@@ -215,8 +213,10 @@ export default {
 
       try {
         if (type === 'inventory item') {
+          const item_type = this.new_item_type;
+
           // Generate new item and add to inventory
-          await parent.$refs.inventory.generateInventoryItem(type, name, recent_story, this.new_item_equipped);
+          await parent.$refs.inventory.generateInventoryItem(item_type, name, recent_story, this.new_item_equipped);
           
           // Change status message if this is only active request
           if (only_active && this.new_item_equipped) {
@@ -292,20 +292,24 @@ export default {
       </option>
     </select>
 
-    <select class="type-select" v-if="action_type === 'new'" v-model="new_asset_type">
-      <option value="other">Other</option>
-      <option value="character">Character</option>
-      <option value="location">Location</option>
-      <option value="item">Item (context card)</option>
-      <option value="inventory item">Item (inventory)</option>
-    </select>
+    <div v-if="action_type === 'new'">
+      <select class="type-select" v-model="new_asset_type">
+        <option value="other">Other</option>
+        <option value="character">Character</option>
+        <option value="location">Location</option>
+        <option value="item">Item (context card)</option>
+        <option value="inventory item">Item (inventory)</option>
+      </select>
 
-    <select class="type-select" v-if="new_asset_type === 'inventory item'" v-model="new_item_type">
-      <option value="other">Other</option>
-      <option value="perishable">Perishable</option>
-      <option value="weapon">Weapon</option>
-      <option value="apparel">Armor/apparel</option>
-    </select>
+      <select class="type-select" 
+      v-if="new_asset_type === 'inventory item'" 
+      v-model="new_item_type">
+        <option value="other">Other</option>
+        <option value="perishable">Perishable</option>
+        <option value="weapon">Weapon</option>
+        <option value="apparel">Armor/apparel</option>
+      </select>
+    </div>
 
     <input
       v-model="user_input"
@@ -314,27 +318,29 @@ export default {
       :placeholder="inputPlaceholder"
     />
 
-    <label v-if="new_asset_type === 'inventory item' && new_item_type !== 'perishable'">
-      ⚔️: 
-      <input
-        v-model="new_item_equipped"
-        type="checkbox"
-        class="custom-checkbox"
-        title="Equip item."
-      />
-    </label>
+    <div v-if="action_type === 'new'">
+      <label v-if="new_asset_type === 'inventory item' && new_item_type !== 'perishable'">
+        ⚔️: 
+        <input
+          v-model="new_item_equipped"
+          type="checkbox"
+          class="custom-checkbox"
+          title="Equip item."
+        />
+      </label>
 
-    <label v-if="new_asset_type === 'character' || new_asset_type === 'location'">
-      📖: 
-      <input
-        v-model="new_create_memories"
-        type="checkbox"
-        class="custom-checkbox"
-        title="Enable memory generation for context card."
-      />
-    </label>
+      <label v-if="new_asset_type === 'character' || new_asset_type === 'location'">
+        📖: 
+        <input
+          v-model="new_create_memories"
+          type="checkbox"
+          class="custom-checkbox"
+          title="Enable memory generation for context card."
+        />
+      </label>
 
-    <button v-if="action_type === 'new'" @click="createNewAsset()" :disabled="loading">Add</button>
+      <button @click="createNewAsset()" :disabled="loading">Add</button>
+    </div>
 
     <label v-if="action_type !== 'new' && selected_skill === null">
       <input 
