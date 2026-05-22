@@ -153,8 +153,8 @@ export default {
             local: this.use_local,
             type: this.type,
             name: this.name,
-            story_information: story_information,
-            recent_story: recent_story
+            story_information,
+            recent_story
           })
         });
         const data = await res.json();
@@ -210,10 +210,8 @@ export default {
     // Each continue action has a set chance of creating a memory
     // if a card name is found in generated content (default: 30%).
     // RPG mode uses player information and creates a memory relating to the player.
-    async addCardMemory(content, type, chance = 0.3) {
+    async addCardMemory(recent_story, type, chance = 0.3) {
       const parent = this.$parent;
-
-      // Get story content and gamemode from StoryEditor
       const gamemode = parent.gamemode; // Gamemode affects generation prompt
 
       // Get context cards of given type with memory creation turned on
@@ -227,13 +225,13 @@ export default {
       cards = [...cards].sort(() => Math.random() - 0.5)
 
       let card = null;
-      const lower_content = content.trim().toLowerCase();
+      const lower_content = recent_story.trim().toLowerCase();
 
       // Try to find one relevant card from text
       for (const c of cards) {
         if (c.keywords.length === 0) continue; // skip empty keyword fields
 
-        // Check if any card keyword is found in content
+        // Check if any card keyword is found in recent story
         for (const keyword of c.keywords) {
           if (lower_content.includes(keyword.trim().toLowerCase())) {
             card = c;
@@ -283,7 +281,7 @@ export default {
             card_type: card.type,
             card_name: card.name,
             card_description: card.content,
-            recent_story: recent_story
+            recent_story
           })
         });
         const data = await res.json();

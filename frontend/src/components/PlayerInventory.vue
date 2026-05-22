@@ -93,7 +93,7 @@ export default {
             type: 'item',
             name: name,
             story_information: story_information,
-            recent_story: recent_story
+            recent_story
           })
         });
         const data = await res.json();

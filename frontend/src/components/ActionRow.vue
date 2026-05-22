@@ -95,7 +95,7 @@ export default {
       // If action type is new, story is continued with appropriate
       // user action for given story asset.
       if (type === 'new') {
-        asset_type = this.new_asset_type;
+        const asset_type = this.new_asset_type;
         
         if (asset_type === 'inventory item') {
           if (this.new_item_equipped) {
@@ -119,14 +119,6 @@ export default {
         user_input += '.';
       }
 
-      if (type === 'say') {
-        // Add quotes to dialogue
-        if (!user_input.endsWith('"') || !user_input.startsWith('"')) {
-          user_input = '"' + user_input + '"'
-        }
-        return 'You say ' + user_input;
-      }
-
       if (type === 'do') {
         // Add "You" if missing (e.g. open the door -> You open the door)
         if (!/^you\b/i.test(user_input)) {
@@ -136,6 +128,14 @@ export default {
 
       // Capitalize first letter
       user_input = user_input.charAt(0).toUpperCase() + user_input.slice(1);
+
+      if (type === 'say') {
+        // Add quotes to dialogue
+        if (!user_input.endsWith('"') || !user_input.startsWith('"')) {
+          user_input = '"' + user_input + '"'
+        }
+        return 'You say ' + user_input;
+      }
 
       return user_input;
     },
@@ -210,7 +210,7 @@ export default {
       // Use active_requests to disable buttons
       parent.active_requests++;
       this.loading = true;
-      parent.status_message = 'Generating new asset...';
+      parent.status_message = `Generating new ${type}...`;
 
       try {
         if (type === 'inventory item') {
@@ -235,7 +235,7 @@ export default {
           parent.status_message = `Created new ${type} card called '${name}'.`;
         }
         else if (only_active) {
-          parent.status_message = `Created new card called '${name}'.`;
+          parent.status_message = `Created new context card called '${name}'.`;
         }
         // Reset input for next action
         this.reset(false);
