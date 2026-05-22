@@ -18,14 +18,13 @@ export default {
 <template>
     <div class="item">
       <h3>
+        <label class="item-equipped" v-if="item.type !== 'perishable'">
+          Equipped: 
+          <input v-model="item.equipped" type="checkbox" class="custom-checkbox" />
+        </label>
         <span class="item-name">{{ item.name }}</span>
         <span class="item-type">({{ item.type }})</span>
       </h3>
-
-      <label v-if="item.type !== 'perishable'">
-        Equipped: 
-        <input v-model="item.equipped" type="checkbox" class="custom-checkbox" />
-      </label>
 
       <button @click="collapse = !collapse">{{ collapse ? 'Edit' : 'Collapse' }}</button>
       <div v-if="!collapse">          
@@ -73,12 +72,13 @@ export default {
   color: #aa3bff;
   font-weight: normal;
 }
-.item label {
+.item-equipped {
   position: absolute;
   left: 0;
   top: 0;  
   font-size: 0.7em;
   font-weight: normal;
+  margin-left: 10px;
 } 
 .item button {
   margin-bottom: 10px;
