@@ -440,7 +440,8 @@ def summarize():
                 "num_predict": 1000, # Token limit to prevent unnecessarily long responses
                 "num_ctx": 8192 # Use 8k input token limit
             },
-            "stream": False
+            "stream": False,
+            "keep_alive": "30m" # Keep the connection alive for 30 minutes to allow faster subsequent calls
         })
 
         if response.status_code == 200:
@@ -537,7 +538,8 @@ def memorize():
                 "num_predict": 200,
                 "num_ctx": 8192
             },
-            "stream": False
+            "stream": False,
+            "keep_alive": "30m"
         })
 
         if response.status_code == 200:
@@ -661,7 +663,8 @@ def generate_asset():
                 "num_predict": 200,
                 "num_ctx": 8192
             },
-            "stream": False
+            "stream": False,
+            "keep_alive": "30m"
         })
 
         if response.status_code == 200:
@@ -792,7 +795,8 @@ def generate_card_memory():
                 "num_predict": 70, # Small-ish limit as one memory should only be one sentence long
                 "num_ctx": 8192
             },
-            "stream": False
+            "stream": False,
+            "keep_alive": "30m"
         })
 
         if response.status_code == 200:

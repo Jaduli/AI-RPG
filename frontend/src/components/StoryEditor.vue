@@ -123,7 +123,7 @@ export default {
 
         // As location names appear less frequently in story content than characters, 
         // use a higher chance to create a new memory.
-        await this.$refs.contextCards.addCardMemory(most_recent_content, 'location', 0.4);
+        await this.$refs.contextCards.addCardMemory(most_recent_content, 'location', 0.5);
 
         this.status_message = 'Continuing story...';
 

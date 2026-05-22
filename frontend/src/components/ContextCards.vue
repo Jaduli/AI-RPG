@@ -123,7 +123,7 @@ export default {
         }
         card_text += ':\n' + card.content + '\n';
         if (card.child_locations) {
-          card_text += `Locations within ${card.name}: ${card.child_locations}.\n`
+          card_text += `\nLocations within ${card.name}: ${card.child_locations}.\n`
         }
         if (card.memories) {
           // Get up to three random card memories as context
@@ -132,7 +132,7 @@ export default {
             .slice(0, 3);
 
           if (random_memories.length > 0) {
-            card_text += `Memories for ${card.name}:\n`
+            card_text += `\nMemories for ${card.name}:\n`
             
             for (const memory of random_memories) {
               card_text += `-  ${memory}\n`;

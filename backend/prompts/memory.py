@@ -309,7 +309,7 @@ THE MEMORY CAN INCLUDE:
 - Trust or distrust toward the player
 - Admiration, fear, resentment, attraction, suspicion, loyalty, or hatred
 - Judgments or praise about the player's morality, competence, or intentions
-- Beliefs about what the player wanted or intended
+- Explicit impressions created by the player's words or actions
 - Personal emotional reactions that would persist over time
 - Relationship changes caused by recent events
 - Important promises, betrayals, or sacrifices involving the player
@@ -324,13 +324,18 @@ EXCLUDE (STRICT):
 - Objective narration
 - Facts unrelated to the character's opinion of the player
 
+FACTUAL GROUNDING RULE (ABSOLUTE):
+
+- NEVER invent motives, intentions, secrets, lies, deception, or hidden agendas unless explicitly supported by the recent story.
+- NEVER escalate mild uncertainty into suspicion or distrust without clear evidence.
+- NEVER infer emotions or intentions from neutral actions alone.
+- Character opinions MUST remain proportional to the actual events that occurred.
+- If the player's behavior was neutral, the character's memory should remain neutral.
+- Strong emotional conclusions require strong explicit story evidence.
+
 CHARACTER CONSISTENCY RULE:
 
 - The memory MUST match the provided character personality and description.
-- Cowardly characters should interpret events differently than brave characters.
-- Arrogant characters should interpret events differently than humble characters.
-- Suspicious characters should form suspicious conclusions.
-- Loyal characters should form forgiving or protective conclusions.
 - The memory MUST feel like genuine personal thoughts of the character.
 
 STYLE:
@@ -371,18 +376,18 @@ Only create a memory that:
 2. Is supported by the recent story content, AND
 3. Is likely to matter if the player revisits the location later.
 
-THE MEMORY CAN INCLUDE:
+THE MEMORY CAN INCLUDE (ONLY IF EXPLICITLY SHOWN):
 
-- Important actions that occurred at the location
-- Discoveries, secrets, or dangers associated with the location
-- Emotional or symbolic significance attached to the location
-- Damage, changes, or notable events affecting the location
-- Character opinions or reactions about the location
-- Alliances, betrayals, or conflicts that happened there
-- Important objects hidden, lost, or found there
-- Judgments about the location's people, atmosphere, culture, or purpose
-- Expectations or assumptions about what may happen there in the future
-- Lasting impressions caused by exploration or events
+- Important actions that explicitly occurred at the location
+- Discoveries or dangers directly encountered
+- Explicitly stated emotional reactions
+- Damage or changes directly observed
+- Character statements or reactions explicitly shown
+- Alliances, betrayals, or conflicts that explicitly occurred
+- Important objects explicitly hidden, lost, or found
+- Explicit judgments or opinions stated by characters
+- Explicit plans or warnings regarding the location
+- Lasting impressions ONLY if directly described in the story
 
 EXCLUDE (STRICT):
 
@@ -393,14 +398,16 @@ EXCLUDE (STRICT):
 - Objective narration unrelated to the location's future significance
 - Information unlikely to matter in future visits
 
-LOCATION CONSISTENCY RULE:
+FACTUAL ACCURACY RULE (ABSOLUTE):
 
-- The memory MUST match the established tone, history, and nature of the location.
-- Dangerous locations should generate tense or threatening memories.
-- Sacred or emotional locations should generate meaningful or reflective memories.
-- Peaceful locations should generate calmer or nostalgic memories.
-- The memory MUST feel like persistent world knowledge tied to the location itself.
-- If characters only talk about the location but never visit, you MUST mention it in the memory.
+- NEVER invent actions, emotions, opinions, thoughts, memories, motivations, assumptions, or experiences that were not explicitly shown in the recent story.
+- NEVER infer how the player felt unless the story directly stated the emotion.
+- NEVER infer what the player thought about a location.
+- NEVER invent that the player visited a location if they only heard about it.
+- NEVER invent conversations, discoveries, conflicts, or events.
+- Every statement in the memory MUST be directly supported by explicit story text.
+- If the recent story does not explicitly support a detail, DO NOT include it.
+- When uncertain, omit the detail entirely.
 
 STYLE:
 

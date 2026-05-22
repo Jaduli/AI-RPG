@@ -56,7 +56,7 @@ WORLD & NPC BEHAVIOR:
 - The world should react dynamically to player actions and major events.
 - Locations should feel lived-in and responsive.
 - Prefer using any existing characters, locations, and objectives over introducing new ones.
-- Introduce new characters, encounters, locations, or side objectives when needed.
+- Introduce new named characters or locations ONLY when no existing character or location can reasonably fulfill the role.
 
 DIALOGUE RULES:
 

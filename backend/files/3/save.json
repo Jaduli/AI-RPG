@@ -1,6 +1,6 @@
 {
   "story_name": "Isekai'd",
-  "instructions": "STORYTELLING:\n- Do NOT assume the player knows any information about the world or its characters.\n- Try to always use characters and locations that appear in story context. Avoid naming new characters or locations unless absolutely necessary. \n- Not all characters and locations that are included in context need to be used.",
+  "instructions": "CHARACTER & LOCATION RULES:\n\n- Do NOT assume the player knows any information about the world or its characters.\n- Only use characters and locations explicitly provided in the context.\n- Do NOT invent new named characters unless it is necessary for the scene to function.\n- Minor unnamed NPCs are allowed only when necessary (examples: guard, villager, merchant, child, soldier).\n- When the Player interacts with a new character, make sure that character's description fits with one of the characters mentioned in context.\n\nFAIL CONDITIONS:\n\n- Introducing unnecessary new named characters.\n- Inventing locations when existing ones fit the scene.\n- Wrongly naming a man as a woman or otherwise misrepresenting the character described in context.",
   "content": "( What to do before beginning the story: \n\n- Add your information in the 'Player' tab. Feel free to edit your inventory to what you wish to start with.\n\n- Add any skills you're interested in learning in the 'Skills' tab (or add them as they become relevant).\n\n- Replace any information within {} in the story beginning below.\n\n- If you want a certain storytelling style or game difficulty, add it to generation instructions.\n\n- Lastly, remove all text within the parentheses. Leave only the story beginning in the editor.\n\n- Remember that you can continue the story without a character action! Click the 'Continue' button once or twice before using a character action if you want to set the scene. After each user action, you should let your actions play out before using another one. If that sounds confusing, just play the game and figure out your favorite play style as you play.\n\nEnjoy the game! )\n\nIt is a day like any other. You are sitting at your computer, trying out some game made by your dear sister. You don't know what to expect: a buggy mess, AI slop, maybe even an actually good game?\n\nBefore you can find out, your world shifts.\n\nYour chair vanishes beneath you. Your stomach lurches as if gravity forgets which direction it belongs to. Sound stretches into a long, deafening hum. For one impossible instant, you glimpse things that should not exist: creatures made of light, water that shimmers like gold, skin that pulses with something other than blood.\n\nThen—\n\nSilence.\n\nYou are no longer home.\n\nNow you are in {choose a beginning location: Oakwood Village, Elventon Harbor, or the Holy City of Donvard}, though you do not know that. You arrive with nothing but the clothes you wear, the phone still in your pocket, and {anything else you have on you, add to inventory}.",
   "summary": "",
   "essential_context": "Story Genres: Fantasy, Adventure.\n\n[World Information]\nWorld name: Pangea.\nPangea is a fantasy world with all kinds of creatures, from forest spirits to hungry wyverns to charming vampires. The most common race is human.\n\nThere are three kingdoms on Pangea.\nIn the North: Arthinora, led by King Rohan.\nIn the East: Donvard, led by elven Queen Lysa.\nIn the West: Eldoria, led by King Lionel.\n\nIn the South: Land of Kha, a desert clan known for their primal ways and use of blood magic. Led by the Khaen, their strongest fighter.\n\nWorld Events:\nKing Lionel of the Holy Kingdom of Donvard has declared war against the Kingdom of Arthinora.\nA dragon has been spotted flying over the hills of Eldoria.\nRumors say the Kha have been attempting to summon the form of an ancient god.",
@@ -23,7 +23,7 @@
     },
     {
       "child_locations": "Holy City of Donvard, Orchard of the Sun, Crown Lake",
-      "content": "A Holy Kingdom that is ruled by King Lionel and Queen Anise. It's lands are vast with low hills and human-dominated farming land. Donvardian royalty is said to be ambitious, cunning, and often the cause of wars on Pangea. Donvardian people worship 'The Holy One', though the exact form and description of the god differs between people. The symbol of Donvard is a golden sun, a sing of their worship and hard labor. Donvardians believe in purification, and some consider inhuman qualities to be impure, leading it to be the least accepting of creatures such as dwarves, vampires, or orcs.",
+      "content": "A Holy Kingdom that is ruled by King Lionel and Queen Anise. Its lands are vast with low hills and human-dominated farming land. Donvardian royalty is said to be ambitious, cunning, and often the cause of wars on Pangea. Donvardian people worship 'The Holy One', though the exact form and description of the god differs between people. The symbol of Donvard is a golden sun, a sing of their worship and hard labor. Donvardians believe in purification, and some consider inhuman qualities to be impure, leading it to be the least accepting of creatures such as dwarves, vampires, or orcs.",
       "create_memories": false,
       "id": 1779028553088,
       "keywords": [
@@ -145,7 +145,8 @@
         "Aylor",
         "Prince of Donvard",
         "The Royal Palace",
-        "The Shine of the Kingdom"
+        "The Shine of the Kingdom",
+        "City of Donvard"
       ],
       "memories": [],
       "name": "Prince Aylor",
@@ -203,7 +204,8 @@
       "id": 1779383120994,
       "keywords": [
         "Susana",
-        "Explorer's Guild"
+        "Explorer's Guild",
+        "City of Donvard"
       ],
       "memories": [],
       "name": "Adventurer Susana",
@@ -270,7 +272,7 @@
       "type": "character"
     },
     {
-      "content": "Marta is a ruggedly handsome woman in her late forties with an imposing physique and a wild shock of curly brown hair. She has a distinctive scar above her left eyebrow from a barroom brawl that left its mark on both her face and her temperament. Born to a human mother from the kingdom of Arthinora and a Kha father who was part of a traveling tribe, Marta's upbringing was a mix of cultures and customs.\n\nMarta is a straightforward woman with a sharp tongue and quick fists. Her goal is to keep her family safe from retribution and Oakwood Tavern running smoothly despite the increasingly tense relations between kingdoms. Notable patrons include Arthanorian spies and smugglers, Eldorians with whispers of rumors about the dragon, and enigmatic Kha traders rumored to be looking for more than exotic goods.",
+      "content": "Marta is a rugged woman in her late forties with an imposing physique and a wild shock of curly brown hair. She has a distinctive scar above her left eyebrow from a barroom brawl that left its mark on both her face and her temperament. Born to a human mother from the kingdom of Arthinora and a Kha father who was part of a traveling tribe, Marta's upbringing was a mix of cultures and customs.\n\nMarta is a straightforward woman with a sharp tongue and quick fists. Her goal is to keep her family safe from retribution and Oakwood Tavern running smoothly despite the increasingly tense relations between kingdoms. Notable patrons include Arthanorian spies and smugglers, Eldorians with whispers of rumors about the dragon, and enigmatic Kha traders rumored to be looking for more than exotic goods.",
       "create_memories": true,
       "id": 1779384411693,
       "keywords": [
@@ -325,7 +327,8 @@
       "id": 1779387975923,
       "keywords": [
         "Seralyth",
-        "Assembly Hall"
+        "Assembly Hall",
+        "Elventon"
       ],
       "memories": [],
       "name": "Lady Seralyth",
@@ -337,7 +340,8 @@
       "id": 1779388255744,
       "keywords": [
         "Lucian",
-        "Assembly Hall"
+        "Assembly Hall",
+        "Elventon"
       ],
       "memories": [],
       "name": "Treasurer Lucian",
@@ -408,7 +412,7 @@
       "create_memories": true,
       "id": 1779391052181,
       "keywords": [
-        "Sea"
+        "Violet Sea"
       ],
       "memories": [],
       "name": "The Great Violet Sea",
@@ -793,6 +797,18 @@
       "memories": [],
       "name": "Wolffe",
       "type": "character"
+    },
+    {
+      "id": 1779477194387,
+      "name": "Madalyn",
+      "type": "character",
+      "content": "Madalyn is a serene woman in her mid-forties with long black hair and light brown eyes. Her slender figure is draped in functional but elegant robes. Born into a family of revered healers, Madalyn was trained from a young age in the art of soothing the sick and calming the troubled. She spent many years studying under the maesters at the City of Donvard, honing her skills as a skilled apothecary and spiritual advisor.\n\nAs the tensions between Arthinora and Donvard escalate, Madalyn finds herself at odds with King Lionel's declaration of war against his neighboring kingdom. Despite the danger that lurks within the city, she remains committed to helping those in need, often sneaking out under the cover of darkness to tend to the wounded soldiers who have fled from Arthinora.",
+      "keywords": [
+        "Madalyn",
+        "City of Donvard"
+      ],
+      "create_memories": true,
+      "memories": []
     }
   ],
   "player": {
@@ -808,7 +824,7 @@
       "type": "apparel"
     },
     {
-      "content": "A phone with some battery left. Has no signal and no way to charge it in this world. Perhaps you could still find a use for it?",
+      "content": "No signal and no way to charge it in this world. Perhaps you could still find a use for it?",
       "equipped": false,
       "id": 1779354725145,
       "name": "A Phone",
