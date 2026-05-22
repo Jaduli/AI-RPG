@@ -63,7 +63,7 @@ export default {
           <h4>Keywords (comma-separated)</h4>
           <input type="text" v-model="card.keywords" maxlength="200" />
 
-          <div v-if="card.type === 'character'">
+          <div v-if="card.type === 'character' || card.type === 'location'">
             <h3>Character Memories</h3>
 
             <label>Create Character Memories: 
