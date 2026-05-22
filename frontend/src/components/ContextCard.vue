@@ -64,9 +64,10 @@ export default {
           <input type="text" v-model="card.keywords" maxlength="200" />
 
           <div v-if="card.type === 'character' || card.type === 'location'">
-            <h3>Character Memories</h3>
+            <h3>Memories</h3>
 
-            <label>Create Memories: 
+            <label>
+              Create Memories: 
             <input v-model="card.create_memories" type="checkbox" class="custom-checkbox" />
             </label>
 
@@ -86,10 +87,12 @@ export default {
                   :key="index"
                   class="memory-item"
                 >
-                  <textarea v-model="card.memories[index]" />
-                  <button type="button" class="btn btn-danger" @click="removeMemory(index)">
-                    Remove
-                  </button>
+                  <label>Memory {{ index + 1 }}:
+                    <input v-model="card.memories[index]" />
+                    <button type="button" class="btn btn-danger" @click="removeMemory(index)">
+                      Remove
+                    </button>
+                  </label>
                 </div>
               </div>
             </div>
@@ -135,8 +138,8 @@ export default {
   flex-direction: column;
   gap: 5px;
 }
-.memory-item textarea {
-  min-height: 70px;
+.memory-item input {
+  width: 70%;
 }
 .card-type {
   font-size: 0.7em;

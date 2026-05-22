@@ -1,28 +1,30 @@
 {
   "story_name": "War is Coming",
   "instructions": "- Continue the story in second-person present tense (like this: 'He looks at you.'). Do NOT use past tense.\n- Do NOT decide for the protagonist (referred to as 'you').\n- Story genres: fantasy, adventure.\n- Do NOT write mature or inappropriate content.",
-  "content": "Your life was peaceful. Then a raven brought you a letter, written by the King himself. War is coming, it said. The Holy Kingdom of Donvard will attack your home, Arthinora, and show no mercy. You, a knight who has served King Cairon in past battles, will be crucial in winning this war. So you gather your gear, saddle your horse, and begin the long ride towards the castle where the King resides.\n\nYou ride your horse, Fern, down a dirt road.",
+  "content": "Your life was peaceful. Then a raven brought you a letter, written by the King himself. War is coming, it said. The Holy Kingdom of Donvard will attack your home, Arthinora, and show no mercy. You, a knight who has served King Rohan in past battles, will be crucial in winning this war. So you gather your gear, saddle your horse, and begin the long ride towards the castle where the King resides.\n\nYou ride your horse, Fern, down a dirt road.",
   "summary": "You, a knight, left your home after being summoned by the king.",
   "essential_context": "World Information:\nThe Three Kingdoms: Arthinora, Eldoria, Donvard.\n\nKing Lionel of the Holy Kingdom of Donvard has declared war against the Kingdom of Arthinora.",
   "memory_cursor": 0,
   "summary_cursor": 0,
   "context_cards": [
     {
+      "child_locations": "",
       "content": "Eldoria is ruled by the Elven Queen Lysa. Eldoria is considered to be a peaceful and rich kingdom. Eldoria is located next to the Great Violet Sea.",
+      "create_memories": false,
       "id": 1779028506940,
       "keywords": [
         "Eldoria",
         "Lysa",
         "Kingdoms"
       ],
+      "memories": [],
       "name": "Kingdom of Eldoria",
-      "type": "location",
-      "child_locations": "",
-      "create_memories": false,
-      "memories": []
+      "type": "location"
     },
     {
+      "child_locations": "",
       "content": "A Holy Kingdom that is ruled by King Lionel and Queen Anise. It's lands are vast with low hills and human-dominated farming land.",
+      "create_memories": false,
       "id": 1779028553088,
       "keywords": [
         "Donvard",
@@ -30,75 +32,75 @@
         "Anise",
         "Kingdoms"
       ],
+      "memories": [],
       "name": "Holy Kingdom of Donvard",
-      "type": "location",
-      "child_locations": "",
-      "create_memories": false,
-      "memories": []
+      "type": "location"
     },
     {
       "content": "A cruel and ambitious king. Lionel has thinning blond hair and ice-blue eyes.",
+      "create_memories": false,
       "id": 1779029866153,
       "keywords": [
         "Lionel",
         "Donvard"
       ],
-      "name": "Lionel",
-      "type": "character",
-      "create_memories": false,
-      "memories": []
+      "memories": [],
+      "name": "King Lionel",
+      "type": "character"
     },
     {
       "child_locations": "Oakwood Village",
-      "content": "A Northern Kingdom ruled by King Cairon. Dominated by woods and spirits. Arthinoran people are considered to be loyal and resilient.",
+      "content": "A Northern Kingdom ruled by King Rohan. Dominated by woods and spirits. Arthinoran people are considered to be loyal and resilient.",
+      "create_memories": false,
       "id": 1779030002049,
       "keywords": [
         "Arthinora",
         "Cairon",
         "kingdoms"
       ],
+      "memories": [
+        "You have lived in the Kingdom of Arthinora your whole life. You are familiar with its culture and geography."
+      ],
       "name": "Kingdom of Arthinora",
-      "type": "location",
-      "create_memories": false,
-      "memories": []
+      "type": "location"
     },
     {
       "child_locations": "Oakwood Tavern",
       "content": "A small village located in the woods of Arthinora. Notable characters include an elderly seer named Evely, and the Blacksmith's son Fenn.",
+      "create_memories": false,
       "id": 1779030584611,
       "keywords": [
         "Oakwood"
       ],
+      "memories": [],
       "name": "Oakwood Village",
       "parent_location": "Kingdom of Arthinora",
-      "type": "location",
-      "create_memories": false,
-      "memories": []
+      "type": "location"
     },
     {
       "content": "A dapper and adventurous young man. Fenn has tousled brown hair, sun-tanned skin, and green eyes. Fenn wears light leather armor and is talented at shooting bows. His most prized possession is his bow carved from a dark oak he once felled with his father.",
+      "create_memories": false,
       "id": 1779030758848,
       "keywords": [
         "Fenn",
         "Oakwood"
       ],
+      "memories": [],
       "name": "Fenn",
-      "type": "character",
-      "create_memories": false,
-      "memories": []
+      "type": "character"
     },
     {
+      "child_locations": "",
       "content": "A small but comfortable tavern with a kind but brutish owner, a woman named Maya. Oakwood Tavern offers a place to rest and eat for cheap. Residents of Oakwood often share gossip there.",
+      "create_memories": false,
       "id": 1779031113687,
       "keywords": [
         "Oakwood Tavern"
       ],
+      "memories": [],
       "name": "Oakwood Tavern",
       "parent_location": "Oakwood Village",
-      "type": "location",
-      "child_locations": "",
-      "create_memories": false,
-      "memories": []
+      "type": "location"
     },
     {
       "content": "Your trusty mare. Sturdy stature, bay coat thick enough for the northern weather. Not the fastest or bravest horse, but a fine mount for travel.",
@@ -110,11 +112,27 @@
       ],
       "name": "Fern the horse",
       "type": "other"
+    },
+    {
+      "content": "A fair and just man. Rohan has dark brown hair, broad shoulders, and a rough look that speaks of his experiences in past battles.",
+      "create_memories": true,
+      "id": 1779445979557,
+      "keywords": [
+        "Rohan",
+        " Kings",
+        " Arthinora"
+      ],
+      "memories": [
+        "Cairon has served me well in past battles.",
+        "Cairon has potential to become more than a simple knight."
+      ],
+      "name": "King Rohan",
+      "type": "character"
     }
   ],
   "player": {
-    "name": "Rohan",
-    "description": "You are a knight. You serve King Cairon in the Kingdom of Arthinora."
+    "name": "Cairon",
+    "information": "A loyal and resilient knight of the Kingdom of Arthinora. You have served King Rohan in past battles and are known for your bravery and skill with a sword. You have a strong sense of duty and will do whatever it takes to protect your kingdom and its people."
   },
   "inventory": [
     {
@@ -155,12 +173,12 @@
   ],
   "skills": [
     {
-      "id": 1779314453819,
-      "name": "Swordsmanship",
       "content": "",
+      "experience": 4000,
+      "id": 1779314453819,
       "level": 4,
-      "proficiency": "intermediate",
-      "experience": 4000
+      "name": "Swordsmanship",
+      "proficiency": "intermediate"
     }
   ]
 }

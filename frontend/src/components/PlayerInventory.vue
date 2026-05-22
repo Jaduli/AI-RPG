@@ -67,7 +67,7 @@ export default {
         }
         str += '\n';
       }
-      return str;
+      return str.trim();
     },
     removeItem(id) {
       this.inventory = this.inventory.filter(item => item.id !== id);

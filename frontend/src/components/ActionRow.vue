@@ -129,7 +129,7 @@ export default {
 
       if (type === 'do') {
         // Add "You" if missing (e.g. open the door -> You open the door)
-        if (!/^you\b/i.test(action.trim())) {
+        if (!/^you\b/i.test(user_input)) {
           return 'You ' + user_input;
         }
       }

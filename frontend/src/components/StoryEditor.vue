@@ -120,13 +120,14 @@ export default {
         
         // Use 30 % chance to create new memory for one relevant character or location is
         // found in most recent story content (if memory creation is enabled for asset). 
-        await this.$refs.contextCards.addCardMemory(most_recent_content, 'character', 0.3);
+        await this.$refs.contextCards.addCardMemory(most_recent_content, 'character', 0.2);
 
         // As location names appear less frequently in story content than characters, 
         // use a higher chance to create a new memory.
-        await this.$refs.contextCards.addCardMemory(most_recent_content, 'location', 0.6);
+        await this.$refs.contextCards.addCardMemory(most_recent_content, 'location', 0.4);
 
         let payload = {
+          story_id: this.story_id,
           gamemode: this.gamemode,
           model: this.main_model,
           instructions: this.instructions,
@@ -155,11 +156,13 @@ export default {
 
           is_new_action = action !== null;
 
-          player_action = action.player_action;
-          selected_item = action.selected_item;
-          selected_skill = action.selected_skill;
-          use_d20 = action.use_d20;
-          action_type = action.action_type;
+          if (is_new_action) {
+            player_action = action.player_action || '';
+            selected_item = action.selected_item || null;
+            selected_skill = action.selected_skill || null;
+            use_d20 = action.use_d20 || false;
+            action_type = action.action_type || '';
+          }
 
           // Get skill outcome based on level if a skill was selected for the action
           if (selected_skill) {
@@ -238,13 +241,12 @@ export default {
           this.sent_context = data.full_context;
         }
 
-        if (gamemode === 'rpg') {
+        if (this.gamemode === 'rpg') {
           // D20 action outcome of player action (success, failure, etc.)
           if (data.outcome) {
             this.recent_outcome = data.outcome;
           }
-          // Skill use outcome (success, failure, etc.).
-          // Skills use levels and are separate from D20.
+          // Skill use outcome separate from D20
           if (outcome) {
             this.recent_outcome = outcome;
           }

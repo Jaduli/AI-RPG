@@ -5,6 +5,9 @@ backend/files/1/backup.json
 !backend/files/2/
 !backend/files/2/save.json
 backend/files/2/backup.json
+!backend/files/3/
+!backend/files/3/save.json
+backend/files/3/backup.json
 backend/data/*
 .env
 .env.*

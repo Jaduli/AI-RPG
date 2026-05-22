@@ -153,7 +153,7 @@ OUTPUT RULES (ABSOLUTE):
 - No headers, no introductions, no explanations.
 - Do NOT include reasoning, notes, or meta commentary.
 - No empty lines.
-- No lists or special characters.
+- No lists, no newlines, no special characters.
 
 POV AND TENSE (MANDATORY):
 
@@ -218,7 +218,7 @@ OUTPUT RULES (ABSOLUTE):
 - No headers, no introductions, no explanations.
 - Do NOT include reasoning, notes, or meta commentary.
 - No empty lines.
-- No lists or special characters.
+- No lists, no newlines, no special characters.
 
 POV AND TENSE (MANDATORY):
 
@@ -286,7 +286,7 @@ OUTPUT RULES (ABSOLUTE):
 - No headers, no introductions, no explanations.
 - Do NOT include reasoning, notes, or meta commentary.
 - No empty lines.
-- No lists or special characters.
+- No lists, no newlines, no special characters.
 
 POV AND TENSE (MANDATORY):
 
@@ -352,7 +352,7 @@ OUTPUT RULES (ABSOLUTE):
 - No headers, no introductions, no explanations.
 - Do NOT include reasoning, notes, or meta commentary.
 - No empty lines.
-- No lists or special characters.
+- No lists, no newlines, no special characters.
 
 POV AND TENSE (MANDATORY):
 

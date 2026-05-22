@@ -334,7 +334,7 @@ def continue_story():
     # This will increase rate of cache hits in API call -> cheaper responses (if supported by API provider).
     full_prompt = (
         "[Essential Story Information]\n" + essential_context +
-        ("\n\n[Player Information]\n" + player_information if player_information else "") +
+        ("\n\n[Player]\n" + player_information if player_information else "") +
         ("\n\n[Player Equipment]\n" + player_equipment if player_equipment else "") +
         ("\n\n[Player Skills & Proficiency]\n" + player_skills if player_skills else "") +
         ("\n\n[Story Summary]\n" + summary if summary else "") +

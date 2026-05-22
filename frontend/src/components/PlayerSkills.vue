@@ -150,7 +150,7 @@ export default {
       for (const skill of this.skills) {
         str += `- ${skill.name}, ${skill.proficiency}\n`;
       }
-      return str;
+      return str.trim();
     },
     removeSkill(id) {
       this.skills = this.skills.filter(skill => skill.id !== id);

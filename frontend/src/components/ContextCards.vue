@@ -116,7 +116,7 @@ export default {
             card_text += `Memories for ${card.name}:\n`
             
             for (const memory of random_memories) {
-              card_text += `-  "${memory}"\n`;
+              card_text += `-  ${memory}\n`;
             }
           }
         }
@@ -261,8 +261,12 @@ export default {
         let player_name = '';
 
         if (gamemode === 'rpg') {
-          // Get player name from player card
-          player_name = parent.playerCard.name;
+          const player = parent.$refs.playerCard;
+
+          if (!player || !player.name) {
+            throw new Error('Please set player name for memory generation.');
+          }
+          player_name = player.name;
         }
 
         const res = await fetch('/api/generate_card_memory', {
@@ -352,16 +356,19 @@ export default {
       <input type="text" v-model="keywords" maxlength="200" />
 
       <!-- Type-specific values -->
-      <label v-if="type === 'character' || type === 'location'">Create Memories: 
-        <input v-model="create_memories" type="checkbox" class="custom-checkbox" />
-      </label>
-
-      <label v-if="type === 'location'">Parent Location: 
+      <label v-if="type === 'location'">
+        Parent Location: 
         <input type="text" v-model="parent_location" maxlength="200" />
       </label>
 
-      <label v-if="type === 'location'">Child Locations (comma-seperated): 
+      <label v-if="type === 'location'">
+        Child Locations: 
         <input type="text" v-model="child_locations" maxlength="300" />
+      </label>
+
+      <label v-if="type === 'character' || type === 'location'">
+        Create Memories: 
+        <input v-model="create_memories" type="checkbox" class="custom-checkbox" />
       </label>
 
       <button @click="addCard" :disabled="loading">Add Card</button>
