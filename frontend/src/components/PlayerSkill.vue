@@ -21,8 +21,10 @@ export default {
 
       <button @click="collapse = !collapse">{{ collapse ? 'Edit' : 'Collapse' }}</button>
       <div v-if="!collapse">          
-        <h4>Name</h4>
-        <input type="text" v-model="skill.name" maxlength="25" />
+        <label>
+          Name: 
+          <input type="text" v-model="skill.name" maxlength="25" />
+        </label>
 
         <button class="btn btn-danger" @click="$emit('remove')">Forget skill</button>
       </div>
@@ -40,8 +42,8 @@ export default {
   flex-direction: column;
   gap: 5px;
 }
-.skill textarea {
-  min-height: 50px;
+.skill input {
+  width: 70%;
 }
 .skill h4 {
   margin: 3px 0 3px;

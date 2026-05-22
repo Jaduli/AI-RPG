@@ -34,7 +34,10 @@ export default {
 
 <template>
     <div class="context-card">
-        <h3>{{ card.name }} <span class="card-type">({{ card.type }})</span></h3>
+        <h3>
+          <span class="card-name">{{ card.name }}</span>
+          <span class="card-type">({{ card.type }})</span>
+        </h3>
         <button @click="collapse = !collapse">{{ collapse ? 'Edit' : 'Collapse' }}</button>
         <div v-if="!collapse">          
           <h4>Name</h4>
@@ -78,8 +81,8 @@ export default {
               </button>
 
               <div v-if="show_memories" class="memory-list">
-                <label>Keyword for memory generation: {{ card.keywords[0] }}.
-                  <span title="The first set keyword will be used to generate memories.">
+                <label>Keyword for memory creation: {{ card.keywords[0] }}.
+                  <span title="The first set keyword will be used to create memories.">
                     ⓘ
                   </span>
                 </label>
@@ -126,6 +129,22 @@ export default {
 .context-card h4 {
   margin: 3px 0 3px;
 }
+.context-card h3 {
+  position: relative;
+  text-align: center;
+  margin: 0;
+}
+.card-name {
+  display: inline-block;
+}
+.card-type {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 0.7em;
+  color: #aa3bff;
+  font-weight: normal;
+}
 .context-card button {
   margin-bottom: 10px;
 }
@@ -146,10 +165,5 @@ export default {
 }
 .memory-item input {
   width: 70%;
-}
-.card-type {
-  font-size: 0.7em;
-  color: #aa3bff;
-  font-weight: normal;
 }
 </style>
