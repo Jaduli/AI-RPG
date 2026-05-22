@@ -1,7 +1,7 @@
 {
   "story_name": "Isekai'd",
-  "instructions": "STORYTELLING:\n- Do NOT assume the player knows any information about the world or its characters.",
-  "content": "( What to do before beginning the story: \n\n- Add your information in the 'Player' tab. Feel free to edit your inventory to what you wish to start with.\n\n- Add any skills you're interested in learning in the 'Skills' tab (or add them as they become relevant).\n\n- Replace any information within {} in the story beginning below.\n\n- Lastly, remove all text within the parentheses. Leave only the story beginning in the editor.\n\n- Remember that you can continue the story without a character action! Click the 'Continue' button once or twice before using a character action if you want to set the scene. After each user action, you should let your actions play out before using another one by continuing without a user action. If that sounds confusing, just play the game and figure out your favorite playstyle as you play.\n\nEnjoy the game! )\n\nIt is a day like any other. You are sitting at your computer, trying out some game made by your dear sister. You don't know what to expect: a buggy mess, AI slop, maybe even an actually good game?\n\nBefore you can find out, your world shifts.\n\nYour chair vanishes beneath you. Your stomach lurches as if gravity forgets which direction it belongs to. Sound stretches into a long, deafening hum. For one impossible instant, you glimpse things that should not exist: creatures made of light, water that shimmers like gold, skin that pulses with something other than blood.\n\nThen—\n\nSilence.\n\nYou are no longer home.\n\nNow you are in {choose a beginning location: Oakwood Village, Elventon Harbor, or the Holy City of Donvard}, though you do not know that. You arrive with nothing but the clothes you wear, the phone still in your pocket, and {anything else you have on you, add to inventory}.",
+  "instructions": "STORYTELLING:\n- Do NOT assume the player knows any information about the world or its characters.\n- Try to always use characters and locations that appear in story context. Avoid naming new characters or locations unless absolutely necessary. \n- Not all characters and locations that are included in context need to be used.",
+  "content": "( What to do before beginning the story: \n\n- Add your information in the 'Player' tab. Feel free to edit your inventory to what you wish to start with.\n\n- Add any skills you're interested in learning in the 'Skills' tab (or add them as they become relevant).\n\n- Replace any information within {} in the story beginning below.\n\n- If you want a certain storytelling style or game difficulty, add it to generation instructions.\n\n- Lastly, remove all text within the parentheses. Leave only the story beginning in the editor.\n\n- Remember that you can continue the story without a character action! Click the 'Continue' button once or twice before using a character action if you want to set the scene. After each user action, you should let your actions play out before using another one. If that sounds confusing, just play the game and figure out your favorite play style as you play.\n\nEnjoy the game! )\n\nIt is a day like any other. You are sitting at your computer, trying out some game made by your dear sister. You don't know what to expect: a buggy mess, AI slop, maybe even an actually good game?\n\nBefore you can find out, your world shifts.\n\nYour chair vanishes beneath you. Your stomach lurches as if gravity forgets which direction it belongs to. Sound stretches into a long, deafening hum. For one impossible instant, you glimpse things that should not exist: creatures made of light, water that shimmers like gold, skin that pulses with something other than blood.\n\nThen—\n\nSilence.\n\nYou are no longer home.\n\nNow you are in {choose a beginning location: Oakwood Village, Elventon Harbor, or the Holy City of Donvard}, though you do not know that. You arrive with nothing but the clothes you wear, the phone still in your pocket, and {anything else you have on you, add to inventory}.",
   "summary": "",
   "essential_context": "Story Genres: Fantasy, Adventure.\n\n[World Information]\nWorld name: Pangea.\nPangea is a fantasy world with all kinds of creatures, from forest spirits to hungry wyverns to charming vampires. The most common race is human.\n\nThere are three kingdoms on Pangea.\nIn the North: Arthinora, led by King Rohan.\nIn the East: Donvard, led by elven Queen Lysa.\nIn the West: Eldoria, led by King Lionel.\n\nIn the South: Land of Kha, a desert clan known for their primal ways and use of blood magic. Led by the Khaen, their strongest fighter.\n\nWorld Events:\nKing Lionel of the Holy Kingdom of Donvard has declared war against the Kingdom of Arthinora.\nA dragon has been spotted flying over the hills of Eldoria.\nRumors say the Kha have been attempting to summon the form of an ancient god.",
   "memory_cursor": 0,
@@ -72,7 +72,7 @@
       ],
       "memories": [],
       "name": "Oakwood Village",
-      "parent_location": "Kingdom of Arthinora",
+      "parent_location": "Arthinora",
       "type": "location"
     },
     {
@@ -110,7 +110,7 @@
       ],
       "memories": [],
       "name": "Holy City of Donvard",
-      "parent_location": "Kingdom of Donvard",
+      "parent_location": "Donvard",
       "type": "location"
     },
     {
@@ -270,15 +270,15 @@
       "type": "character"
     },
     {
-      "content": "Maya is a ruggedly handsome woman in her late forties with an imposing physique and a wild shock of curly brown hair. She has a distinctive scar above her left eyebrow from a barroom brawl that left its mark on both her face and her temperament. Born to a human mother from the kingdom of Arthinora and a Kha father who was part of a traveling tribe, Maya's upbringing was a mix of cultures and customs.\n\nMaya is a straightforward woman with a sharp tongue and quick fists. Her goal is to keep her family safe from retribution and her tavern running smoothly despite the increasingly tense relations between kingdoms. Notable patrons include Arthanorian spies and smugglers, Eldorians with whispers of rumors about the dragon, and enigmatic Kha traders rumored to be looking for more than exotic goods.",
+      "content": "Marta is a ruggedly handsome woman in her late forties with an imposing physique and a wild shock of curly brown hair. She has a distinctive scar above her left eyebrow from a barroom brawl that left its mark on both her face and her temperament. Born to a human mother from the kingdom of Arthinora and a Kha father who was part of a traveling tribe, Marta's upbringing was a mix of cultures and customs.\n\nMarta is a straightforward woman with a sharp tongue and quick fists. Her goal is to keep her family safe from retribution and Oakwood Tavern running smoothly despite the increasingly tense relations between kingdoms. Notable patrons include Arthanorian spies and smugglers, Eldorians with whispers of rumors about the dragon, and enigmatic Kha traders rumored to be looking for more than exotic goods.",
       "create_memories": true,
       "id": 1779384411693,
       "keywords": [
-        "Maya",
-        "Oakwood Tavern"
+        "Marta",
+        "Oakwood"
       ],
       "memories": [],
-      "name": "Maya",
+      "name": "Marta",
       "type": "character"
     },
     {
@@ -344,7 +344,7 @@
       "type": "character"
     },
     {
-      "content": "A strikingly beautiful woman in her late-forties, with violet eyes and long blonde hair. She has a regal presence, but those who are close to her know of her kind, religious soul. Her slender fingers are adorned with heavy rings bearing the golden sun of the Holy Kingdom of Donvard.\n\nAnise is driven by a sense of righteousness. She shares King Lionel's vision for a united Pangea, but believes it should be done under holy order, not with steel and sword.",
+      "content": "Queen of Donvard, a strikingly beautiful in her late-forties, with violet eyes and long blonde hair. She has a regal presence, but those who are close to her know of her kind, religious soul. Her slender fingers are adorned with heavy rings bearing the golden sun of the Holy Kingdom of Donvard.\n\nAnise is driven by a sense of righteousness. She shares King Lionel's vision for a united Pangea, but believes it should be done under holy order, not with steel and sword.",
       "create_memories": true,
       "id": 1779389126802,
       "keywords": [
@@ -352,7 +352,7 @@
         "Queen of Donvard"
       ],
       "memories": [],
-      "name": "Queen Anise of Donvard",
+      "name": "Queen Anise",
       "type": "character"
     },
     {
@@ -388,7 +388,7 @@
       ],
       "memories": [],
       "name": "Castle of Arthinora",
-      "parent_location": "Oakwood in Arthinora",
+      "parent_location": "Arthinora",
       "type": "location"
     },
     {
@@ -470,7 +470,7 @@
       "id": 1779392232554,
       "keywords": [
         "Eira",
-        "Oakwood"
+        "Winding Fate"
       ],
       "memories": [],
       "name": "Eira",
@@ -566,7 +566,10 @@
       "content": "The Road of Winding Fate is a treacherous mountain pass in the northern kingdom of Arthinora, notorious for its steep cliffs that lead to the Northern Mountains. A colossal stone statue of the Boar's Fury stands guard at the midpoint of the pass, its eyes glowing like embers as it surveys the valleys below. This pivotal route connects the eastern valleys to Arthinora's capital city and has borne witness to centuries of turmoil, as Arthinoran clans have clashed with Donvardian invaders and Southern raiders alike.\n\nThe roads are often contested by roving packs of goblin and dwarf warriors, and the occasional fearsome wyvern. Some travelers talk of a hidden manor near the road, said to hold creatures that drink red and never see the light.",
       "create_memories": true,
       "id": 1779394693506,
-      "keywords": "Winding Fate, Roads of Arthinora",
+      "keywords": [
+        "Winding Fate",
+        "Roads of Arthinora"
+      ],
       "memories": [],
       "name": "The Road of Winding Fate",
       "parent_location": "Arthinora",

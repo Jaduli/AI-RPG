@@ -123,7 +123,7 @@ export default {
 
         // As location names appear less frequently in story content than characters, 
         // use a higher chance to create a new memory.
-        await this.$refs.contextCards.addCardMemory(most_recent_content, 'location', 0.5);
+        await this.$refs.contextCards.addCardMemory(most_recent_content, 'location', 0.4);
 
         this.status_message = 'Continuing story...';
 
@@ -231,7 +231,6 @@ export default {
 
         // Sync content with player action
         if (is_new_action) {
-          this.recent_action = player_action;
           this.content += player_action + '\n\n';
         }
 
@@ -245,10 +244,12 @@ export default {
         if (this.gamemode === 'rpg') {
           // D20 action outcome of player action (success, failure, etc.)
           if (data.outcome) {
+            this.recent_action = player_action;
             this.recent_outcome = data.outcome;
           }
           // Skill use outcome separate from D20
           if (outcome) {
+            this.recent_action = player_action;
             this.recent_outcome = outcome;
           }
 

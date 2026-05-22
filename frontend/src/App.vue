@@ -28,8 +28,8 @@ export default {
       // Top P and temperature control randomness in the AI output.
       // Higher values mean more randomness and creativity, lower values improve 
       // consistency with story context (e.g. story essentials and memories).
-      top_p: 0.9,
-      temperature: 1,
+      top_p: 0.8,
+      temperature: 0.8,
       // Max tokens controls the length of returned content in story generation.
       max_tokens: 150,
       memorize: true,
@@ -69,7 +69,7 @@ export default {
           this.gamemode = data.gamemode || this.gamemode;
 
           if (this.gamemode === 'storyteller') {
-            max_tokens = 200; // Longer output is better for storytelling
+            this.max_tokens = 200; // Longer output is better for storytelling
           }
 
           this.config_ready = true;

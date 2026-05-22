@@ -123,7 +123,7 @@ export default {
         }
         card_text += ':\n' + card.content + '\n';
         if (card.child_locations) {
-          card_text += `Locations within ${card.name}: ${card.child_locations}\n`
+          card_text += `Locations within ${card.name}: ${card.child_locations}.\n`
         }
         if (card.memories) {
           // Get up to three random card memories as context
@@ -269,7 +269,7 @@ export default {
       // Avoid memory generation every time a relevant card is found
       if (Math.random() > chance) return;
 
-      parent.status_message = `Generating ${card.type} memory...`;
+      parent.status_message = `Creating a ${card.type} memory...`;
       try {
         this.loading = true;
         parent.active_requests++;

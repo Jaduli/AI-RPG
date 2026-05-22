@@ -113,7 +113,11 @@ export default {
       }
 
       // The following edit user input directly.
-      user_input = this.firstToSecondPerson(user_input);
+      
+      // Change to second person perspective for non-dialogue actions
+      if (type !== 'say') {
+        user_input = this.firstToSecondPerson(user_input);
+      }
 
       // Add punctuation if missing
       if (!/[.!?"]$/.test(user_input)) {
@@ -146,7 +150,7 @@ export default {
     async getPlayerAction(recent_story = '') {
       let item = null;
       let skill = null;
-      
+
       if (this.action_type === 'use') {
         item = this.selected_item;
         skill = this.selected_skill;

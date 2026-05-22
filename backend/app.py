@@ -744,12 +744,14 @@ def generate_card_memory():
     sys_prompt = ''
 
     if (card_type == 'location'):
+        temperature = 0.3 # Low temperature for better consistency in location memories
         if gamemode == 'rpg':
             sys_prompt = LOCATION_MEMORY_RPG_SYS_PROMPT
         else:
             sys_prompt = LOCATION_MEMORY_SYS_PROMPT
 
     elif (card_type == 'character'):
+        temperature = 0.8 # Higher temperature for more personality in character memories
         if gamemode == 'rpg':
             sys_prompt = CHARACTER_MEMORY_RPG_SYS_PROMPT
         else:
@@ -786,8 +788,8 @@ def generate_card_memory():
                 {"role": "user", "content": content}
             ],
             "options": {
-                "temperature": 0.8, # Below average temperature for good consistency with some creativity
-                "num_predict": 50, # Small-ish limit as one memory should only be one sentence long
+                "temperature": temperature,
+                "num_predict": 70, # Small-ish limit as one memory should only be one sentence long
                 "num_ctx": 8192
             },
             "stream": False
@@ -818,8 +820,8 @@ def generate_card_memory():
                 {"role": "system", "content": sys_prompt},
                 {"role": "user", "content": content}
             ],
-            "temperature": 0.8,
-            "max_tokens": 50
+            "temperature": temperature,
+            "max_tokens": 70
         }
 
         if model in ("deepseek-v4-flash", "deepseek-v4-pro"):

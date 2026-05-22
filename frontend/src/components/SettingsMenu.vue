@@ -161,7 +161,7 @@ export default {
       </span>
     </label>
 
-    <label>Update Story Summary: 
+    <label>Summarize Story: 
       <input v-model="summarizeVal" type="checkbox" class="custom-checkbox" />
     </label>
 
