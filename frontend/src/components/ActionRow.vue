@@ -9,7 +9,7 @@ export default {
       selected_item: null,
       selected_skill: null,
       new_asset_type: 'other',
-      new_character_memories: true,
+      new_create_memories: true,
       new_item_type: 'other',
       new_item_equipped: false,
       input_placeholder: 'Input action'
@@ -104,10 +104,10 @@ export default {
           return `You get item '${user_input}'.`
         }
         if (asset_type === 'item') {
-          `You learn about an item called '${user_input}'.`
+          return `You learn about an item called '${user_input}'.`
         }
         if (asset_type === 'location' || asset_type === 'character') {
-          `You learn about a ${asset_type} called ${user_input}.`
+          return `You learn about a ${asset_type} called ${user_input}.`
         }
         return `You learn about ${user_input}.`
       }
@@ -228,7 +228,7 @@ export default {
           return;
         }
         // Generate and add new context card
-        await contextCards.generateContextCard(type, name, recent_story, this.new_character_memories);
+        await contextCards.generateContextCard(type, name, recent_story, this.new_create_memories);
 
         // Set status message
         if (only_active && ['location', 'character', 'item'].includes(type)) {
@@ -323,13 +323,13 @@ export default {
       />
     </label>
 
-    <label v-if="new_asset_type === 'character'">
+    <label v-if="new_asset_type === 'character' || new_asset_type === 'location'">
       📖: 
       <input
-        v-model="new_character_memories"
+        v-model="new_create_memories"
         type="checkbox"
         class="custom-checkbox"
-        title="Enable memory generation for character."
+        title="Enable memory generation for context card."
       />
     </label>
 

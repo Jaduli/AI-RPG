@@ -16,7 +16,10 @@
         "Kingdoms"
       ],
       "name": "Kingdom of Eldoria",
-      "type": "location"
+      "type": "location",
+      "child_locations": "",
+      "create_memories": false,
+      "memories": []
     },
     {
       "content": "A Holy Kingdom that is ruled by King Lionel and Queen Anise. It's lands are vast with low hills and human-dominated farming land.",
@@ -28,7 +31,10 @@
         "Kingdoms"
       ],
       "name": "Holy Kingdom of Donvard",
-      "type": "location"
+      "type": "location",
+      "child_locations": "",
+      "create_memories": false,
+      "memories": []
     },
     {
       "content": "A cruel and ambitious king. Lionel has thinning blond hair and ice-blue eyes.",
@@ -38,7 +44,9 @@
         "Donvard"
       ],
       "name": "Lionel",
-      "type": "character"
+      "type": "character",
+      "create_memories": false,
+      "memories": []
     },
     {
       "child_locations": "Oakwood Village",
@@ -50,7 +58,9 @@
         "kingdoms"
       ],
       "name": "Kingdom of Arthinora",
-      "type": "location"
+      "type": "location",
+      "create_memories": false,
+      "memories": []
     },
     {
       "child_locations": "Oakwood Tavern",
@@ -61,7 +71,9 @@
       ],
       "name": "Oakwood Village",
       "parent_location": "Kingdom of Arthinora",
-      "type": "location"
+      "type": "location",
+      "create_memories": false,
+      "memories": []
     },
     {
       "content": "A dapper and adventurous young man. Fenn has tousled brown hair, sun-tanned skin, and green eyes. Fenn wears light leather armor and is talented at shooting bows. His most prized possession is his bow carved from a dark oak he once felled with his father.",
@@ -72,7 +84,8 @@
       ],
       "name": "Fenn",
       "type": "character",
-      "create_memories": false
+      "create_memories": false,
+      "memories": []
     },
     {
       "content": "A small but comfortable tavern with a kind but brutish owner, a woman named Maya. Oakwood Tavern offers a place to rest and eat for cheap. Residents of Oakwood often share gossip there.",
@@ -82,7 +95,10 @@
       ],
       "name": "Oakwood Tavern",
       "parent_location": "Oakwood Village",
-      "type": "location"
+      "type": "location",
+      "child_locations": "",
+      "create_memories": false,
+      "memories": []
     },
     {
       "content": "Your trusty mare. Sturdy stature, bay coat thick enough for the northern weather. Not the fastest or bravest horse, but a fine mount for travel.",

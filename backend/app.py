@@ -16,7 +16,9 @@ from prompts.memory import (
     SUMMARIZATION_SYS_PROMPT, 
     MEMORY_SYS_PROMPT,
     CHARACTER_MEMORY_SYS_PROMPT,
-    CHARACTER_MEMORY_RPG_SYS_PROMPT
+    LOCATION_MEMORY_SYS_PROMPT,
+    CHARACTER_MEMORY_RPG_SYS_PROMPT,
+    LOCATION_MEMORY_RPG_SYS_PROMPT
 )
 from prompts.rpg import (
     RPG_SYS_PROMPT, 
@@ -334,7 +336,7 @@ def continue_story():
         "[Essential Story Information]\n" + essential_context +
         ("\n\n[Player Information]\n" + player_information if player_information else "") +
         ("\n\n[Player Equipment]\n" + player_equipment if player_equipment else "") +
-        ("\n\n[Player Skills]\n" + player_skills if player_skills else "") +
+        ("\n\n[Player Skills & Proficiency]\n" + player_skills if player_skills else "") +
         ("\n\n[Story Summary]\n" + summary if summary else "") +
         "\n\n[Past Memories]\n" + memory_block +
         ("\n\n[Relevant Context]\n" + context_cards if context_cards else "") +
@@ -707,21 +709,21 @@ def generate_asset():
 
     trimmed = utils.trim_incomplete_sentences(generated_content)
 
-    app.logger.info("Content used in asset generation:\n" + content)
-    app.logger.info("Tokens used in asset generation: %s", tokens_total)
+    print("Content used in asset generation:", content, flush=True)
+    print("Tokens used in asset generation: %s", tokens_total, flush=True)
 
     return jsonify({"generated_content": trimmed, "tokens_total": tokens_total})
 
 """
-/generate_character_memory
+/generate_card_memory
 
-Generates a character memory using local or cloud AI.
-Returns 400 for missing/invalid JSON or missing asset type; 
+Generates a context card memory using local or cloud AI.
+Returns 400 for missing/invalid JSON or invalid card type; 
 API call errors with appropriate status codes (from utils.call_ai_api);
 500 for server or API key errors, or if AI API returns empty content.
 """
-@app.route('/api/generate_character_memory', methods=['POST'])
-def generate_character_memory():
+@app.route('/api/generate_card_memory', methods=['POST'])
+def generate_card_memory():
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"error": "Missing or invalid JSON body."}), 400
@@ -734,29 +736,46 @@ def generate_character_memory():
     gamemode = data.get('gamemode', '')
     story_information = data.get('story_information', '')
     player_name = data.get('player_name', '')
-    character_name = data.get('character_name', '')
-    character_description = data.get('character_description', '')
+    card_type = data.get('card_type', '')
+    card_name = data.get('card_name', '')
+    card_description = data.get('card_description', '')
     recent_story = data.get('recent_story', '')
 
+    sys_prompt = ''
+
+    if (card_type == 'location'):
+        if gamemode == 'rpg':
+            sys_prompt = LOCATION_MEMORY_RPG_SYS_PROMPT
+        else:
+            sys_prompt = LOCATION_MEMORY_SYS_PROMPT
+
+    elif (card_type == 'character'):
+        if gamemode == 'rpg':
+            sys_prompt = CHARACTER_MEMORY_RPG_SYS_PROMPT
+        else:
+            sys_prompt = CHARACTER_MEMORY_SYS_PROMPT
+
+    else:
+        return jsonify({"error": "Invalid card type."}), 400
+
     content = ''
+
+    card_type_cap = card_type.capitalize()
     
     # Build context for memory
     content += '[Story Information]\n' + story_information + '\n\n'
-    content += '[Player]\nPlayer Name: ' + player_name + '\n\n'
 
-    content += '[Character]\nCharacter Name: ' + character_name + '\n'
-    content += 'Character Description: ' + character_description + '\n\n'
-    
+    if (gamemode == 'rpg'):
+        content += '[Player]\nPlayer Name: ' + player_name + '\n\n'
+
+    content += f'[{card_type_cap}]\n{card_type_cap} Name: {card_name}\n'
+    content += f'{card_type_cap} Description: {card_description}\n\n'
+
     content += '[Recent Story]\n'
     content += recent_story
     
     new_memory = ''
     tokens_total = -1
-
-    sys_prompt = CHARACTER_MEMORY_SYS_PROMPT
-
-    if gamemode == 'rpg':
-        sys_prompt = CHARACTER_MEMORY_RPG_SYS_PROMPT
 
     if (local == True and LOCAL_AI_ENABLED):
         # Local memorization using Ollama API
@@ -796,7 +815,7 @@ def generate_character_memory():
         payload = {
             "model": model,
             "messages": [
-                {"role": "system", "content": CHARACTER_MEMORY_SYS_PROMPT},
+                {"role": "system", "content": sys_prompt},
                 {"role": "user", "content": content}
             ],
             "temperature": 0.8,
@@ -817,8 +836,8 @@ def generate_character_memory():
 
         tokens_total = result['usage']['total_tokens']
 
-    app.logger.info("Content used in asset generation:\n" + content)
-    app.logger.info("Tokens used in character memory generation: %s", tokens_total)
+    print("Content used in memory generation:", content, flush=True)
+    print("Tokens used in memory generation: %s", tokens_total, flush=True)
 
     return jsonify({"new_memory": new_memory, "tokens_total": tokens_total})
 

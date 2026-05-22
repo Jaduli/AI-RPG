@@ -37,15 +37,13 @@ export default {
         content: this.content,
         
       };
-      if (type === 'location' && this.parent_location?.trim()) {
-        payload.parent_location = this.parent_location;
+      if (type === 'location') {
+        payload.parent_location = this.parent_location.trim();
+        payload.child_locations = this.child_locations.trim();
       }
-      if (type === 'location' && this.child_locations?.trim()) {
-        payload.child_locations = this.child_locations;
-      }
-      if (type === 'character' && this.create_memories) {
+      if (type === 'character' || type === 'location') {
         payload.create_memories = this.create_memories;
-        payload.character_memories = [];
+        payload.memories = [];
       }
       payload.keywords = this.keywords.split(',')
       
@@ -75,7 +73,7 @@ export default {
               content: card.content || '',
               parent_location: card.parent_location || '',
               child_locations: card.child_locations || '',
-              character_memories: card.character_memories || []
+              memories: card.memories || []
             };
             matching.push(payload);
             break; // Only add card once even if multiple keywords match
@@ -108,9 +106,9 @@ export default {
         if (card.child_locations) {
           card_text += `Locations within ${card.name}: ${card.child_locations}\n`
         }
-        if (card.character_memories) {
-          // Get up to three random character memories as context
-          const random_memories = [...card.character_memories]
+        if (card.memories) {
+          // Get up to three random card memories as context
+          const random_memories = [...card.memories]
             .sort(() => Math.random() - 0.5)
             .slice(0, 3);
 
@@ -170,9 +168,13 @@ export default {
         this.content = data.generated_content;
 
         if (only_active) {
-          parent.status_message = '';
+          if (data.tokens_total && parent.show_token_use) {
+            parent.status_message = 'Tokens used for content generation: ' + data.tokens_total;
+          } 
+          else {
+            parent.status_message = '';
+          }
         }
-        return;
       } finally {
         this.loading = false;
         parent.active_requests--;
@@ -187,10 +189,10 @@ export default {
     },
     // Adds a new card based on given recent story, type, and name. Used in
     // ActionRow to create new cards based on recent story and user input.
-    async generateContextCard(type = 'other', name = '', recent_story = '', character_memories = false) {
+    async generateContextCard(type = 'other', name = '', recent_story = '', create_memories = false) {
       this.name = name.trim();
       this.type = type;
-      this.create_memories = character_memories;
+      this.create_memories = create_memories;
 
       // Add name as keyword
       this.keywords = name;
@@ -204,49 +206,51 @@ export default {
       this.addCard();
       return;
     },
-    // Generate and add memories for existing characters found in given content.
-    // Each continue action has a set chance of creating a character memory
-    // if a character name is found in generated content (default: 30%).
+    // Generate and add memories for existing context cards found in given content.
+    // Each continue action has a set chance of creating a memory
+    // if a card name is found in generated content (default: 30%).
     // RPG mode uses player information and creates a memory relating to the player.
-    async addCharacterMemory(content, chance = 0.3) {
+    async addCardMemory(content, type, chance = 0.3) {
       const parent = this.$parent;
 
       // Get story content and gamemode from StoryEditor
       const gamemode = parent.gamemode; // Gamemode affects generation prompt
 
-      // Get characters with memory creation turned on
-      let characters = this.cards.filter(card => card.create_memories === true);
+      // Get context cards of given type with memory creation turned on
+      let cards = this.cards.filter(
+        card => card.create_memories === true && card.type === type
+      );
 
-      if (characters.length === 0) return;
+      if (cards.length === 0) return;
       
-      // Randomize order to prevent creating memories only for oldest characters
-      characters = [...characters].sort(() => Math.random() - 0.5)
+      // Randomize order to prevent creating memories only for oldest cards
+      cards = [...cards].sort(() => Math.random() - 0.5)
 
-      let character = null;
+      let card = null;
       const lower_content = content.trim().toLowerCase();
 
-      // Try to find one relevant character from text
-      for (const char of characters) {
-        if (char.keywords.length === 0) continue; // skip empty keyword fields
+      // Try to find one relevant card from text
+      for (const c of cards) {
+        if (c.keywords.length === 0) continue; // skip empty keyword fields
 
-        // Check if any character keyword is found in content
-        for (const keyword of char.keywords) {
+        // Check if any card keyword is found in content
+        for (const keyword of c.keywords) {
           if (lower_content.includes(keyword.trim().toLowerCase())) {
-            character = char;
+            card = c;
             break;
           }
         }
-        // Stop if relevant character found
-        if (character) break;
+        // Stop if relevant card found
+        if (card) break;
       }
 
-      // Return if no character found
-      if (!character) return;
+      // Return if no card found
+      if (!card) return;
 
-      // Avoid memory generation every time a character is found
+      // Avoid memory generation every time a relevant card is found
       if (Math.random() > chance) return;
 
-      parent.status_message = 'Generating character memory...';
+      parent.status_message = `Generating ${card.type} memory...`;
       try {
         this.loading = true;
         parent.active_requests++;
@@ -261,7 +265,7 @@ export default {
           player_name = parent.playerCard.name;
         }
 
-        const res = await fetch('/api/generate_character_memory', {
+        const res = await fetch('/api/generate_card_memory', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -272,8 +276,9 @@ export default {
             gamemode: gamemode,
             story_information: story_information,
             player_name: player_name,
-            character_name: character.name,
-            character_desctiption: character.content,
+            card_type: card.type,
+            card_name: card.name,
+            card_description: card.content,
             recent_story: recent_story
           })
         });
@@ -286,17 +291,17 @@ export default {
         const memory = data.new_memory;
 
         if (!memory) {
-          throw new Error('Backend returned empty character memory.');
+          throw new Error('Backend returned empty card memory.');
         }
-        // Keep a maximum of 10 memories per character
-        if (!Array.isArray(character.character_memories)) {
-          character.character_memories = [];
+        // Keep a maximum of 10 memories per card
+        if (!Array.isArray(card.memories)) {
+          card.memories = [];
         }
-        if (character.character_memories.length > 10) {
+        if (card.memories.length > 10) {
           // Remove the oldest memory
-          character.character_memories.shift();
+          card.memories.shift();
         }
-        character.character_memories.push(memory);
+        card.memories.push(memory);
       } finally {
         this.loading = false;
         parent.active_requests--;

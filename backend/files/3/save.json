@@ -1,0 +1,722 @@
+{
+  "story_name": "Isekai'd",
+  "instructions": "STORYTELLING:\n- Do NOT assume the player knows any information about the world or its characters.",
+  "content": "( What to do before beginning the story: \n\n- Add your information in the 'Player' tab. Feel free to edit your inventory to what you wish to start with.\n\n- Add any skills you're interested in learning in the 'Skills' tab (or add them as they become relevant).\n\n- Replace any information within {} in the story beginning below.\n\n- Lastly, remove all text within the parentheses. Leave only the story beginning in the editor.\n\n- Remember that you can continue the story without a character action! Click the 'Continue' button once or twice before using a character action if you want to set the scene. After each user action, you should let your actions play out before using another one by continuing without a user action. If that sounds confusing, just play the game and figure out your favorite playstyle as you play.\n\nEnjoy the game! )\n\nIt is a day like any other. You are sitting at your computer, trying out some game made by your dear sister. You don't know what to expect: a buggy mess, something half-assed, maybe even an actually good game?\n\nBefore you can find out, your world shifts.\n\nYour chair vanishes beneath you. Your stomach lurches as if gravity forgets which direction it belongs to. Sound stretches into a long, deafening hum. For one impossible instant, you glimpse things that should not exist: creatures made of light, water that shimmers like gold, skin that pulses with something other than blood.\n\nThen—\n\nSilence.\n\nYou are no longer home.\n\nNow you are in {choose a beginning location: Oakwood Village, or Elventon Harbor}, though you do not know that. You arrive with nothing but the clothes you wear, the phone still in your pocket, and {anything else you have on you, add to inventory}.\n\n",
+  "summary": "",
+  "essential_context": "Story Genres: Fantasy, Adventure.\n\n[World Information]\nWorld name: Pangea.\nPangea is a fantasy world with all kinds of creatures, from forest spirits to hungry wyverns to charming vampires. The most common race is human.\n\nThere are three kingdoms on Pangea.\nIn the North: Arthinora, led by King Rohan.\nIn the East: Donvard, led by elven queen Lysa.\nIn the West: Eldoria, led by King Lionel.\n\nIn the South: Land of Kha, a desert clan known for their primal ways and use of blood magic. Led by the Khaen, their strongest fighter.\n\nWorld Events:\nKing Lionel of the Holy Kingdom of Donvard has declared war against the Kingdom of Arthinora.\nA dragon has been spotted flying over the hills of Eldoria.\nRumors say the Kha have been attempting to summon the ancient form of an old god.",
+  "memory_cursor": 0,
+  "summary_cursor": 0,
+  "context_cards": [
+    {
+      "child_locations": "The Great Violet Sea, Elventon Harbor, Golden Roads",
+      "content": "An elven kingdom ruled by the Elven Queen Lysa and her daughter, Princess Cordelia. Eldoria is considered to be a peaceful and rich kingdom, valuing beauty and peace. The symbol of Eldoria is a violet dove holding a white rose.",
+      "id": 1779028506940,
+      "keywords": [
+        "Eldoria",
+        "Lysa",
+        "Kingdoms"
+      ],
+      "name": "Kingdom of Eldoria",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "child_locations": "Holy City of Donvard",
+      "content": "A Holy Kingdom that is ruled by King Lionel and Queen Anise. It's lands are vast with low hills and human-dominated farming land. Donvardian royalty is said to be ambitious, cunning, and often the cause of wars on Pangea. Donvardian people worship 'The Holy One', though the exact form or wish of the god differs between people. The symbol of Donvard is a golden sun, a sing of their worship and hard labor. Donvardians believe in purification, and some consider inhuman qualities to be impure, leading it to be the least accepting of creatures such as dwarves or orcs.",
+      "id": 1779028553088,
+      "keywords": [
+        "Donvard",
+        "Lionel",
+        "Anise",
+        "Kingdoms"
+      ],
+      "name": "Kingdom of Donvard",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "Lionel is a tall man in his fifties with a stature that demands order. Lionel has thinning blond hair and brown eyes. Lionel is known for his ruthless, uncaring nature; he takes what he needs no matter the way to get it. He cares little for the tricks of his son, Crown Prince Aylor, or his wife Queen Anise's religious concerns.",
+      "id": 1779029866153,
+      "keywords": "Lionel, kings",
+      "name": "King Lionel",
+      "type": "character",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "child_locations": "Oakwood Village, Castle of Arthinora, Spiritwoods, Silver Mountain, The Road of Winding Fate, Ironhart Forest",
+      "content": "A Northern Kingdom ruled by King Rohan. Dominated by woods and spirits. Arthinoran people are considered to be loyal and resilient. The symbol of Arthinora is a black boar.",
+      "id": 1779030002049,
+      "keywords": "Arthinora,Rohan,kingdoms",
+      "name": "Kingdom of Arthinora",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "child_locations": "Oakwood Tavern, Briarmarket Lane",
+      "content": "A small settlement located in the woods near the border between Arthinora and Donvard. The village is a notable resting spot for those who travel to Arthinora from foreign lands. Its wood-and-stone cabins are unadorned but durable. Its people often craft gifts and perform rituals to appease the spirits that are said to live within the surrounding woods.",
+      "id": 1779030584611,
+      "keywords": [
+        "Oakwood"
+      ],
+      "name": "Oakwood Village",
+      "parent_location": "Kingdom of Arthinora",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "A dapper and adventurous man in his early twenties. Fenn has tousled brown hair, dark green eyes, and light skin with freckles. Fenn tends to wear light leather armor, and he is talented with his bow carved from a dark oak he once felled with his late father. Fenn inherited his father's cabin in Oakwood Village in Arthinora, but he has always felt a calling to explore the world.\n\nFenn's mother was secretly a werewolf, a side which he tries to hide despite Arthinoran's accepting nature towards half-breeds. Fenn fears the full moon and often disappears during it, though few who know him knows if he truly is capable of transformation.\n\nFenn's ultimate dream is to one day see a dragon as he believes them to be the coolest thing to ever exist—he could talk for hours about dragons if given the chance, despite knowing little of them. Fenn has a dagger he often uses to carve small trinkets out of wood—sometimes for the forest spirits, sometimes to give as gifts to cheer others up.",
+      "id": 1779030758848,
+      "keywords": [
+        "Fenn",
+        "Oakwood"
+      ],
+      "name": "Fenn",
+      "type": "character",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "A small but comfortable tavern with a kind but brutish owner, a woman named Maya. Oakwood Tavern offers a place to rest and eat for cheap. Residents of Oakwood often share gossip there.",
+      "id": 1779031113687,
+      "keywords": [
+        "Oakwood Tavern"
+      ],
+      "name": "Oakwood Tavern",
+      "parent_location": "Oakwood",
+      "type": "location",
+      "child_locations": "",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "child_locations": "Temple of the Golden Flame, The Royal Palace, The Explorer's Guild, The Sewers, House of Great Pleasures",
+      "content": "The Holy City of Donvard is a sacred city built in a rugged valley. At the city's heart lies the magnificent Temple of the Golden Flame, a soaring structure dedicated to the worship of the Holy One, said to hold the power of purification within his radiating flame that burns eternally at the temple's apex. On the outskirts, refugees and outsiders live in slums often ignored by the royalty.\n\nThe city is alive with anticipation, as news of King Lionel's declaration spreads fear and determination among its inhabitants. Priests perform ritualistic cleansing rites to protect their city from impending conflict, while mercenaries and knights gather at the city gates, eager to depart for the battlefields. The Shine of the Kingdom, Prince Aylor, has been seen performing strange rituals within the Royal Palace's walls.",
+      "id": 1779379987498,
+      "keywords": [
+        "City of Donvard"
+      ],
+      "name": "Holy City of Donvard",
+      "parent_location": "Kingdom of Donvard",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "The Temple of the Golden Flame is a grand, sun-scorched temple complex in the heart of the Holy City of Donvard. Its gleaming gold-stone architecture stands out amidst the arid landscape, reflecting the intense sunlight that bathes the surrounding dunes. At its center lies the eternal golden flame.\n\nThe temple is a hub for Donvard's devout followers, who flock here to pray for victory and bask in the radiance of the Golden Flame. Rumors whisper that the flame has begun to flicker ominously, as if sensing the tumultuous fate of their kingdom. Within the temple walls, monks train in martial arts and weave potent spells, fueling tensions between those who see the war effort as righteous sacrifice and those who view it as reckless aggression.",
+      "id": 1779380516018,
+      "keywords": [
+        "Golden Flame"
+      ],
+      "name": "Temple of the Golden Flame",
+      "parent_location": "the Holy City of Donvard",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "The Royal Palace in Donvard is a grand fortress with gleaming white stone walls, surrounded by towering spires that pierce the grey Donvardian sky. The palace's main entrance, adorned with the symbol of the Holy Kingdom's golden sun, is flanked by imposing stone statues of lions. At night, torches and lanterns illuminate the cobblestone streets within the palace walls, casting a warm glow over the bustling crowds of knights, advisors, and guardsmen hurrying to attend to their duties.\n\nThe palace is known to host glamorous events, and the bravest and most ambitious of individuals are often invited. Prince Aylor, the Shine of the Kingdom, can often be seen performing rituals at night—some holy, others questionable.",
+      "id": 1779381373575,
+      "keywords": [
+        "Royal Palace"
+      ],
+      "name": "The Royal Palace",
+      "parent_location": "the Holy City of Donvard",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      
+      "content": "Nicknamed \"Shine of the Kingdom\", Aylor is the prince of the Holy Kingdom of Donvard. He is considered to be beautiful, with long blonde hair and striking red eyes. The throne claims him to be favored by the Holy One, and he claims to receive visions in his dreams. \n\nPrince Aylor has strong ambitions in making the world fall under his power. He values those with talent, and cares little for the weak or unfortunate. Aylor often rides his pure white warhorse Adelynn, and he is known to dress in royal clothing fit for a prince: red apparel trimmed with gold. Aylor is a talented swordsman, and he yearns for battle; some claim he has made a deal with the Corrupted One, which has granted him immortality. Such claims often get silenced.\n\nAylor owns 'The Dragonslayer', an inherited white steel sword that was once said to pierce the heart of a dragon.",
+      "create_memories": true,
+      "id": 1779381931444,
+      "keywords": [
+        "Aylor",
+        " Prince of Donvard",
+        " The Royal Palace",
+        " The Shine of the Kingdom"
+      ],
+      "name": "Prince Aylor",
+      "type": "character",
+      "memories": []
+    },
+    {
+      "content": "The Dragonslayer is a sword made of white steel, its blade inscribed with ancient runes that seem to glow golden when darkness approaches. Its wielder is said to be gifted with unmatched strength and agility, as if the sword itself tempers their resolve against the forces of evil. Some claim the sword to corrupt one's mind if held too long.",
+      "id": 1779382076890,
+      "keywords": [
+        "Dragonslayer"
+      ],
+      "name": "The Dragonslayer",
+      "type": "item"
+    },
+    {
+      "content": "The Explorer's Guild is a storied institution in the heart of Donvard, its imposing stone façade bearing witness to countless quests and expeditions. Inside, rows of dusty maps line the walls, alongside an assortment of curious trinkets and relics gathered from far-flung corners of Pangea, each one telling a tale of bravery and perseverance. At the center of this treasure trove, Guildmaster Edgar stands tall, his piercing blue eyes always scanning the assembly for the next worthy adventurer.\n\nThis hub of Donvard's exploratory endeavors has long been a thorn in King Lionel's side, as Guildmaster Edgar remains committed to fostering understanding between nations through cooperation and mutual respect.",
+      "id": 1779382260280,
+      "keywords": "Explorer's Guild",
+      "name": "The Explorer's Guild",
+      "parent_location": "the Holy City of Donvard",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      
+      "content": "Guildmaster Edgar is a man in his late forties, with graying beard and piercing blue eyes. He wears a leather apron over a crisp white shirt and carries an ornate staff adorned with silver runes. Edgar's weathered hands reflect years of rough living, a testament to his experience as an explorer.\n\nEdgar often speaks of his past adventures around Pangea: the deserts in the south, the spirits in the north, the shimmer of the sea in the west. He believes in equal living for all creatures, a fact which many proud and spirited Donvardians disagree with.\n\nAs Guildmaster of the Donvard Explorers' Guild, Edgar has spent years navigating the treacherous politics of the war-torn kingdoms. His experience is not limited to mere paperwork; he's a skilled fighter with scars on his hands and face to prove it. A personal vendetta against King Lionel drives Edgar to seek more information about the escalating conflict between Donvard and Arthinora, particularly in light of recent rumors about a mysterious artifact hidden somewhere within the disputed territories.",
+      "create_memories": true,
+      "id": 1779382646389,
+      "keywords": "Edgar, Guildmaster, City of Donvard",
+      "name": "Guildmaster Edgar",
+      "type": "character",
+      "memories": []
+    },
+    {
+      "content": "The hidden passages beneath the city's streets, known as The Sewers, are a labyrinthine network of tunnels and chambers. As one navigates through its narrow alleys and caverns, the air grows thick with the stench of mold, damp earth, and something faintly sweet, hinting at the presence of dark magic. Rebels, spies, and secret societies all find hiding places among the crumbling structures.\n\nRumors swirl that some brave (or foolhardy) souls have begun to excavate hidden chambers deep within the sewers' depths, seeking long-lost artifacts and forbidden knowledge.\n\nNotable Characters: Lady Orc Jehane, Spy Malin",
+      "id": 1779382844206,
+      "keywords": [
+        "the sewers"
+      ],
+      "name": "The Sewers",
+      "parent_location": "the Holy City of Donvard",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      
+      "content": "Susana is a young woman with wild, curly brown hair and piercing emerald eyes that seem to gleam with a hint of mischief. She wears a leather tunic adorned with intricate silver embroidery, symbolizing her status as an elite huntress from the woods of Arthinora. Born into a family of renowned warriors, Susana has honed her skills in battle and tracking since childhood.\n\nSusana feels a growing unease with the ongoing conflict. She is torn between her loyalty to the Explorer's Guild and the need to defend her old home. Her personal goal is to uncover the truth behind the escalating tensions and use her skills to prevent all-out catastrophe.",
+      "create_memories": true,
+      "id": 1779383120994,
+      "keywords": [
+        "Susana",
+        " Explorer's Guild"
+      ],
+      "name": "Adventurer Susana",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Edwald is a rugged man in his late twenties, with unkempt brown hair and a strong jawline. He wears a leather tunic and carries a well-worn sword at his side. His eyes seem to hold a deep sadness.\n\nHe was once a soldier in the Holy Kingdom of Donvard, but after King Lionel's declaration of war against Arthinora, Edwald grew disillusioned with the monarch's motives and abandoned his post.  Edwald is driven by a strong sense of justice and compassion, often putting the needs of others before his own. Rumors of Prince Aylor's brutality towards prisoners have sparked a personal vendetta in Edwald against his former commander.\n\nEdwald has few close friends, but one bond remains: with Lila, a basket weaver from Eldoria who shared a brief romance with him on a campaign. Edwald has not met with Lila since the campaign, but he hopes to one day find her again.",
+      "create_memories": true,
+      "id": 1779383294246,
+      "keywords": [
+        "Edwald",
+        " Explorer's Guild"
+      ],
+      "name": "Adventurer Edwald",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Fitz is a mysterious figure in his late twenties, often seen wearing dark robes and a hood that casts his face in shadows. Fitz has dark brown eyes and tousled jet-black hair.\n\nA child of the sewers beneath the City of Donvard, Malin was raised on whispers and rumors of his mother's past - a rebellious thief who vanished when sneaking around the Royal Palace. With an innate curiosity and a talent for stealth, Fitz grew up to become a skilled spy and messenger for various factions in the city above. His primary goal is to uncover the truth about her mother's disappearance while keeping his existence hidden from prying eyes.\n\nA trusted ally of the local thieves' guild, Fitz has earned the respect of the city's underworld with his uncanny ability to gather information without leaving a trail.",
+      "create_memories": true,
+      "id": 1779383562548,
+      "keywords": [
+        "Fitz",
+        " the sewers"
+      ],
+      "name": "Spy Fitz",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Orc Jehane is a diminutive orc with skin like dark green leather and piercing yellow eyes that seem to glow in the dim light. She wears a suit of mismatched armor, scavenged from various corners of Donvard's undercity, adorned with tiny, delicate silver filigree.\n\nJehane is fueled by an unyielding fervor for her faith and its ideals, which emphasize raw power and brutal efficiency. Her background as an outcast in the heavily populated city above, forced to flee after her family's death at the hands of Donvard's city guards, has driven a burning resentment against authority and given rise to a maelstrom of conflicting motivations - to serve her faith or exact revenge on those who wronged her people.",
+      "create_memories": true,
+      "id": 1779383719210,
+      "keywords": [
+        "Jehane",
+        " the sewers"
+      ],
+      "name": "Orc Jehane",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Seer Evely is a woman in her late forties with long, wild gray hair and clouded eyes. She has lived in Oakwood Village for most of her life, studying the ancient spirits and rituals passed down through her family. Evely's unique background is tied to her having been a victim of brutal bandit raids as a young woman; she lost several loved ones, but found solace and a purpose in mastering her gift. As a result, Seer Evely is fiercely protective of her community and harbors deep-seated anger towards those who would cause harm. She is intensely driven to use her abilities for the good of her people.\n\nSeer Evely's relationships are defined by her intense loyalty to Oakwood Village, particularly its mayor, Saul, with whom she shares a long history. Evely has also formed an uneasy alliance with Fenn, who occasionally brings her plants and other supplies from the nearby woods.",
+      "create_memories": true,
+      "id": 1779384129279,
+      "keywords": [
+        "Evely",
+        " Oakwood"
+      ],
+      "name": "Seer Evely",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Mayor Saul is a stout man in his late forties with a bushy beard and thick, dark eyebrows. As the mayor of Oakwood Village, Saul has spent years navigating the complexities of trade and politics between the two kingdoms.\n\nGrowing up in Arthinora, Saul was instilled with a strong sense of loyalty to his homeland, but as he traveled extensively throughout Pangea, he developed a more nuanced understanding of the world's various cultures. This led him to forge close relationships with Donvardian merchants, and though the current war threatens Oakwood Village's delicate balance, Saul remains resolute in his commitment to preserving peace between the warring nations.",
+      "create_memories": true,
+      "id": 1779384260138,
+      "keywords": [
+        "Saul",
+        " Oakwood"
+      ],
+      "name": "Mayor Saul",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Maya is a ruggedly handsome woman in her late forties with an imposing physique and a wild shock of curly brown hair. She has a distinctive scar above her left eyebrow from a barroom brawl that left its mark on both her face and her temperament. Born to a human mother from the kingdom of Arthinora and a Kha father who was part of a traveling tribe, Maya's upbringing was a mix of cultures and customs.\n\nMaya is a straightforward woman with a sharp tongue and quick fists. Her goal is to keep her family safe from retribution and her tavern running smoothly despite the increasingly tense relations between kingdoms. Notable patrons include Arthanorian spies and smugglers, Eldorians with whispers of rumors about the dragon, and enigmatic Kha traders rumored to be looking for more than exotic goods.",
+      "create_memories": true,
+      "id": 1779384411693,
+      "keywords": [
+        "Maya",
+        " Oakwood Tavern"
+      ],
+      "name": "Maya",
+      "type": "character",
+      "memories": []
+    },
+    {
+      "child_locations": "Moonlight Market, The Violet Assembly Hall, The Brineforge Yards, Seafoam Catacombs",
+      "content": "Elventon Harbor is a bustling seaside port town located next to the Great Violet Sea in Eldoria. The ancient, weathered buildings seem to lean against one another, their wooden facades bearing intricate carvings of mermaids and sea serpents. A large stone statue of the long-forgotten elven King Maric stands sentinel over the harbor entrance, its eyes said to weep saltwater tears whenever a ship carrying Eldorian sailors sets sail for The Violet Reach, a dangerous section of sea beyond the harbor known for whirlpools, sea serpents, and disappearances.\n\nAs word spreads of the dragon's sighting over the hills, Elventon Harbor is abuzz with worried chatter and preparations for potential battle, and for prayers of a sacred hero to save the town.\n\nThe town's inhabitants are predominantly elven Eldorians, fiercely proud of their history and craftsmanship.",
+      "id": 1779385817424,
+      "keywords": [
+        "Elventon",
+        " the Great Violet Sea"
+      ],
+      "name": "Elventon Harbor",
+      "parent_location": "Eldoria",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "The Violet Assembly Hall is a majestic, ornate hall nestled among the dockside taverns and warehouses. Its intricately carved wooden façade glows with a soft, ethereal light emanating from within, illuminating the busy harbor streets at dusk. A sprawling silverwood tree, its branches adorned with tiny lanterns, towers above the Assembly Hall's central entrance.\n\nBuilt by the ancient elven councilors of Elventon as a sanctuary for travelers and diplomats alike, the Violet Assembly Hall has long been a hub for interkingdom negotiations and clandestine meetings. Despite the brewing war between Donvard and Arthinora, its hallowed halls remain a beacon of hope for peaceful resolutions, attracting envoys from far-flung lands seeking to broker fragile alliances amidst the gathering storm.",
+      "id": 1779386005404,
+      "keywords": "Assembly Hall",
+      "name": "The Violet Assembly Hall",
+      "parent_location": "Elventon Harbor in Eldoria",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      
+      "content": "Jonas is a short (5'3'') and cute man in his early twenties. Jonas has short white hair, warm brown eyes, sun-tanned skin and a lean build often dressed in worn leather armor. As a member of Elventon's traveling performers' troupe, Jonas learned the art of storytelling and performance from his mother, who was a skilled actress and singer.\n\nJonas grew up on the road, moving from town to town with a troupe in Eldoria, often playing for coin or supplies in exchange for their performances. Though he has seen many wondrous sights, Jonas is driven by a sense of restlessness, feeling there's more to life than the fleeting entertainment he provides. As rumors spread about King Lionel's declaration of war and the sighting of the dragon, Jonas feels an itch to join the adventure and prove himself beyond mere storytelling.\n\nJonas has an elf mother and a human father, a traveler his mother claimed came from the lands in the south before disappearing.",
+      "create_memories": true,
+      "id": 1779387586132,
+      "keywords": "Jonas, Elventon",
+      "name": "Jonas",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Lady Seralyth is an elven woman in her late forties with an ethereal presence. Her silver hair cascades down her back like a river of moonlight, and her piercing emerald eyes seem to hold the wisdom of ages. She wears intricate silver jewelry that adorns her hands and neck, symbolizing her position as councilspeaker for Elventon Harbor.\n\nAs a seasoned diplomat and strategist, Lady Seralyth has walked the fine line between politics and bloodshed for years, serving as an advisor to Queen Lysa during the negotiations with Arthinora and Dovard. She is known for her unwavering dedication to her kingdom and her people, but also for her ruthless willingness to make difficult decisions when the situation demands it. Her ongoing goal is to navigate the complexities of war while protecting her kingdom's interests and preserving its integrity in the face of mounting threats from within and without.",
+      "create_memories": true,
+      "id": 1779387975923,
+      "keywords": [
+        "Seralyth",
+        " Assembly Hall"
+      ],
+      "name": "Lady Seralyth",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Lucian is a slender, agile man in his late twenties with piercing emerald eyes and shoulder-length silver hair that often falls across his forehead. He wears an intricately embroidered cloak over a finely tailored suit of leather armor.\n\nAs the respected treasurer of Eldoria's royal court, Lucian has dedicated himself to maintaining the kingdom's vast wealth and prosperity. With an uncanny knack for finance and strategy, he often finds himself at odds with his more impulsive colleagues, such as the Queen's advisor Lady Seralyth. His most pressing concern is managing the kingdom's resources in preparation for any potential alliance negations with the warring neighbors of Eldoria.\n\nLucian holds himself with a regal and proud stature. He does not concern himself with the matters of commoners.",
+      "create_memories": true,
+      "id": 1779388255744,
+      "keywords": [
+        "Lucian",
+        " Assembly Hall"
+      ],
+      "name": "Treasurer Lucian",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "A strikingly beautiful woman in her late-forties, with violet eyes and long blonde hair. She has a regal presence, but those who are close to her know of her kind, religious soul. Her slender fingers are adorned with heavy rings bearing the golden sun of the Holy Kingdom of Donvard.\n\nAnise is driven by a sense of righteousness. She shares King Lionel's vision for a united Pangea, but believes it should be done under holy order, not with steel and sword.",
+      "create_memories": true,
+      "id": 1779389126802,
+      "keywords": [
+        "Anise",
+        " Queen of Donvard"
+      ],
+      "name": "Queen Anise of Donvard",
+      "type": "character",
+      "memories": []
+    },
+    {
+      "content": "A narrow trading street where hunters, herbalists, trappers, and wandering merchants gather. Briarmarket Lane is a winding, cobblestone alleyway in the heart of Oakwood. Shuttered market stalls and timber-framed shops line its sides, their wooden signs creaking in the gentle breeze that wafts from the nearby forest. Amidst the bustle, the distinctive aroma of roasting chestnuts mingles with the scent of freshly brewed ale, drawing patrons to the cozy Briar's End tavern at the lane's far end.\n\nThis ancient thoroughfare has borne witness to Oakwood's history, from the village's early days as a humble trading post to its current status as a haven for travelers and artisans. Its proximity to the forest has also made it a hub for local hunters and woodworkers, who frequently meet with buyers at Briar's End or other nearby stalls.",
+      "id": 1779389251861,
+      "keywords": [
+        "Briarmarket"
+      ],
+      "name": "Briarmarket Lane",
+      "parent_location": "Oakwood in Arthinora",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      
+      "content": "Hild is a middle-aged woman with a kind face and worn hands. Her long brown hair is tied back in a loose braid, and she has a scattering of grey streaks that have appeared over the years from haggling with customers at Briarmarket Lane. She wears a warm smile as she displays her wares to passing shoppers.\n\nAs a market seller who's lived on Briarmarket Lane all her life, Hild has seen many changes in Pangea. She often sells good-luck charms that hold powers that might not become apparent at first glance. She is known to speak in riddles, but to hold more knowledge than one might think.",
+      "create_memories": true,
+      "id": 1779389544076,
+      "keywords": [
+        "Hild",
+        " Briarmarket"
+      ],
+      "name": "Seller Hild",
+      "type": "character",
+      "memories": []
+    },
+    {
+      "content": "The ancient fortress walls of the Castle of Arthinora rise imposingly from the craggy hillside, a testament to the kingdom's rich history. A squat keep at its center, flanked by four watchtowers, guards the high gates adorned with the emblem of a black boar. The rugged exterior hides elegant halls and chambers within, where stone carvings depict the epic deeds of Arthinora's legendary founders, the royal family that is said to be watched by the spirits of the nearby Spiritwoods.\n\nAs a symbol of Arthinora's resilience, the castle has weathered countless battles against invading forces, yet time after time its invaders seem to face mysterious misfortunes. Castle guards, humans, half-orcs, and other breeds, stand watch over battlements worn smooth by generations of garrisons.",
+      "id": 1779390243731,
+      "keywords": [
+        "Castle of Arthinora"
+      ],
+      "name": "Castle of Arthinora",
+      "parent_location": "Oakwood in Arthinora",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      
+      "content": "King Rohan stands resolute, his rugged features and dark blue eyes a testament to his unfaltering determination. He wears the weight of leadership over his broad shoulders, his royal, spirit-blessed linage holding secrets few dare to question. A faint scar above his left eyebrow hints at a long-forgotten skirmish, but his demeanor remains unshakeable.\n\nAs King of Arthinora, Rohan has long stood against the encroaching ambitions of Donvard's King Lionel. He is a natural mediator and strategist, ever seeking to negotiate a peaceful resolution to the conflict. Yet with each passing day, he grows increasingly wary of Lionel's true intentions, sensing an unseen hand driving his aggressive policies. For Rohan, the key lies in forging alliances with other kingdoms, particularly Eldoria, who Arthinora has long been in good relations with.\n\nKing Rohan holds the most care for his sons, Crown Prince Aric and the Young Prince Aethelm.",
+      "create_memories": true,
+      "id": 1779390577226,
+      "keywords": [
+        "Rohan",
+        " Kings"
+      ],
+      "name": "King Rohan",
+      "type": "character",
+      "memories": []
+    },
+    {
+      "content": "The Great Violet Sea is a majestic expanse of violet water, its surface shimmering with an otherworldly golden sheen. Historically, this was a sacred site for the ancient Eldorians, who believed that the sea's regal color held the essence of true power. The water is home to strange and rare creatures, such as the bioluminescent fish that light up the darkness at night. Fishermen claim to have seen these enchanted fish guiding lost sailors safely back to shore. Some say that the Great Violet Reach, the area beyond known seas, holds creatures that few men can see without becoming enchanted or killed.",
+      "id": 1779391052181,
+      "keywords": "Sea",
+      "name": "The Great Violet Sea",
+      "parent_location": "Eldoria",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "A serene, mystical forest near the Castle of Arthinora. Towering trees, their trunks adorned with intricately carved wooden symbols, stretch towards the sky, while delicate vines weave through the branches like ethereal tapestries. A grand stone statue of Queen Ariana, Arthinora's spirit-blessed founder, stands sentinel at the forest's heart. The air is alive with whispers of ancient magic, drawing forest spirits and dryads to this sacred place where the queen once communed with nature. Despite the war raging beyond its borders, the Spiritwoods remain a sanctuary for those seeking solace in their connection to the natural world, though many say that only those of the Arthinora's royal line can ever return—the spirits may play tricks on those they consider unworthy, trapping their souls forever.",
+      "id": 1779391246289,
+      "keywords": [
+        "Spiritwoods"
+      ],
+      "name": "Spiritwoods",
+      "parent_location": "Arthinora",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "The labyrinthine Serpentine Catacombs lie hidden beneath Elveton Harbor's docks, their entrance guarded by two massive stone serpents. Within, the air is heavy with the scent of damp earth and old magic, as flickering torches cast eerie shadows on the walls. These subterranean tunnels have been a hub for secret meetings between smugglers and revolutionaries, drawing in those seeking to circumvent the sheen of the lands above.\n\nFor centuries, the Catacombs have played host to whispered plots and illicit trade, but the recent influx of rumors about an old god's awakening has many believing the tunnels will soon become a front in the coming conflict. Kha spies are said to move unseen through these corridors, searching for people or powerful artifacts to aid their dark summoning.",
+      "id": 1779391425899,
+      "keywords": [
+        "Serpentine",
+        " Catacombs"
+      ],
+      "name": "Serpentine Catacombs",
+      "parent_location": "Elventon Harbor in Eldoria",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      
+      "content": "The Khaen is a man in her mid-thirties, with skin tanned from years under the desert sun and eyes that seem to hold secrets of the ancient ones. His dark hair is tied back, and scars mark his arms, mementos of countless battles against rival contenders and invading forces.\n\nAs leader of Land of Kha, his main goals are to protect his people and keep them united. His true name is Zha'thik, but he prefers the title Khaen, symbolizing his unyielding strength and connection to the land's raw energy.\n\nThe Khaen knows of old tales that tell of one foreigner that will be key in unlocking the old god's form—the Khaen is said to transform into a man with the head and wings of a phoenix, unlocking rebirth and the power to rule over all. The Kha are secretly looking for said foreigner, though no one knows who it is, only that they come from a place beyond Pangea.",
+      "create_memories": true,
+      "id": 1779391764902,
+      "keywords": [
+        "Khaen"
+      ],
+      "name": "The Khaen",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Ansel is a tall, handsome man in his mid-twenties, with blond hair that curls at the nape and gray eyes that seem to see right through you. He has a lean build, honed from years of living on the road as a wandering warrior. A scar across his left eyebrow tells the story of a close call he had during one of his earlier battles.\n\nAnsel tends to radiate a confident, care-free attitude. He often wears a smile on his face, and his charm can often swoon others enough to get him almost anything he needs. He tends to seek pleasure through affection and humor.\n\nAs a former member of King Lionel's personal guard, Ansel has seen firsthand the brutal tactics employed by the soldiers of Donvard in their campaign against Arthinora. He is haunted by memories of the battle-scarred lands and the innocent civilians caught in the crossfire, and he deserted the army in search of greater meaning. Ansel's close relationship with his childhood friend, a skilled archer named Eira who serves as a scout for the Arthinoran army, sometimes messages him about the unfolding war efforts.",
+      "create_memories": true,
+      "id": 1779392135849,
+      "keywords": "Ansel, House of Great Pleasures, wandering",
+      "name": "Ansel",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Eira is a skilled and agile woman with short brown hair and sharp hazel eyes. She wears leather armor and carries a short sword at her side, evident by the scars on her left forearm from countless battles in the unforgiving Arthinoran wilderness. Born to a family of scouts who had dedicated themselves to protecting the kingdom's borders, Eira grew up learning the art of survival and tracking from her father, who vanished while on patrol when she was still a child.\n\nHaunted by the uncertainty of what happened to him, Eira has since honed her skills in relentless pursuit of answers about his disappearance. Her resolve is both fierce and driven, bordering on obsession at times, which often puts her at odds with fellow scouts. News of the war against Donvard has brought her a sense of unease, knowing her skills could be more valuable elsewhere, but for now, she remains loyal to King Rohan's cause.",
+      "create_memories": true,
+      "id": 1779392232554,
+      "keywords": [
+        "Eira",
+        " Oakwood"
+      ],
+      "name": "Eira",
+      "type": "character",
+      "memories": []
+    },
+    {
+      "content": "A lavish tavern and theater complex in the heart of Donvard's capital city, known for its extravagant entertainment and subtle intrigue. The grand building boasts ornate wooden facades, stained glass windows, and a sweeping marble staircase, illuminated by twinkling lanterns that cast a warm glow on the cobblestone streets. A sprawling garden to one side features beautifully manicured hedges, whispering fountains, and statues of ancient mythological figures, while an elegant concert hall occupies the rear of the property.\n\nFew know of the House of Pleasure's lower floors, where all are made to wear masks, and no speak of what happens there can be shared with the outside world.",
+      "id": 1779392645940,
+      "keywords": [
+        "House of Great Pleasures"
+      ],
+      "name": "House of Great Pleasures",
+      "parent_location": "City of Donvard",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      
+      "content": "A woman in her mid-twenties with long, curly brown hair and warm hazel eyes. She has a delicate tattoo of intertwined vines on her left cheekbone, a mark she earned from her family's esteemed craft of weaving baskets from the sacred silverwood trees found only in Eldoria.\n\nGrowing up in the heart of Eldoria, Lila learned the intricacies of basket weaving from her mother and grandmother, who passed down secrets of the art. She is fiercely proud of her kingdom's connection to beauty and has always sought to preserve its ancient traditions. A gentle soul with a deep respect for all living creatures, Lila often finds herself at odds with her own ambition: she wants to expand Eldoria's trade with neighboring kingdoms without sacrificing their sacred harmony with the environment.",
+      "create_memories": true,
+      "id": 1779392804161,
+      "keywords": "Lila, Moonlight Market",
+      "name": "Lila",
+      "type": "character",
+      "memories": []
+    },
+    {
+      "content": "A bustling hub of activity on the docks of Elventon Harbor. The smell of saltwater and exotic spices fills the air as vendors from all corners of Pangea hawk their wares to eager buyers. Towering above the stalls stands the grand ship, \"Moonwhisper's Fury\", its three masts proudly bearing the flag of Violet Dove of Eldoria.\n\nAs tensions rise between Arthinora and Donvard, some Eldorian sailors take advantage of the chaos to smuggle contraband into the kingdom. Local authorities turn a blind eye, allowing the illicit trade to flourish under the cover of night. The whispers of an impending war fuel paranoia among the population, but for now, merchants continue to haggle over goods, and rumors spread like wildfire through the crowded streets. A small stray wyvern is rumored to be nesting in the nearby harbor, causing some vendors to seek a man brave enough to defeat it.",
+      "id": 1779392984916,
+      "keywords": [
+        "Moonlight Market"
+      ],
+      "name": "Moonlight Market",
+      "parent_location": "Elventon Harbor in Eldoria",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      
+      "content": "A rugged woodsman in his early thirties from Arthinora. He stands at over six feet tall with a sturdy build, dark brown hair, and blue eyes. A series of scars on his broad chest hint at past battles against the wilderness and its more sinister inhabitants. Cain hails from a long line of Arthanorans who live off the land, taking pride in their survivalist skills. Despite his rugged looks, Cain is a handsome man that has gained him many offers for his services, though Cain's love for the woods has kept him as a lone traveler.\n\nCain's affinity for hunting and tracking has been honed by years spent fending off threats to his family's woodsman livelihood. He is driven by loyalty to King Rohan and the spirits that he believes truly own the woods. Cain is particularly concerned about the impact of war on his people and their way of life. His younger brother, Arian, was recently taken in as a squire by the Arthanoran army, fueling Cain's anxiety over his safety.",
+      "create_memories": true,
+      "id": 1779393284110,
+      "keywords": [
+        "Cain",
+        " Oakwood"
+      ],
+      "name": "Cain",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Arian is a young man in his early twenties with unruly brown hair and bright blue eyes. He wears a leather tunic emblazoned with the black boar of Arthinora, paired with worn but well-maintained armor beneath it. Arian has experience with swords and strong ambition, which has led to him becoming King Rohan's squire as the threat of war nears.\n\nArian is fiercely loyal to his lord and homeland, often volunteering for perilous missions to prove himself worthy of the position. He struggles with self-control, prone to rash decisions when driven by passion rather than reason, but his bravery and unwavering dedication make up for this flaw in the eyes of King Rohan. Arian holds true care for his brother Cain, though the two rarely see each other as Cain's content nature clashes with Arian's ambitions.",
+      "create_memories": true,
+      "id": 1779393656027,
+      "keywords": [
+        "Arian",
+        " Castle of Arthinora"
+      ],
+      "name": "Arian",
+      "type": "character",
+      "memories": []
+    },
+    {
+      
+      "content": "Linette is a mysterious woman, shrouded in shadows. Her long raven hair cascades down her pale neck like dark waterfalls, and her piercing red eyes seem to gleam with secrets in the dim light of evening. Her slender yet athletic physique betrays a strength that is both captivating and unnerving. A crimson pendant adorns her neck, shaped like a crescent moon with an inky void at its center.\n\nAs one of Arthinora's rarest citizens—a vampire with no allegiance to either kingdom, despite being born in Donvard's heart—Linette has lived through the turmoil brewing between Arthinora and Donvard. She is drawn to conflict, feeding on the chaos that comes with it, but her presence is shrouded in whispers of rebellion against the Donvardian crown for the Prince Aylor's rumored use of dark magic to fuel the war effort.",
+      "create_memories": true,
+      "id": 1779393843007,
+      "keywords": "Linette, vampire, Darkwood Manor",
+      "name": "Linette",
+      "type": "character",
+      "memories": []
+    },
+    {
+      "content": "Darkwood Manor is a foreboding, ancient estate shrouded in perpetual twilight. Towering cypress trees encircle its walls, their branches tangled like skeletal fingers. In the distance, a faint howling echoes through the darkness, as if the very woods themselves were lamenting the presence of this vampire stronghold. Darkwood Manor has been a refuge for creatures of the night for centuries, its stone façade bearing witness to countless midnight gatherings and clandestine rituals.",
+      "id": 1779394376334,
+      "keywords": "Darkwood Manor",
+      "name": "Darkwood Manor",
+      "parent_location": "Arthinora",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "child_locations": "Darkwood Manor",
+      "content": "The Road of Winding Fate is a treacherous mountain pass in the northern kingdom of Arthinora, notorious for its steep cliffs that lead to the Northern Mountains. A colossal stone statue of the Boar's Fury stands guard at the midpoint of the pass, its eyes glowing like embers as it surveys the valleys below. This pivotal route connects the eastern valleys to Arthinora's capital city and has borne witness to centuries of turmoil, as Arthinoran clans have clashed with Donvardian invaders and Southern raiders alike.\n\nThe roads are often contested by roving packs of goblin and dwarf warriors, and the occasional fearsome wyvern. Some travelers talk of a hidden manor near the road, said to hold creatures that drink red and never see the light.",
+      "id": 1779394693506,
+      "keywords": [
+        "Roads of Arthinora",
+        " Winding Fate"
+      ],
+      "name": "The Road of Winding Fate",
+      "parent_location": "Arthinora",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "child_locations": "The Weeping Pines, The Great Stone Bridge",
+      "content": "A network of sun-kissed highways that stretch across the lands of Eldoria. It is said that if one could see them from above, the roads would form the image of a rose bush. The roads are often patrolled by elven guards who work to withhold peace for safe travel, though some say that the elves' greed can make the guards look the other way if paid well. Many merchants and travelers cross the golden roads, often preferring them to that of the roads near the kingdom borders. Crossing the Great Stone Bridge is the fastest way to travel between Donvard and Eldoria.",
+      "id": 1779395815625,
+      "keywords": [
+        "Golden Roads"
+      ],
+      "name": "The Golden Roads",
+      "parent_location": "Eldoria",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "A majestic archway that spans the Silverbrook River between Donvard and Eldoria. A lone stone pedestal stands sentinel at the bridge's center, worn smooth by countless pilgrims' reverent hands, where a delicate silver bell seems to whisper prayers on the wind.\n\nThe Great Stone Bridge has stood witness to generations of Donvard's royal families crossing into Eldoria for alliances and diplomacy, though now its tranquility is disrupted by war drums beating in Arthinora. Travelers passing beneath the bridge speak of visions seen in the river's dark depths: a serpent coiled about the kingdom's heart, its scales glinting with a malevolent fire that seems to pulse with every heartbeat.",
+      "id": 1779395937255,
+      "keywords": "Great Stone Bridge, Silverbrook",
+      "name": "The Great Stone Bridge",
+      "parent_location": "The Golden Roads",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "The rugged white peak of The Silver Mountain stands sentinel against the grey skies, its granite surface weathered into a labyrinth of gleaming silver streaks and fissures that echo with ancient energy. No man has yet climbed the treacherous mountain as it is said to be ruled by the ancient spirits of Arthinoran royals.",
+      "id": 1779396246861,
+      "keywords": [
+        ""
+      ],
+      "name": "The Silver Mountain",
+      "parent_location": "Arthinora",
+      "type": "location",
+      "create_memories": false,
+      "memories": []
+    },
+    {
+      "content": "Rumors speak of a dragon sighted over Eldoria, its scales a gleaming white. Some say it is a tale to spread fear, others see a sing of impending doom. No one knows where the dragon roosts, though some suspect it might rule the highest peak of the Silver Mountain far north in Arthinora. Others say it scouts the Great Violet Sea, roosting somewhere far beyond the known world.",
+      "id": 1779396532711,
+      "keywords": [
+        "Dragon"
+      ],
+      "name": "The Dragon",
+      "type": "other"
+    },
+    {
+      "id": 1779397421993,
+      "name": "Prince Aethelm",
+      "type": "character",
+      "content": "Aethelm is a lean and agile man in his early twenties, with unruly brown hair and gray eyes that seem to gleam with a fierce inner light. He stands out amidst the formal attire of his kingdom's nobles due to his love of comfortable leather breeches and worn boots.\n\nAs a member of the royal family of Arthinora, Prince Aethelm was raised on tales of bravery and sacrifice, instilled with a sense of duty to protect his people from the increasingly aggressive forces of King Lionel's Eldoria. However, despite his noble upbringing, he has developed a rebellious streak, often sneaking out of the castle walls at night to gather information about the war effort or simply to explore the bustling markets and taverns. His greatest goal is to prove himself worthy of leading Arthinora into a brighter future.\n\nDespite his youth, Prince Aethelm's strong sense of justice and compassion has earned him some respect among his people.",
+      "create_memories": true,
+      "memories": [],
+      "keywords": [
+        "Aethelm",
+        " Young Prince",
+        " Prince of Arthinora"
+      ]
+    },
+    {
+      "id": 1779397670663,
+      "name": "Crown Prince Aric",
+      "type": "character",
+      "content": "Crown Prince Aric is a man in his mid-twenties, tall and lean with dark gray eyes. He has short, dark hair and a strong jawline that hints at a commanding presence. As the eldest son of King Rohan of Arthinora, Aric has been groomed for leadership and spiritual connection from a young age.\n\nGrowing up amidst the turmoil of war, Aric has learned to be strategic and decisive, often taking charge of key battles alongside his father. A complex mix of idealism and pragmatism defines his personality, as he struggles to balance his compassion for the people, appeasing the spirits, and the harsh realities of war.",
+      "create_memories": true,
+      "memories": [],
+      "keywords": [
+        "Aric",
+        " Prince of Arthinora"
+      ]
+    },
+    {
+      "id": 1779397813491,
+      "name": "Crown Princess Cordelia",
+      "type": "character",
+      "content": "Cordelia is a poised elven woman in her mid-twenties with long silver hair and piercing violet eyes. She stands at an elegant height of five feet nine inches, with a lithe yet athletic build that speaks to her expertise in swordsmanship and hand-to-hand combat.\n\nAs the crown princess of Eldoria, Cordelia has been trained in the art of diplomacy from a young age by her mother, Queen Lysa. However, she has also honed her skills as a warrior through rigorous training and involvement in the kingdom's battles against the wyrm terrorizing their western borders. Cordelia is fiercely loyal to her family and people but struggles with the moral implications of war, particularly after learning that Arthinora is merely defending itself from Donvard's aggression.\n\nCordelia finds solace in the quiet moments spent studying the ancient lore of Eldoria, pouring over texts written by her ancestors that hint at a deeper connection between their world and the mythical realm.",
+      "create_memories": true,
+      "memories": [],
+      "keywords": [
+        "Cordelia",
+        " Princess of Eldoria"
+      ]
+    },
+    {
+      "id": 1779397934731,
+      "name": "Queen Lysa",
+      "type": "character",
+      "content": "Queen Lysa stands tall, her slender figure draped in intricately woven silver and sapphire robes that shimmer in the light. Her long, raven-black hair cascades down her back like a waterfall of night, framing an oval face with high cheekbones and piercing violet eyes. Those who have seen her note an almost otherworldly aura about her.\n\nA native of Eldoria, Lysa's elven heritage grants her supernatural agility and keen senses. As the ruling queen of Eldoria, she has navigated the treacherous landscape of Pangea's politics with a shrewd mind and calculated cunning, forging alliances and securing borders through diplomacy rather than conquest. The recent declaration of war by King Lionel of Donvard against Arthinora weighs heavily on her conscience; she is caught between loyalty to her kingdom's safety and her own moral compass.",
+      "create_memories": true,
+      "memories": [],
+      "keywords": [
+        "Lysa",
+        " Queen"
+      ]
+    },
+    {
+      "id": 1779398233727,
+      "name": "Ironhart Forest",
+      "type": "location",
+      "content": "A Werewolf territory located in a rugged expanse of wilderness in northern Arthinora. A dense thicket of pine trees dominates the landscape. The werewolves of this territory have learned to live in harmony with the land, their howls carrying on the wind at dawn and dusk.\n\nTheir existence is marked by a truce with King Rohan of Arthinora—the werewolves provide valuable hunting services for his kingdom in exchange for protection from human persecution. The Ironhart pack's leader, Alpha Warren, is a master strategist who walks a fine line between loyalty to Arthinora and allegiance to the pack's independence.",
+      "parent_location": "Arthinora",
+      "create_memories": false,
+      "memories": [],
+      "keywords": [
+        "Ironhart",
+        " Warren",
+        " werewolf",
+        " werewolves"
+      ]
+    },
+    {
+      "id": 1779398492324,
+      "name": "Warren",
+      "type": "character",
+      "content": "A middle aged werewolf, born to lead. His tanned skin and unruly dark hair make him nearly indistinguishable from his surroundings, but his dark amber eyes betray his lupine nature as they shine with an inner light under moonlight. Raised on a territory of werewolves on the fringes of human society, Alpha Warren has grown accustomed to living in secret and walking the thin line between man and beast.\n\nAlpha Warren's greatest strength lies not only in his physical prowess, but in his keen intuition and ability to navigate the shadows. Seeing the spirits of the surrounding wood disturbed, he feels an inexplicable connection to the ongoing conflict between Arthinora and Donvard, sensing that it will soon engulf all three kingdoms. The dragon spotted over Eldoria has also caught his attention, fueling Alpha Warren's suspicion that the very fabric of Pangea is unraveling. He feels torn between keeping his pack's independence and joining the outside battles in an effort to calm the spirits.",
+      "create_memories": true,
+      
+      "memories": [],
+      "keywords": "Warren, Alpha, werewolf"
+    }
+  ],
+  "player": {
+    "name": "{add name}",
+    "information": "Age: \nGender: \nPronouns: \nRace: human.\nSkin color: \nHair length/style and color: \nEye color: \nHeight: \nBuild: \nOrigin: isekai'd from the real world.\nReputation: unknown."
+  },
+  "inventory": [
+    {
+      "content": "Just the clothing you arrived with.",
+      "equipped": true,
+      "id": 1779037327232,
+      "name": "Basic clothing",
+      "type": "apparel"
+    },
+    {
+      "content": "A phone with some battery left. Has no signal and no way to charge it in this world. Perhaps you could still find a use for it?",
+      "equipped": false,
+      "id": 1779354725145,
+      "name": "A Phone",
+      "type": "other"
+    },
+    {
+      "content": "Good thing you always carried this around. Small, but could be a useful tool or the deciding factor in a fight.",
+      "equipped": true,
+      "id": 1779354905802,
+      "name": "A Switchblade",
+      "type": "weapon"
+    }
+  ],
+  "skills": [
+    {
+      "experience": 0,
+      "id": 1779354969623,
+      "level": 8,
+      "name": "Programming",
+      "proficiency": "expert"
+    }
+  ]
+}

@@ -16,7 +16,7 @@ export default {
   emits: ['remove'],
   methods: {
     removeMemory(index) {
-      this.card.character_memories.splice(index, 1);
+      this.card.memories.splice(index, 1);
     }
   },
   computed: {
@@ -77,16 +77,16 @@ export default {
               </button>
 
               <div v-if="show_memories" class="memory-list">
-                <p v-if="!card.character_memories || card.character_memories.length === 0">
+                <p v-if="!card.memories || card.memories.length === 0">
                   No memories.
                 </p>
 
                 <div
-                  v-for="(memory, index) in card.character_memories"
+                  v-for="(memory, index) in card.memories"
                   :key="index"
                   class="memory-item"
                 >
-                  <textarea v-model="card.character_memories[index]" />
+                  <textarea v-model="card.memories[index]" />
                   <button type="button" class="btn btn-danger" @click="removeMemory(index)">
                     Remove
                   </button>
