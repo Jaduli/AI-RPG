@@ -352,7 +352,7 @@ export default {
       <input type="text" v-model="keywords" maxlength="200" />
 
       <!-- Type-specific values -->
-      <label v-if="type === 'character'">Create Character Memories: 
+      <label v-if="type === 'character' || type === 'location'">Create Memories: 
         <input v-model="create_memories" type="checkbox" class="custom-checkbox" />
       </label>
 

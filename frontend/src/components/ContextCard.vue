@@ -66,7 +66,7 @@ export default {
           <div v-if="card.type === 'character' || card.type === 'location'">
             <h3>Character Memories</h3>
 
-            <label>Create Character Memories: 
+            <label>Create Memories: 
             <input v-model="card.create_memories" type="checkbox" class="custom-checkbox" />
             </label>
 
