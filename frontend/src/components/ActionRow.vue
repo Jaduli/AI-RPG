@@ -113,6 +113,7 @@ export default {
       }
 
       // The following edit user input directly.
+      user_input = this.firstToSecondPerson(user_input);
 
       // Add punctuation if missing
       if (!/[.!?"]$/.test(user_input)) {
