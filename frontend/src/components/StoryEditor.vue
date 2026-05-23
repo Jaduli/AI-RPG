@@ -54,6 +54,7 @@ export default {
       active_requests: 0,
       memory_cursor: 0,
       summary_cursor: 0,
+      card_memory_cursor: 0,
       player_section: 'inventory',
       // Recent story content (i.e. content within the context window) 
       // is displayed in the editor
@@ -114,18 +115,7 @@ export default {
         // Get relevant context cards based on found keywords in recent story
         const context_cards = this.$refs.contextCards.getMatchingContextCardsStr(recent_story);
 
-        // Get recent content that is about to fall out of context window to use for
-        // character and location memory generation
-        const past_recent_content = recent_story.slice(0, 1000).trim();
-        
-        // Use 25 % chance to create new memory for one relevant character found in
-        // recent story content (if memory creation is enabled for character). 
-        await this.$refs.contextCards.addCardMemory(past_recent_content, 'character', 0.25);
-
-        // As location names appear less frequently in story content than characters, 
-        // use a higher chance to create a new memory for location. This allows the story
-        // to remember which locations have been introduced and relevant details about them.
-        await this.$refs.contextCards.addCardMemory(past_recent_content, 'location', 0.5);
+        await this.createContextCardMemories();
 
         let payload = {
           story_id: this.story_id,
@@ -437,6 +427,43 @@ export default {
         this.status_message = 'Error creating memory: ' + (err.message || err);
       } finally {
         this.active_requests--;
+      }
+    },
+    // Function to create context card memories with backend API. This extracts relevant 
+    // character and location information from past story content and creates new context 
+    // card memories for them.
+    async createContextCardMemories() {
+      try {
+        // Minimum past content length to create a card new memory.
+        // default: 1000
+        const minimum_length_chars = 1000;
+
+        // Use past story content for new card memory (without overlap with recent story)
+        let {past_content, cutoff_index} = this.extractPastContent(this.card_memory_cursor);
+
+        const content_length = past_content.length;
+
+        // Return if there is not enough content to memorize
+        if (content_length < minimum_length_chars) {
+          return;
+        }
+        // Prevent including too much content at once. Prioritize using newest story content.
+        if (content_length > 2000) {
+          past_content = past_content.slice(-2000);
+        }
+
+        // Use 25 % chance to create new memory for one relevant character found in
+        // past story content (if memory creation is enabled for character). 
+        await this.$refs.contextCards.addCardMemory(past_content, 'character', 0.25);
+
+        // As location names appear less frequently in story content than characters, 
+        // use a higher chance to create a new memory for location. This allows the story
+        // to remember which locations have been introduced and relevant details about them.
+        await this.$refs.contextCards.addCardMemory(past_content, 'location', 0.5);
+
+        this.card_memory_cursor = cutoff_index;
+      } catch (err) {
+        console.error('Error creating context card memory: ' + (err.message || err));
       }
     },
     // Function to save the story to backend API
