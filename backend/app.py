@@ -111,6 +111,7 @@ def load_file():
             essential_context = data.get("essential_context", '')
             memory_cursor = data.get("memory_cursor", 0)
             summary_cursor = data.get("summary_cursor", 0)
+            card_memory_cursor = data.get("card_memory_cursor", 0)
             context_cards = data.get("context_cards", [])
             player = data.get("player", [])
             inventory = data.get("inventory", [])
@@ -121,8 +122,8 @@ def load_file():
 
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
                     "summary": summary, "essential_context": essential_context, "memory_cursor": memory_cursor,
-                    "summary_cursor":summary_cursor, "context_cards": context_cards, "player": player,
-                    "inventory": inventory, "skills": skills})
+                    "summary_cursor":summary_cursor, "card_memory_cursor": card_memory_cursor,
+                    "context_cards": context_cards, "player": player, "inventory": inventory, "skills": skills})
 
 """
 /save
@@ -174,6 +175,7 @@ def save_file():
     essential_context = data.get("essential_context", '')
     memory_cursor = data.get("memory_cursor", 0)
     summary_cursor = data.get("summary_cursor", 0)
+    card_memory_cursor = data.get("card_memory_cursor", 0)
     context_cards = data.get("context_cards", [])
     player = data.get("player_information", [])
     inventory = data.get("inventory", [])
@@ -188,6 +190,7 @@ def save_file():
         "essential_context": essential_context,
         "memory_cursor": memory_cursor,
         "summary_cursor": summary_cursor,
+        "card_memory_cursor": card_memory_cursor,
         "context_cards": context_cards,
         "player": player,
         "inventory": inventory,

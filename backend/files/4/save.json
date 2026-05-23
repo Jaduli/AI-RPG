@@ -6,6 +6,7 @@
   "essential_context": "Story genres: Dungeon RPG.\n\nThe player has been sent into a dark dungeon with no memories of their past and no apparent way out. The player has the gift of rebirth: When they die, they will be reborn in another part of the dungeon with every item and armor they had on them on the time of their death. The player started with nothing, but they will keep all their items and skills after death. The player's goal is to improve their skills and equipment enough to perhaps one day escape from the dungeons.\n\nThe dungeons contain monsters, passive critters, and other trapped human souls that can choose to form an alliance with the player. The dungeons are not just a cave; some corridors may lead to different biomes and breathtaking scenery. The player can find items through looting monsters or opening any chests they find. The dungeons can also contain traps that lead to immediate death, riddling merchants, or creatures that desire only to kill.",
   "memory_cursor": 0,
   "summary_cursor": 0,
+  "card_memory_cursor": 0,
   "context_cards": [],
   "player": {
     "name": "{add name}",

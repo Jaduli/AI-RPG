@@ -6,6 +6,7 @@
   "essential_context": "(Add important story and world details here, e.g. primary regions, important characters, time and setting. This will always be included as context in story, character memory, and asset generation -> heavy token load if long. Examples below.)\n\nThe story takes place in {the real world/a fantasy world/story reference e.g. Westeros}.\nStory genres: {pick, e.g. adventure/romance/action/horror/cyberpunk}.\nStory themes: {e.g. personal growth, friendships, good vs. evil, forbidden love}.\n\n[Example World]\nDate: August, 1006.\nLocation: Imperial China.\nCurrent Emperor: Emperor Taizong\n\nThe story is set in a historical fantasy world. The player lives in an empire filled with fairytale creatures such as demons, werewolves and vampires. Reputation is gained through killing monsters and completing quests.",
   "memory_cursor": 0,
   "summary_cursor": 0,
+  "card_memory_cursor": 0,
   "context_cards": [
     {
       "child_locations": "Nickel Palace, Beetroot Waterfall, Forest of Death",

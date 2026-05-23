@@ -6,6 +6,7 @@
   "essential_context": "Story Genres: Fantasy, Adventure.\n\n[World Information]\nWorld name: Pangea.\nPangea is a fantasy world with all kinds of creatures, from forest spirits to hungry wyverns to charming vampires. The most common race is human.\n\nThere are three kingdoms on Pangea.\nIn the North: Arthinora, led by King Rohan.\nIn the East: Donvard, led by elven Queen Lysa.\nIn the West: Eldoria, led by King Lionel.\n\nIn the South: Land of Kha, a desert clan known for their primal ways and use of blood magic. Led by the Khaen, their strongest fighter.\n\nWorld Events:\nKing Lionel of the Holy Kingdom of Donvard has declared war against the Kingdom of Arthinora.\nA dragon has been spotted flying over the hills of Eldoria.\nRumors say the Kha have been attempting to summon the form of an ancient god.",
   "memory_cursor": 0,
   "summary_cursor": 0,
+  "card_memory_cursor": 0,
   "context_cards": [
     {
       "child_locations": "The Great Violet Sea, Elventon Harbor, Golden Roads",

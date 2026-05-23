@@ -506,6 +506,7 @@ export default {
             essential_context: this.essential_context,
             memory_cursor: this.memory_cursor,
             summary_cursor: this.summary_cursor,
+            card_memory_cursor: this.card_memory_cursor,
             context_cards: context_cards,
             player_information: player_information,
             skills: player_skills,
@@ -558,6 +559,7 @@ export default {
         this.essential_context = data.essential_context || '';
         this.memory_cursor = data.memory_cursor || 0;
         this.summary_cursor = data.summary_cursor || 0;
+        this.card_memory_cursor = data.card_memory_cursor || 0;
         this.$refs.contextCards.cards = data.context_cards || [];
         this.recent_action = '';
         this.recent_outcome = '';

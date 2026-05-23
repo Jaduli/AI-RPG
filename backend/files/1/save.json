@@ -6,6 +6,7 @@
   "essential_context": "World Information:\nThe Three Kingdoms: Arthinora, Eldoria, Donvard.\n\nKing Lionel of the Holy Kingdom of Donvard has declared war against the Kingdom of Arthinora.",
   "memory_cursor": 0,
   "summary_cursor": 0,
+  "card_memory_cursor": 0,
   "context_cards": [
     {
       "child_locations": "",
