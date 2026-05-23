@@ -85,7 +85,9 @@ export default {
         if (skill) {
           return `You use skill ${skill.name}.`
         }
-        return `You use item '${item.name}'.`
+        if (item) {
+          return `You use item '${item.name}'.`
+        }
       }
       // Otherwise if user input is empty, continue the story without an action
       if (!user_input) {

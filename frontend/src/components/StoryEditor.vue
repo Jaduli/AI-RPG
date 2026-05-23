@@ -277,7 +277,7 @@ export default {
           this.$refs.actionRow.reset(false);
 
           // Remove perishable items after use
-          if (action_type === 'use' && selected_item.type === 'perishable') {
+          if (action_type === 'use' && selected_item && selected_item.type === 'perishable') {
             this.$refs.inventory.removeItem(selected_item.id);
           }
         }
