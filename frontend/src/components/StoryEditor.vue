@@ -117,12 +117,13 @@ export default {
         // Most recent content to be used for character memory and asset generation
         const most_recent_content = recent_story.slice(-1000).trim();
         
-        // Use 30 % chance to create new memory for one relevant character or location is
-        // found in most recent story content (if memory creation is enabled for asset). 
-        await this.$refs.contextCards.addCardMemory(most_recent_content, 'character', 0.3);
+        // Use 20 % chance to create new memory for one relevant character found in most
+        // recent story content (if memory creation is enabled for character). 
+        await this.$refs.contextCards.addCardMemory(most_recent_content, 'character', 0.2);
 
         // As location names appear less frequently in story content than characters, 
-        // use a higher chance to create a new memory.
+        // use a higher chance to create a new memory for location. This allows the story
+        // to remember which locations have been introduced and relevant details about them.
         await this.$refs.contextCards.addCardMemory(most_recent_content, 'location', 0.5);
 
         this.status_message = 'Continuing story...';
