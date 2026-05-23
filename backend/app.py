@@ -627,12 +627,16 @@ def generate_asset():
     story_information = data.get('story_information', '')
     recent_story = data.get('recent_story', '')
 
+    asset_name = asset_type
+    if (asset_type == 'other'):
+        asset_name = 'asset'
+
     content = ''
     if story_information:
         content += '[Story Information]\n' + story_information + '\n\n'
 
     if name:
-        content += f'[Generation Context]\nNew {asset_type} name: ' + name
+        content += f'[Generation Context]\nNew {asset_name} name: ' + name
 
         # Only use recent story as context if name is given
         if recent_story:

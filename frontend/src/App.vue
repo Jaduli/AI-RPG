@@ -70,6 +70,10 @@ export default {
 
           if (this.gamemode === 'storyteller') {
             this.max_tokens = 200; // Longer output is better for storytelling
+
+            // More creativity for storytelling
+            this.temperature = 1.0;
+            this.top_p = 0.9;
           }
 
           this.config_ready = true;

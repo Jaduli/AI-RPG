@@ -205,7 +205,7 @@ STYLE:
 - Use explicit names.
 """
 
-# Location Memory
+# Location Memory (non RPG)
 LOCATION_MEMORY_SYS_PROMPT = """
 You are a strict location memory generation system for a storytelling application.
 
