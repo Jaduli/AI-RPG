@@ -3,7 +3,7 @@
 APPLICATION FEATURES
 
 - Continue a story with an AI model of your choosing. You may start off with anything in any genre. 
-- Make a custom scenario or let the AI guide the story for you.
+- Make a custom world and scenario or let the AI generate assets and guide the story for you.
 - Add custom story context with Story Essentials (always included in prompt) and Context Cards (only included when relevant to story).
 - Add custom instructions to be used in story generation (e.g. storytelling style, point of view, content restrictions).
 - Edit generated story content in any way (within the context window).
@@ -17,19 +17,19 @@ APPLICATION FEATURES
 RPG MODE FEATURES
 
 - Add custom player details (name, looks, party members, etc.).
-- Make player actions: do, say, use, custom, and new asset generation. Actions are automatically converted to be suitable for story generation.
+- Make player actions, e.g. "I open the door". Currently available actions: do, say, use, custom, and new asset generation. Actions are automatically converted to be suitable for story generation.
 - Add and use items from inventory.
 - Add and use skills that gain experience the more you use them (higher level -> better chance for action to succeed).
-- Use D20 to make actions have a random chance to succeed.
+- Use D20 for actions to have a random chance to succeed.
 
 
 RUNNING INSTRUCTIONS
 
 Docker is required to run the app: https://www.docker.com/products/docker-desktop/.
 
-Clone the repository in your terminal: git clone https://github.com/Jaduli/AI-RPG.git
+Clone the repository in your terminal: `git clone https://github.com/Jaduli/AI-RPG.git`
 
-Navigate inside the folder: cd AI-RPG
+Navigate inside the folder: `cd AI-RPG`
 
 Add your cloud AI API key and URL in a .env file in the root folder. The API key is ONLY used for API calls to your selected provider. You can also add default models for external API calls in the .env file.
 
