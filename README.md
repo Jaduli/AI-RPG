@@ -2,28 +2,34 @@
 
 APPLICATION FEATURES
 
-- Continue a story with an AI model of your choosing. You may start off with anything in any genre, in any point of view (including second person view).
+- Continue a story with an AI model of your choosing. You may start off with anything in any genre. 
+- Make a custom scenario or let the AI guide the story for you.
 - Add custom story context with Story Essentials (always included in prompt) and Context Cards (only included when relevant to story).
 - Add custom instructions to be used in story generation (e.g. storytelling style, point of view, content restrictions).
 - Edit generated story content in any way (within the context window).
 - Story memories and summary will be created and used automatically as the story progresses.
+- Character and location cards have their own memories.
 - Save and load stories. The story autosaves after every continuation, and one backup save is generated for each story.
 - Edit generation settings such as model, temperature, and recent story token limit.
 - See total tokens used in each API call.
-- Support is included for running a local AI that can be used for summary and memory creation (requires compatible GPU).
+- Support is included for running a local AI that can be used for summary, memory, and asset creation (requires compatible GPU).
+
+RPG MODE FEATURES
+
+- Add custom player details (name, looks, party members, etc.).
+- Make player actions: do, say, use, custom, and new asset generation. Actions are automatically converted to be suitable for story generation.
+- Add and use items from inventory.
+- Add and use skills that gain experience the more you use them (higher level -> better chance for action to succeed).
+- Use D20 to make actions have a random chance to succeed.
 
 
 RUNNING INSTRUCTIONS
 
 Docker is required to run the app: https://www.docker.com/products/docker-desktop/.
 
-With Docker running, navigate to "AI-Storyteller" folder in your terminal and run `docker compose up --build` to build and run the app without local AI (=> all AI use is done with an external AI API). 
+Clone the repository in your terminal: git clone https://github.com/Jaduli/AI-RPG.git
 
-When running, the app can be accessed at http://localhost:5173/.
-
-If you have an NVIDIA GPU with at least 8 GB of VRAM and compatible drivers, you can run the app with a local AI for summary and memory actions (GPU mode). To use local AI, build and run the app with `docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build`. Running the AI locally will reduce cloud API rate limits and cost. Local story continuation is not supported as competent storytelling should be done with a large (20B+ parameter) model. Smaller models struggle with consistency and creativity and have limited use cases.
-
-NOTE! The full container takes about 25-35 GB to run, mainly due to Docker images and the local AI model (only installed on GPU mode). First time set up may take 20+ minutes to compose depending on selected mode and your internet connection.
+Navigate inside the folder: cd AI-RPG
 
 Add your cloud AI API key and URL in a .env file in the root folder. The API key is ONLY used for API calls to your selected provider. You can also add default models for external API calls in the .env file.
 
@@ -38,6 +44,14 @@ API URL: https://api.deepseek.com/chat/completions
 Model name & Pricing can be found here:
 https://api-docs.deepseek.com/quick_start/pricing
 
+With Docker running, use command `docker compose up --build` to build and run the app without local AI (=> all AI use is done with an external AI API). 
+
+When running, the app can be accessed at http://localhost:5173/.
+
+If you have an NVIDIA GPU with at least 8 GB of VRAM and compatible drivers, you can run the app with a local AI for summary and memory actions (GPU mode). To use local AI, build and run the app with `docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build`. Running the AI locally will reduce cloud API rate limits and cost. Local story continuation is not supported as competent storytelling should be done with a large (20B+ parameter) model. Smaller models struggle with consistency and creativity and have limited use cases.
+
+NOTE! The full container takes about 25-35 GB to run, mainly due to Docker images and the local AI model (only installed on GPU mode). First time set up may take 20+ minutes to compose depending on selected mode and your internet connection.
+
 The container can be stopped with CTRL+C in the terminal. Once built, the container can also be run directly through the Docker Desktop app. After startup, the site will load only once it reaches a connection to the backend. If the site refuses to load, check that containers are up and have finished loading.
 
 
@@ -51,7 +65,7 @@ Additional story generation instructions, such as storytelling style or content 
 
 The story is saved automatically after every Continue action. It can also be saved manually with the Save button. One backup save is created for each file, which can be accessed with the filename {filename}_backup.json. Saved files and their backups can be found in backend/files. 
 
-Past memories for each story are saved in a database which can be found in backend/data/memory.db. Memories can be viewed and edited with an SQL compatible database editor, e.g DBeaver (https://dbeaver.io/). As summaries and memories are generated with AI, hallucination or metatext may be included in the output. For this reason, manual context editing may be required for lower token usage and better story consistency.
+Past memories for each story are saved in a database which can be found in backend/data/memory.db. Memories can be viewed and edited with an SQL compatible database editor, e.g DBeaver (https://dbeaver.io/).
 
 
 PROJECT INFORMATION
