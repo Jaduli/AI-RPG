@@ -711,9 +711,6 @@ def generate_asset():
 
     trimmed = utils.trim_incomplete_sentences(generated_content)
 
-    print("Content used in asset generation:", content, flush=True)
-    print("Tokens used in asset generation: %s", tokens_total, flush=True)
-
     return jsonify({"generated_content": trimmed, "tokens_total": tokens_total})
 
 """
@@ -840,9 +837,6 @@ def generate_card_memory():
         new_memory = result["choices"][0]["message"]["content"]
 
         tokens_total = result['usage']['total_tokens']
-
-    print("Content used in memory generation:", content, flush=True)
-    print("Tokens used in memory generation: %s", tokens_total, flush=True)
 
     return jsonify({"new_memory": new_memory, "tokens_total": tokens_total})
 
