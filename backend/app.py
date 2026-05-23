@@ -143,10 +143,6 @@ def save_file():
     
     if not isinstance(story_id, int) or isinstance(story_id, bool) or story_id <= 0:
         return jsonify({"error": "Invalid story ID. ID must be a positive integer."}), 400
-    
-    story_name = data.get("story_name", '')
-    if (story_name.strip() == ''):
-        return jsonify({"error": "Story name is required."}), 400
 
     path = os.path.join(BASE_DIR, str(story_id))
     os.makedirs(path, exist_ok=True)
@@ -169,6 +165,7 @@ def save_file():
         os.rename(save_path, backup_path)
 
     # Get rest of saved data
+    story_name = data.get("story_name", '')
     instructions = data.get("instructions", '')
     content = data.get("content", '')
     summary = data.get("summary", '')
