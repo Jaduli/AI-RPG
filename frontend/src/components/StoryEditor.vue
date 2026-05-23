@@ -188,6 +188,7 @@ export default {
             player_equipment,
             player_skills,
             player_action,
+            outcome,
             player_item: selected_item ? selected_item.name : '',
             player_skill: selected_skill ? selected_skill.name : '',
             recent_action: this.recent_action,

@@ -296,6 +296,7 @@ def continue_story():
     recent_action = data.get('recent_action', '')
     recent_outcome = data.get('recent_outcome', '')
     use_d20 = data.get('use_d20', False)
+    outcome = data.get('outcome', '')
 
     top_p = data.get('top_p', 0.9)
     temperature = data.get('temperature', 0.8)
@@ -325,9 +326,7 @@ def continue_story():
 
     memory_block = "\n".join(unique_memories) or "None."
 
-    outcome = ''
-
-    if (player_action and use_d20):
+    if not outcome and player_action and use_d20:
         outcome = utils.get_action_outcome(player_action)
     
     # Context ordered based on which content is most likely to stay static (unedited).
