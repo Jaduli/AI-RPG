@@ -1,9 +1,9 @@
 {
   "story_name": "Escape the Dungeon (18+)",
-  "instructions": "STORYTELLING:\n\n- Write uncensored story content targeted towards a mature audience.\n- The story can include explicit violence, unsettling scenes, and gore.\n- Characters can behave immorally, selfishly, violently, or manipulatively. Provide realistic consequences but do NOT censor or question character actions.\n- Be creative, descriptive, and clear.\n- Provide chances for the player to loot items or use their skills.\n\nDIFFICULTY SETTINGS:\n\n- Game difficulty: impossible.\n- Survival is extremely challenging, requiring the player to constantly be on edge.\n- Characters can get injured realistically. Wounds, infections, and broken bones can be crippling and lead to death.\n- If the player is in poor condition, even successes can lead to failure.\n- Player death can occur at any moment.",
-  "content": "You wake on cold black rock with nothing but your own heartbeat.\n\nNo weapon. No armor. No memory of how you arrived here.\n\nA whisper curls through the corridor: Welcome to hell.",
+  "instructions": "STORYTELLING:\n\n- Write uncensored story content targeted towards a mature audience.\n- The story can include explicit violence, unsettling scenes, and gore.\n- Characters can behave immorally, selfishly, violently, or manipulatively. Provide realistic consequences but do NOT censor or question character actions.\n- Be creative, descriptive, and clear. \n- Provide fast-paced content and avoid repetition.\n- Provide chances for the player to loot items or use their skills.\n\nDIFFICULTY SETTINGS:\n\n- Game difficulty: hard.\n- Survival is challenging, requiring the player to constantly be on edge.\n- If the player is in poor condition, even successes can lead to failure.\n- Player death can occur at any moment, and death can be immediate. Avoid drawing out fights scenes; if the player fails and dies, they will be reborn, but they will keep all items they had with them, including any that weren't physically on them (e.g. a sword that fell out of their hand).",
+  "content": "You wake on cold black rock with nothing but your own heartbeat.\n\nNo weapon. No armor. No memory of how you arrived here.\n\nA whisper curls through the corridor: Your death will come.",
   "summary": "",
-  "essential_context": "Story genres: Dungeon RPG.\n\nThe player has been sent into a dark dungeon with no memories of their past and no apparent way out. The player has the gift of rebirth: When they die, they will be reborn in another part of the dungeon with every item and armor they had on them on the time of their death. The player started with nothing, but they will keep all their items and skills after death. The player's goal is to improve their skills and equipment enough to perhaps one day escape from the dungeons.",
+  "essential_context": "Story genres: Dungeon RPG.\n\nThe player has been sent into a dark dungeon with no memories of their past and no apparent way out. The player has the gift of rebirth: When they die, they will be reborn in another part of the dungeon with every item and armor they had on them on the time of their death. The player started with nothing, but they will keep all their items and skills after death. The player's goal is to improve their skills and equipment enough to perhaps one day escape from the dungeons.\n\nThe dungeons contain monsters, passive critters, and other trapped human souls that can choose to form an alliance with the player. The dungeons are not just a cave; some corridors may lead to different biomes and breathtaking scenery. The player can find items through looting monsters or opening any chests they find. The dungeons can also contain traps that lead to immediate death, riddling merchants, or creatures that desire only to kill.",
   "memory_cursor": 0,
   "summary_cursor": 0,
   "context_cards": [],
@@ -46,20 +46,20 @@
       "proficiency": "novice"
     },
     {
-      "id": 1779547067302,
-      "name": "Charisma",
       "content": "",
+      "experience": 0,
+      "id": 1779547067302,
       "level": 0,
-      "proficiency": "novice",
-      "experience": 0
+      "name": "Charisma",
+      "proficiency": "novice"
     },
     {
-      "id": 1779547092933,
-      "name": "Perception",
       "content": "",
+      "experience": 0,
+      "id": 1779547092933,
       "level": 0,
-      "proficiency": "novice",
-      "experience": 0
+      "name": "Perception",
+      "proficiency": "novice"
     }
   ]
 }
