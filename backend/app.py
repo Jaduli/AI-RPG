@@ -638,6 +638,14 @@ def generate_asset():
         # Only use recent story as context if name is given
         if recent_story:
             content += '\n\nRecent story: ' + recent_story
+
+    # Average temperature for good consistency & creativity in asset generation
+    temperature = 1.1 
+
+    # Lower temperature when recent story context is provided for better consistency 
+    # with existing story content
+    if (recent_story):
+        temperature = 0.6
     
     generated_content = ''
     sys_prompt = ''
@@ -662,7 +670,7 @@ def generate_asset():
                 {"role": "user", "content": content}
             ],
             "options": {
-                "temperature": 1.1, # Average temperature for good consistency & creativity
+                "temperature": temperature,
                 "num_predict": 200,
                 "num_ctx": 8192
             },
@@ -695,7 +703,7 @@ def generate_asset():
                 {"role": "system", "content": sys_prompt},
                 {"role": "user", "content": content}
             ],
-            "temperature": 1.1,
+            "temperature": temperature,
             "max_tokens": 200
         }
 
