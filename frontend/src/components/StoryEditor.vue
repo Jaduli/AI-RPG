@@ -571,7 +571,7 @@ export default {
       this.recent_outcome = '';
       this.outcome_counter = 0;
 
-      if (gamemode === 'rpg') {
+      if (this.gamemode === 'rpg') {
         this.$refs.inventory.inventory = [];
         this.$refs.skills.skills = [];
         
