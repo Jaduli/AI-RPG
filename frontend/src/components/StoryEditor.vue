@@ -115,8 +115,6 @@ export default {
         // Get relevant context cards based on found keywords in recent story
         const context_cards = this.$refs.contextCards.getMatchingContextCardsStr(recent_story);
 
-        await this.createContextCardMemories();
-
         let payload = {
           story_id: this.story_id,
           gamemode: this.gamemode,
@@ -183,7 +181,7 @@ export default {
             player_skill: selected_skill ? selected_skill.name : '',
             recent_action: this.recent_action,
             recent_outcome: this.recent_outcome,
-            use_d20: use_d20,
+            use_d20
           }
 
           // Merge payloads
@@ -286,20 +284,26 @@ export default {
         if (this.show_token_use && data.tokens_total) {
           this.status_message = 'Total tokens used for continue action: ' + data.tokens_total;
         }
-        // Automatically summarize (only happens if enough content is past the recent story context window)
+
+        // The following memory actions happen only if enough content has fallen out of the  
+        // context window to avoid unnecessary API calls and to ensure that there is enough
+        // content for the memory to be meaningful.
+
+        // Summarize story
         if (this.summarize) {
           await this.summarizeStory();
         }
 
-        // Automatically turn past context into a memory and save the story if filename is set
-        if (this.story_name && this.story_name.trim() !== '') {
-          if (this.memorize) {
-            await this.createMemory();
-          }
-          await this.saveStory();
-        } else {
-          this.status_message = 'Please set story name to save and memorize story.'
+        // Create memories for cards with memory creation enabled
+        await this.createContextCardMemories();
+
+        // Turn past story content into a memory
+        if (this.memorize) {
+          await this.createMemory();
         }
+
+        // Automatically save the story with new content
+        await this.saveStory();
       } catch (err) {
         this.status_message = 'Error continuing story: ' + (err.message || err);
       } finally {
@@ -468,17 +472,13 @@ export default {
     },
     // Function to save the story to backend API
     async saveStory(sync = true) {
-      if (!this.story_name || this.story_name.trim() === '') {
-        this.status_message = 'Please enter a story name to save the story.';
-        return;
+      // Only change status message if this is the only active request to
+      // avoid confusion with other actions.
+      if (this.active_requests === 0) {
+        this.status_message = 'Saving story...';
       }
       try {
         this.active_requests++;
-        // Only change status message if this is the only active request to
-        // avoid confusion with other actions.
-        if (this.active_requests === 1) {
-          this.status_message = 'Saving story...';
-        }
 
         if (sync) {
           // Sync content with story editor before saving
@@ -519,7 +519,7 @@ export default {
           this.status_message = 'Error saving story: ' + data.error;
           return;
         }
-        if (this.active_requests === 1 && data.message) {
+        if (this.active_requests === 0 && data.message) {
           this.status_message = 'Success: ' + data.message;
         }
         if (!data.error) {
