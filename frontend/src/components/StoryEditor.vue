@@ -456,14 +456,11 @@ export default {
           past_content = past_content.slice(-2000);
         }
 
-        // Use 25 % chance to create new memory for one relevant character found in
-        // past story content (if memory creation is enabled for character). 
-        await this.$refs.contextCards.addCardMemory(past_content, 'character', 0.25);
-
-        // As location names appear less frequently in story content than characters, 
-        // use a higher chance to create a new memory for location. This allows the story
-        // to remember which locations have been introduced and relevant details about them.
-        await this.$refs.contextCards.addCardMemory(past_content, 'location', 0.5);
+        // Create new memory for one relevant character + location found in
+        // past story content (if memory creation is enabled). Uses a random
+        // chance based on existing memory count.
+        await this.$refs.contextCards.addCardMemory(past_content, 'character');
+        await this.$refs.contextCards.addCardMemory(past_content, 'location');
 
         this.card_memory_cursor = cutoff_index;
       } catch (err) {

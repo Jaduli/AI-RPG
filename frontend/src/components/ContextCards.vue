@@ -226,10 +226,11 @@ export default {
       return;
     },
     // Generate and add memories for existing context cards found in given content.
-    // The first keyword is used for matching. Each continue action has a set chance
-    // of creating a memory if a card name is found in generated content (default: 30%).
+    // The first keyword is used for matching. The chance of creating is 1, then decreases
+    // with each memory to make sure the card has at least one memory when first interacted with,
+    // allowing the story to remember if a character has been met or a location been visited.
     // RPG mode uses player information and creates a memory relating to the player.
-    async addCardMemory(recent_story, type, chance = 0.3) {
+    async addCardMemory(recent_story, type) {
       const parent = this.$parent;
       const gamemode = parent.gamemode; // Gamemode affects generation prompt
 
@@ -266,6 +267,19 @@ export default {
       // Return if no card found
       if (!card) return;
 
+      let chance = 0;
+      const memory_count = Array.isArray(card.memories) ? card.memories.length : 0;
+
+      // Ensure at least one memory, then decrease chance with each memory
+      if (type === 'character') {
+        chance = Math.max(1 / (memory_count + 1), 0.2); // Minimum 20% chance
+      }
+      // As location names appear less frequently in story content than characters, 
+      // use a higher chance to create a new memory for location.
+      else if (type === 'location') {
+        chance = Math.max(1 - memory_count * 0.2, 0.4); // Minimum 40% chance
+      }
+
       // Avoid memory generation every time a relevant card is found
       if (Math.random() > chance) return;
 
@@ -296,9 +310,9 @@ export default {
           body: JSON.stringify({
             model: this.mem_model,
             local: this.use_local,
-            gamemode: gamemode,
-            story_information: story_information,
-            player_name: player_name,
+            gamemode,
+            story_information,
+            player_name,
             card_type: card.type,
             card_name: card.name,
             card_description: card.content,
