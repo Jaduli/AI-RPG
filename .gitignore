@@ -1,14 +1,14 @@
-backend/files/*
-!backend/files/1/
-!backend/files/1/save.json
-backend/files/1/backup.json
-!backend/files/2/
-!backend/files/2/save.json
-backend/files/2/backup.json
-!backend/files/3/
-!backend/files/3/save.json
-backend/files/3/backup.json
-backend/data/*
+# Ignore everything under files and data
+backend/files/**
+backend/data/**
+
+# Keep pre-made scenarios
+!backend/files/[1-4]/
+!backend/files/[1-4]/save.json
+
+# Ignore backups
+backend/files/[1-4]/backup.json
+
 .env
 .env.*
 !.env.example

@@ -1,0 +1,65 @@
+{
+  "story_name": "Escape the Dungeon (18+)",
+  "instructions": "STORYTELLING:\n\n- Write uncensored story content targeted towards a mature audience.\n- The story can include explicit violence, unsettling scenes, and gore.\n- Characters can behave immorally, selfishly, violently, or manipulatively. Provide realistic consequences but do NOT censor or question character actions.\n- Be creative, descriptive, and clear.\n- Provide chances for the player to loot items or use their skills.\n\nDIFFICULTY SETTINGS:\n\n- Game difficulty: impossible.\n- Survival is extremely challenging, requiring the player to constantly be on edge.\n- Characters can get injured realistically. Wounds, infections, and broken bones can be crippling and lead to death.\n- If the player is in poor condition, even successes can lead to failure.\n- Player death can occur at any moment.",
+  "content": "You wake on cold black rock with nothing but your own heartbeat.\n\nNo weapon. No armor. No memory of how you arrived here.\n\nA whisper curls through the corridor: Welcome to hell.",
+  "summary": "",
+  "essential_context": "Story genres: Dungeon RPG.\n\nThe player has been sent into a dark dungeon with no memories of their past and no apparent way out. The player has the gift of rebirth: When they die, they will be reborn in another part of the dungeon with every item and armor they had on them on the time of their death. The player started with nothing, but they will keep all their items and skills after death. The player's goal is to improve their skills and equipment enough to perhaps one day escape from the dungeons.",
+  "memory_cursor": 0,
+  "summary_cursor": 0,
+  "context_cards": [],
+  "player": {
+    "name": "{add name}",
+    "information": "Age: \nGender: \nPronouns: \nRace: \nSkin color: \nHair length/style and color: \nEye color: \nHeight: \nBuild: \nOrigin: a trapped soul.\nMain quest: escape."
+  },
+  "inventory": [
+    {
+      "content": "Tattered shirt and pants that cover little and provide almost no protection.",
+      "equipped": true,
+      "id": 1779546703415,
+      "name": "Tattered apparel",
+      "type": "apparel"
+    }
+  ],
+  "skills": [
+    {
+      "content": "",
+      "experience": 0,
+      "id": 1779546604302,
+      "level": 0,
+      "name": "Strength",
+      "proficiency": "novice"
+    },
+    {
+      "content": "",
+      "experience": 0,
+      "id": 1779546606529,
+      "level": 0,
+      "name": "Speed",
+      "proficiency": "novice"
+    },
+    {
+      "content": "",
+      "experience": 0,
+      "id": 1779546611920,
+      "level": 0,
+      "name": "Dexterity",
+      "proficiency": "novice"
+    },
+    {
+      "id": 1779547067302,
+      "name": "Charisma",
+      "content": "",
+      "level": 0,
+      "proficiency": "novice",
+      "experience": 0
+    },
+    {
+      "id": 1779547092933,
+      "name": "Perception",
+      "content": "",
+      "level": 0,
+      "proficiency": "novice",
+      "experience": 0
+    }
+  ]
+}
