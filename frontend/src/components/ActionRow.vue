@@ -336,6 +336,11 @@ export default {
         />
       </label>
 
+      <span v-if="new_asset_type === 'inventory item' && new_item_type === 'perishable'"
+        title="Perishable items will only be included in context when used, and they will be discarded automatically after use.">
+        ⓘ
+      </span>
+
       <label v-if="new_asset_type === 'character' || new_asset_type === 'location'">
         📖: 
         <input

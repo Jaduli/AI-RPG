@@ -145,11 +145,10 @@ export default {
           <option value="weapon">Weapon</option>
           <option value="apparel">Armor/apparel</option>
         </select>
-        <label v-if="type === 'perishable'">
-          <span title="Perishable items will be discarded automatically after use.">
-            ⓘ
-          </span>
-        </label>
+        <span v-if="type === 'perishable'"
+          title="Perishable items will only be included in context when used, and they will be discarded automatically after use.">
+          ⓘ
+        </span>
       </label>
 
       <h4>Item Information</h4>
