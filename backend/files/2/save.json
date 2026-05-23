@@ -9,13 +9,13 @@
   "context_cards": [
     {
       "child_locations": "Nickel Palace, Beetroot Waterfall, Forest of Death",
-      "content": "( Locations can have one parent and multiple child locations. \n\nExample chain: Kingdom -> Village -> Tavern. \n\nIf you are in Kingdom (i.e. at least one of its keywords is found in recent story), context will include name of Village (NOT content unless Village keyword is also found in recent story). If you are in Village, context will include names of both Kingdom and Tavern. If you are in Tavern, context will include name of Village. If you want Tavern to include names of both Kingdom and Village, add its parent as 'Village in Kingdom'. \n\nAI generated cards will not have parent or child locations. The parent/child chain is made to be used for custom worlds/scenarios. \n\nLocation memories work in a similar way as character memories. When you visit or hear about a location, a memory may be created (e.g. what you did there, what you felt). )",
+      "content": "( Locations can have one parent and multiple child locations. \n\nExample chain: Kingdom -> Village -> Tavern. \n\nIf you are in Kingdom (i.e. at least one of its keywords is found in recent story), context will include name of Village (NOT content unless Village keyword is also found in recent story). If you are in Village, context will include names of both Kingdom and Tavern. If you are in Tavern, context will include name of Village. If you want Tavern to include names of both Kingdom and Village, add its parent as 'Village in Kingdom'. \n\nAI generated cards will not have parent or child locations. The parent/child chain is made to be used for custom worlds/scenarios. \n\nLocation memories work in a similar way as character memories. When you visit or hear about a location, a memory may be created (e.g. what you heard or did there). )",
       "create_memories": true,
       "id": 1779285668911,
       "keywords": [],
       "memories": [
         "You visited the Forest of Death and found its gloomy atmosphere and crow residents ominous.",
-        "You heard about the Beetroot Waterfall from a traveler who said it to be a beautiful area for camping."
+        "You heard about the Beetroot Waterfall from a traveler who said it to be a beautiful place for camping."
       ],
       "name": "Location Card Information",
       "parent_location": "Kingdom of Catania",
@@ -23,13 +23,16 @@
     },
     {
       "character_memories": [],
-      "content": "( If character memory creation is turned on, memories will randomly be generated each time a character is being interacted with (i.e. character keyword is found in most recent story). Character memory generation uses Essential Context, character name, character card content, and most recent story to form a memory or thought the character has/could have regarding the player.\n\nWhen created, memories can be viewed and edited below. For each character, up to three random memories are used in story generation and a maximum of 10 memories are stored. Oldest memories get replaced if limit is reached. )",
+      "content": "( If character memory creation is turned on, memories will randomly be generated each time a character is being interacted with. Only the FIRST keyword is searched for from the text, and it should almost always be the character's name. In Kieran's example card from before, this would prevent memory creation from being triggered if 'Sunshine Ranch' is mentioned in the story.\n\nCharacter memory generation uses Essential Context, character name, character card content, and most recent story to form a memory or thought the character has/could have regarding the player. When created, memories can be viewed and edited below. For each character, up to three random memories are used in story generation, and a maximum of 10 memories are stored. Oldest memories get replaced if limit is reached. )",
       "create_memories": true,
       "id": 1779286103590,
-      "keywords": [],
+      "keywords": [
+        "Kieran",
+        " Jones",
+        " Sunshine Ranch"
+      ],
       "memories": [
-        "I thought highly of {player name} when they agreed to play my game.",
-        "Jade reminded me of my younger sister."
+        "I thought highly of {player name} when they agreed to play my game."
       ],
       "name": "Character Card Information",
       "type": "character"
