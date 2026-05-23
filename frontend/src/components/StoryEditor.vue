@@ -474,7 +474,8 @@ export default {
     async saveStory(sync = true) {
       // Only change status message if this is the only active request to
       // avoid confusion with other actions.
-      if (this.active_requests === 0) {
+      const only_active = this.active_requests === 0;
+      if (only_active) {
         this.status_message = 'Saving story...';
       }
       try {
@@ -519,8 +520,11 @@ export default {
           this.status_message = 'Error saving story: ' + data.error;
           return;
         }
-        if (this.active_requests === 0 && data.message) {
+        if (only_active && data.message) {
           this.status_message = 'Success: ' + data.message;
+        }
+        else {
+          this.status_message = 'Story saved successfully.';
         }
         if (!data.error) {
           this.$refs.fileMenu.fetchFiles();
