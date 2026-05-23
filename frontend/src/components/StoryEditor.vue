@@ -191,7 +191,7 @@ export default {
             player_skill: selected_skill ? selected_skill.name : '',
             recent_action: this.recent_action,
             recent_outcome: this.recent_outcome,
-            use_d20: this.use_d20,
+            use_d20: use_d20,
           }
 
           // Merge payloads
