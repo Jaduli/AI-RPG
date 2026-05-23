@@ -53,13 +53,13 @@ export default {
       }
     },
     // Returns xp required for level up.
-    // Examples: 0->1 = 300, 1->2 = 506, 5->6 = 1466.
+    // Examples: 0->1 = 400, 1->2 = 606, 5->6 = 1566.
     // Some non-linear growth is applied to make higher levels
-    // harder to obtain. 
+    // harder to obtain.
     // It should be noted that success gives higher xp gain, 
     // making it easier to get xp on a higher levels.
     getLevelUpThreshold(level) {
-      return Math.floor(300 + (level * 200) * (1 + level / 30));
+      return Math.floor(400 + (level * 200) * (1 + level / 30));
     },
     // Adds xp to skill based on action outcome. Levels up 
     // skill if xp is over level up threshold. XP is added

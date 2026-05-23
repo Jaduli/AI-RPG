@@ -23,13 +23,13 @@ export default {
     reset(all = true) {
       this.user_input = '';
 
-      // Outcome of D20 and skill actions is kept for three turns
-      // -> skills/D20 should not be used consecutively to let the
+      // Outcome of D20 actions is kept for three turns
+      // -> D20 should not be used consecutively to let the
       // action play out.
       this.use_d20 = false;
-      this.selected_skill = null;
       
       if (all) {
+        this.selected_skill = null;
         this.action_type = 'custom';
         this.selected_item = null;
         this.new_asset_type = 'other';
