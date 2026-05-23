@@ -126,8 +126,6 @@ export default {
         // to remember which locations have been introduced and relevant details about them.
         await this.$refs.contextCards.addCardMemory(most_recent_content, 'location', 0.5);
 
-        this.status_message = 'Continuing story...';
-
         let payload = {
           story_id: this.story_id,
           gamemode: this.gamemode,
@@ -199,6 +197,8 @@ export default {
           // Merge payloads
           payload = { ...payload, ...rpg_payload };
         }
+
+        this.status_message = 'Continuing story...';
 
         // Use POST for continue action
         const res = await fetch('/api/continue', {
