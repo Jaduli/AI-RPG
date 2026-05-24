@@ -346,6 +346,15 @@ export default {
           card.memories.shift();
         }
         card.memories.push(memory);
+
+        if (this.parent.active_requests === 1) {
+          if (data.tokens_total && parent.show_token_use) {
+            parent.status_message = 'Tokens used for memory generation: ' + data.tokens_total;
+          } 
+          else {
+            parent.status_message = '';
+          }
+        }
       } finally {
         this.loading = false;
         parent.active_requests--;
