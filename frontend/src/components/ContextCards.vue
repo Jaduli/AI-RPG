@@ -119,10 +119,7 @@ export default {
         card_text += `${card.name}`;
 
         if (card.type !== 'other') {
-          card_text += `, ${card.type}:\n`;
-        }
-        else {
-          card_text += ':\n';
+          card_text += `, ${card.type}`;
         }
 
         if (card.parent_location) {
