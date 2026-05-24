@@ -304,6 +304,8 @@ export default {
 
         // Automatically save the story with new content
         await this.saveStory();
+
+        this.status_message = '';
       } catch (err) {
         this.status_message = 'Error continuing story: ' + (err.message || err);
       } finally {
