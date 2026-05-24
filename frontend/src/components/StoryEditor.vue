@@ -112,7 +112,7 @@ export default {
         // Sync content with editor for any user edits before continuing story
         this.syncContentWithEditor();
 
-        // Get relevant context cards based on found keywords in recent story
+        // Get relevant context cards based on found keywords in recent story (as a string)
         const context_cards = this.$refs.contextCards.getMatchingContextCardsStr(recent_story);
 
         let payload = {
@@ -122,8 +122,8 @@ export default {
           instructions: this.instructions,
           summary: this.summary,
           essential_context: this.essential_context,
-          context_cards: context_cards,
-          recent_story: recent_story,
+          context_cards,
+          recent_story,
           top_p: this.top_p,
           temperature: this.temperature,
           max_tokens: this.max_tokens
@@ -485,9 +485,15 @@ export default {
         
         const context_cards = this.$refs.contextCards.cards || [];
 
-        const player_information = this.$refs.playerCard.getPlayer() || [];
-        const player_inventory = this.$refs.inventory.getInventory() || [];
-        const player_skills = this.$refs.skills.getSkills() || [];
+        let player_information = [];
+        let player_inventory = [];
+        let player_skills = [];
+
+        if (this.gamemode === 'rpg') {
+          player_information = this.$refs.playerCard.getPlayer() || [];
+          player_inventory = this.$refs.inventory.getInventory() || [];
+          player_skills = this.$refs.skills.getSkills() || [];
+        }
 
         // Use POST to save story
         const res = await fetch('/api/save', {
@@ -505,8 +511,8 @@ export default {
             memory_cursor: this.memory_cursor,
             summary_cursor: this.summary_cursor,
             card_memory_cursor: this.card_memory_cursor,
-            context_cards: context_cards,
-            player_information: player_information,
+            context_cards,
+            player_information,
             skills: player_skills,
             inventory: player_inventory
           })

@@ -377,7 +377,7 @@ export default {
           <option value="item">Item</option>
         </select>
         <button @click="handleGenerateContent"  :disabled="loading">Generate Content</button>
-        <span title="Card name and type will be used in content generation.">
+        <span title="Card name, type, and essential context will be used in content generation.">
           ⓘ
         </span>
       </label>
