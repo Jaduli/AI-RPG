@@ -27,6 +27,7 @@ from prompts.rpg import (
     OUTCOME_SYS_PROMPT
 )
 from prompts.storyteller import STORYTELLER_SYS_PROMPT
+from prompts.hybrid import HYBRID_SYS_PROMPT
 
 # Maximum file size for save files
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
@@ -48,6 +49,7 @@ api_key = os.getenv("API_KEY")
 api_main_model = os.getenv("API_MAIN_MODEL", None)
 api_mem_model = os.getenv("API_MEM_MODEL", None)
 env_gamemode = os.getenv("GAMEMODE", None)
+hybrid_enabled = os.getenv("HYBRID", "0") == "1"
 
 app = Flask(__name__)
 CORS(app)
@@ -71,7 +73,8 @@ def get_config():
         "local_ai_enabled": LOCAL_AI_ENABLED,
         "main_model": api_main_model,
         "mem_model": api_mem_model,
-        "gamemode": env_gamemode
+        "gamemode": env_gamemode,
+        "hybrid_enabled": hybrid_enabled
     })
 
 """
@@ -308,7 +311,9 @@ def continue_story():
     
     full_instructions = ''
 
-    if (gamemode == 'rpg'):
+    if (hybrid_enabled):
+        full_instructions = HYBRID_SYS_PROMPT
+    elif (gamemode == 'rpg'):
         full_instructions = RPG_SYS_PROMPT
     elif (gamemode == 'storyteller'):
         full_instructions = STORYTELLER_SYS_PROMPT
@@ -754,14 +759,14 @@ def generate_card_memory():
 
     sys_prompt = ''
 
-    if (card_type == 'location'):
+    if card_type == 'location':
         temperature = 0.3 # Low temperature for better consistency in location memories
         if gamemode == 'rpg':
             sys_prompt = LOCATION_MEMORY_RPG_SYS_PROMPT
         else:
             sys_prompt = LOCATION_MEMORY_SYS_PROMPT
 
-    elif (card_type == 'character'):
+    elif card_type == 'character':
         temperature = 0.8 # Higher temperature for more personality in character memories
         if gamemode == 'rpg':
             sys_prompt = CHARACTER_MEMORY_RPG_SYS_PROMPT
@@ -778,7 +783,7 @@ def generate_card_memory():
     # Build context for memory
     content += '[Story Information]\n' + story_information + '\n\n'
 
-    if (gamemode == 'rpg'):
+    if (gamemode == 'rpg') and player_name:
         content += '[Player]\nPlayer Name: ' + player_name + '\n\n'
 
     content += f'[{card_type_cap}]\n{card_type_cap} Name: {card_name}\n'

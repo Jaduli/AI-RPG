@@ -116,7 +116,14 @@ export default {
       let card_text = '';
 
       for (const card of matching) {
-        card_text += `${card.name}, ${card.type}`;
+        card_text += `${card.name}`;
+
+        if (card.type !== 'other') {
+          card_text += `, ${card.type}:\n`;
+        }
+        else {
+          card_text += ':\n';
+        }
 
         if (card.parent_location) {
           card_text += ' in ' + card.parent_location;

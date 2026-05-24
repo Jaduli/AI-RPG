@@ -67,8 +67,10 @@ export default {
           this.mem_model = data.mem_model || this.mem_model;
 
           this.gamemode = data.gamemode || this.gamemode;
+          
+          const hybrid_enabled = data.hybrid_enabled || false;
 
-          if (this.gamemode === 'storyteller') {
+          if (this.gamemode === 'storyteller' || hybrid_enabled) {
             this.max_tokens = 200; // Longer output is better for storytelling
 
             // More creativity for storytelling
