@@ -608,6 +608,7 @@ export default {
       this.recent_action = '';
       this.recent_outcome = '';
       this.outcome_counter = 0;
+      this.card_memory_cursor = 0;
 
       if (this.gamemode === 'rpg') {
         this.$refs.inventory.inventory = [];
