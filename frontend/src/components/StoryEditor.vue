@@ -275,7 +275,7 @@ export default {
 
         // Scroll to bottom to show new content
         this.$nextTick(() => {
-          const el = this.$refs.editor;
+          const el = this.$refs.editorBox;
           el.scrollTop = el.scrollHeight;
         });
 
@@ -544,7 +544,7 @@ export default {
         this.active_requests++;
         this.status_message = 'Loading story...';
 
-        const id = story_id || this.story_id;
+        const id = story_id;
         if (!id) {
           this.status_message = 'Error loading file: Story ID missing.';
           return;
@@ -587,7 +587,7 @@ export default {
 
         // Scroll to bottom after loading story
         this.$nextTick(() => {
-          const el = this.$refs.editor;
+          const el = this.$refs.editorBox;
           el.scrollTop = el.scrollHeight;
         });
         this.status_message = 'Story loaded successfully.';
@@ -778,7 +778,7 @@ export default {
       <div class="container">
         <h2>Story Editor</h2>
         <textarea 
-        ref="editor"
+        ref="editorBox"
         v-model="story_editor_content" 
         rows="12" 
         cols="80" 
