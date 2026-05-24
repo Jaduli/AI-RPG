@@ -275,7 +275,7 @@ export default {
 
         // Scroll to bottom to show new content
         this.$nextTick(() => {
-          const el = this.$refs.storyBox;
+          const el = this.$refs.editor;
           el.scrollTop = el.scrollHeight;
         });
 
@@ -566,20 +566,22 @@ export default {
         this.recent_outcome = '';
         this.outcome_counter = 0;
 
-        this.$refs.inventory.inventory = data.inventory || [];
-        this.$refs.skills.skills = data.skills || [];
+        if (this.gamemode === 'rpg') {
+          this.$refs.inventory.inventory = data.inventory || [];
+          this.$refs.skills.skills = data.skills || [];
 
-        // Get player information
-        const player_information = data.player || [];
-        this.$refs.playerCard.name = player_information.name || '';
-        this.$refs.playerCard.information = player_information.information || '';
+          // Get player information
+          const player_information = data.player || [];
+          this.$refs.playerCard.name = player_information.name || '';
+          this.$refs.playerCard.information = player_information.information || '';
 
-        // Reset ActionRow
-        this.$refs.actionRow.reset();
+          // Reset ActionRow
+          this.$refs.actionRow.reset();
+        }
 
         // Scroll to bottom after loading story
         this.$nextTick(() => {
-          const el = this.$refs.storyBox;
+          const el = this.$refs.editor;
           el.scrollTop = el.scrollHeight;
         });
         this.status_message = 'Story loaded successfully.';
@@ -770,7 +772,7 @@ export default {
       <div class="container">
         <h2>Story Editor</h2>
         <textarea 
-        ref="storyBox"
+        ref="editor"
         v-model="story_editor_content" 
         rows="12" 
         cols="80" 
