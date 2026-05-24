@@ -526,9 +526,6 @@ export default {
         if (only_active && data.message) {
           this.status_message = 'Success: ' + data.message;
         }
-        else {
-          this.status_message = 'Story saved successfully.';
-        }
         if (!data.error) {
           this.$refs.fileMenu.fetchFiles();
         }
