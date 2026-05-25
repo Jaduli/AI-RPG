@@ -15,7 +15,7 @@ export default {
       name: '',
       content: '',
       keywords: '',
-      selected_type: 'all',
+      filter_type: 'all',
       type: 'other',
       // Type-specific values:
       parent_location: '',
@@ -344,14 +344,13 @@ export default {
         }
         card.memories.push(memory);
 
-        if (this.parent.active_requests === 1) {
-          if (data.tokens_total && parent.show_token_use) {
-            parent.status_message = 'Tokens used for memory generation: ' + data.tokens_total;
-          } 
-          else {
-            parent.status_message = '';
-          }
+        if (data.tokens_total && parent.show_token_use) {
+          parent.status_message = 'Tokens used for memory generation: ' + data.tokens_total;
+        } 
+        else {
+          parent.status_message = '';
         }
+        
       } finally {
         this.loading = false;
         parent.active_requests--;
@@ -362,8 +361,8 @@ export default {
     // Display cards from newest to oldest, filtered by selected type
     sortedCards() {
       let filtered = this.cards;
-      if (this.selected_type !== 'all') {
-        filtered = filtered.filter(card => card.type === this.selected_type);
+      if (this.filter_type !== 'all') {
+        filtered = filtered.filter(card => card.type === this.filter_type);
       }
       return [...filtered].reverse();
     }
@@ -425,7 +424,7 @@ export default {
     <div class="header-row">
       <h2>Existing Cards</h2>
       <label>Filter: 
-      <select v-model="selected_type">
+      <select v-model="filter_type">
         <option value="all">All</option>
         <option value="character">Characters</option>
         <option value="location">Locations</option>

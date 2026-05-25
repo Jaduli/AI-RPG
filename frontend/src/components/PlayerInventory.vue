@@ -7,7 +7,7 @@ export default {
       collapse: false,
       name: '',
       content: '',
-      selected_type: 'all',
+      filter_type: 'all',
       type: 'other',
       equipped: false,
       inventory: []
@@ -118,8 +118,8 @@ export default {
     // Display inventory from newest to oldest, filtered by selected type
     sortedItems() {
       let filtered = this.inventory;
-      if (this.selected_type !== 'all') {
-        filtered = filtered.filter(item => item.type === this.selected_type);
+      if (this.filter_type !== 'all') {
+        filtered = filtered.filter(item => item.type === this.filter_type);
       }
       return [...filtered].reverse();
     }
@@ -170,7 +170,7 @@ export default {
     <div class="header-row">
       <h2>Inventory</h2>
       <label>Filter: 
-        <select v-model="selected_type">
+        <select v-model="filter_type">
           <option value="all">All</option>
           <option value="perishable">Perishable</option>
           <option value="weapon">Weapon</option>
