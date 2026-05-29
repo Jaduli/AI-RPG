@@ -338,7 +338,7 @@ export default {
         if (!Array.isArray(card.memories)) {
           card.memories = [];
         }
-        if (card.memories.length > 10) {
+        if (card.memories.length >= 10) {
           // Remove the oldest memory
           card.memories.shift();
         }
