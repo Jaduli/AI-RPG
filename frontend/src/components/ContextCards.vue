@@ -67,6 +67,15 @@ export default {
         .replace(/\s+/g, ' ')
         .trim() + ' ';
     },
+    // Function to suffle array to randomize chosen cards & card memories
+    shuffleArray(array) {
+      const result = [...array];
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
+    },
     // Get matching context cards based on keywords in recent story content.
     // Cards are formatted to a string to be used in story generation.
     // If card type is character and its memories are enabled, up to 3 random
@@ -131,9 +140,7 @@ export default {
         }
         if (card.memories) {
           // Get up to three random card memories as context
-          const random_memories = [...card.memories]
-            .sort(() => Math.random() - 0.5)
-            .slice(0, 3);
+          const random_memories = this.shuffleArray(card.memories).slice(0, 3);
 
           if (random_memories.length > 0) {
             card_text += `\nMemories for ${card.name}:\n`
@@ -246,7 +253,7 @@ export default {
       if (cards.length === 0) return;
       
       // Randomize order to prevent creating memories only for oldest cards
-      cards = [...cards].sort(() => Math.random() - 0.5)
+      cards = this.shuffleArray(cards)
 
       let card = null;
       const normalized_text = this.normalizeForMatch(recent_story);
@@ -338,14 +345,14 @@ export default {
         if (!Array.isArray(card.memories)) {
           card.memories = [];
         }
-        if (card.memories.length > 10) {
+        if (card.memories.length >= 10) {
           // Remove the oldest memory
           card.memories.shift();
         }
         card.memories.push(memory);
 
         if (data.tokens_total && parent.show_token_use) {
-          parent.status_message = 'Tokens used for memory generation: ' + data.tokens_total;
+          parent.status_message = 'Tokens used for card memory generation: ' + data.tokens_total;
         } 
         else {
           parent.status_message = '';

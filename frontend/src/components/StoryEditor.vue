@@ -34,6 +34,7 @@ export default {
     max_tokens: Number,
     summarize: Boolean,
     memorize: Boolean,
+    generate_direction: Boolean,
   },
   data() {
     return {
@@ -45,16 +46,18 @@ export default {
       instructions: '', // Special instructions for the AI to use
       content: '',
       summary: '',
+      story_direction: '',
       essential_context: '',
       sent_context: '', // Full context sent for story generation
       status_message: '',
       // Values
       story_name: '',
-      active_tab: 'editor',
+      active_tab: 'files',
       active_requests: 0,
       memory_cursor: 0,
       summary_cursor: 0,
       card_memory_cursor: 0,
+      direction_turn_counter: 0,
       player_section: 'inventory',
       // Recent story content (i.e. content within the context window) 
       // is displayed in the editor
@@ -121,6 +124,7 @@ export default {
           model: this.main_model,
           instructions: this.instructions,
           summary: this.summary,
+          story_direction: this.story_direction,
           essential_context: this.essential_context,
           context_cards,
           recent_story,
@@ -302,6 +306,16 @@ export default {
         // Create memories for cards with memory creation enabled
         await this.createContextCardMemories();
 
+        // Refresh future story direction every 15 turns when enabled.
+        if (this.generate_direction) {
+          this.direction_turn_counter += 1;
+
+          if (this.direction_turn_counter >= 15) {
+            await this.generateStoryDirection();
+            this.direction_turn_counter = 0;
+          }
+        }
+
         // Automatically save the story with new content
         await this.saveStory();
       } catch (err) {
@@ -467,6 +481,65 @@ export default {
         console.error('Error creating context card memory: ' + (err.message || err));
       }
     },
+    // Trigger story direction generation from the current story editor content.
+    async generateDirectionManually() {
+      await this.generateStoryDirection();
+    },
+    // Function to generate AI story direction using essential context, summary, and recent story.
+    async generateStoryDirection() {
+      const recent_story = (this.story_editor_content || this.content.slice(this.displayStart)).slice(-5000).trim();
+
+      if (!recent_story) {
+        this.status_message = 'Error: Not enough recent story content to generate direction.';
+        return;
+      }
+
+      const context_cards = this.$refs.contextCards?.getMatchingContextCardsStr(recent_story) || '';
+
+      let player_information = '';
+
+      if (this.gamemode === 'rpg') {
+        player_information = this.$refs.playerCard.getPlayerStr();
+      }
+
+      try {
+        this.active_requests++;
+        this.status_message = 'Generating story direction, please wait...';
+
+        const res = await fetch('/api/generate_direction', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            instructions: this.instructions || '',
+            essential_context: this.essential_context || '',
+            summary: this.summary || '',
+            context_cards: context_cards || '',
+            player_information,
+            recent_story,
+            model: this.mem_model,
+            local: this.use_local
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          this.status_message = 'Backend error generating story direction: ' + data.error;
+          return;
+        }
+
+        this.story_direction = data.direction || '';
+        this.status_message = '';
+
+        if (this.show_token_use && data.tokens_total) {
+          this.status_message = 'Total tokens used for story direction generation: ' + data.tokens_total;
+        }
+      } catch (err) {
+        this.status_message = 'Error generating story direction: ' + (err.message || err);
+      } finally {
+        this.active_requests--;
+      }
+    },
     // Function to save the story to backend API
     async saveStory(sync = true) {
       // Only change status message if this is the only active request to
@@ -507,6 +580,7 @@ export default {
             instructions: this.instructions,
             content: this.content,
             summary: this.summary,
+            story_direction: this.story_direction,
             essential_context: this.essential_context,
             memory_cursor: this.memory_cursor,
             summary_cursor: this.summary_cursor,
@@ -560,6 +634,7 @@ export default {
         this.instructions = data.instructions || '';
         this.content = data.content || '';
         this.summary = data.summary || '';
+        this.story_direction = data.story_direction || '';
         this.essential_context = data.essential_context || '';
         this.memory_cursor = data.memory_cursor || 0;
         this.summary_cursor = data.summary_cursor || 0;
@@ -601,6 +676,7 @@ export default {
       this.instructions = '';
       this.content = '';
       this.summary = '';
+      this.story_direction = '';
       this.essential_context = '';
       this.memory_cursor = 0;
       this.summary_cursor = 0;
@@ -609,6 +685,7 @@ export default {
       this.recent_outcome = '';
       this.outcome_counter = 0;
       this.card_memory_cursor = 0;
+      this.direction_turn_counter = 0;
 
       if (this.gamemode === 'rpg') {
         this.$refs.inventory.inventory = [];
@@ -770,6 +847,15 @@ export default {
         placeholder="Summary will appear here. Summary will be used as context in story generation.">
         </textarea>
       </div>
+      <div class="container">
+        <h2>Future Story Direction</h2>
+        <textarea v-model="story_direction" 
+        rows="10" 
+        cols="80" 
+        placeholder="Generated story direction will appear here.">
+        </textarea>
+        <button @click="generateDirectionManually" :disabled="isLoading">Generate Story Direction</button>
+      </div>
     </div>
 
     <div v-show="active_tab === 'editor'">
@@ -786,6 +872,7 @@ export default {
           ref="actionRow"
           v-if="gamemode === 'rpg'"
           :gamemode="gamemode"
+          :is_loading="isLoading"
         />
       </div>
       <p class="status">{{ status_message }}</p>

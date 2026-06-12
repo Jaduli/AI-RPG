@@ -45,6 +45,7 @@ STORY PROGRESSION:
 - Move the story forward meaningfully in every response.
 - Introduce new developments and choices when appropriate.
 - Avoid stalling, filler, or circular narration.
+- Attempt to steer story direction based on upcoming story events if provided in context.
 
 CHARACTER HANDLING:
 

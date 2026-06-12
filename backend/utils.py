@@ -20,6 +20,9 @@ def trim_incomplete_sentences(text):
 
     trimmed = text[:last_period_index + 1]
 
+    # Replace curly quotes with straight quotes
+    trimmed = trimmed.replace('“', '"').replace('”', '"').replace("’", "'").replace("‘", "'")
+
     # Close quote if trim cuts off dialogue
     if trimmed.count('"') % 2:
         trimmed += '"'
@@ -89,8 +92,8 @@ def get_action_outcome(text):
 
 def call_ai_api(api_url, headers, payload):
     try:
-        # Call external AI API with 30-second timeout
-        response = requests.post(api_url, headers=headers, json=payload, timeout=30)
+        # Call external AI API with 90-second timeout
+        response = requests.post(api_url, headers=headers, json=payload, timeout=90)
 
         raw_body = response.text
 
@@ -126,8 +129,8 @@ def call_ai_api(api_url, headers, payload):
             return data, None
         else:
             detail = raw_body.strip()
-            if len(detail) > 500:
-                detail = detail[:500] + '...'
+            if len(detail) > 40:
+                detail = detail[:40] + '...'
             return None, (f"Invalid response from AI API. Response body: {detail}", 502)
 
     except requests.exceptions.Timeout:

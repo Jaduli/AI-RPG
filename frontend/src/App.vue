@@ -34,6 +34,7 @@ export default {
       max_tokens: 150,
       memorize: true,
       summarize: true,
+      generate_direction: false,
       show_settings: false,
       config_ready: false,
       story_is_loading: false
@@ -128,6 +129,7 @@ export default {
       :max_tokens="max_tokens"
       :summarize="summarize"
       :memorize="memorize"
+      :generate_direction="generate_direction"
       @loading-changed="story_is_loading = $event"
     />
     
@@ -150,6 +152,7 @@ export default {
       :is_loading="story_is_loading"
       :summarize="summarize"
       :memorize="memorize"
+      :generate_direction="generate_direction"
 
       @update:gamemode="gamemode = $event"
       @update:main_model="main_model = $event"
@@ -162,6 +165,7 @@ export default {
       @update:max_tokens="max_tokens = $event"
       @update:summarize="summarize = $event"
       @update:memorize="memorize = $event"
+      @update:generate_direction="generate_direction = $event"
       @close="closeSettings"
       />
     </div>

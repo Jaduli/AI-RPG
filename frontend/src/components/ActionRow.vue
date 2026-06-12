@@ -2,7 +2,6 @@
 export default {
   data() {
     return {
-      loading: false,
       use_d20: false,
       action_type: 'custom',
       user_input: '',
@@ -17,6 +16,7 @@ export default {
   },
   props: {
     gamemode: String,
+    is_loading: Boolean
   },
   methods: {
     // Reset values (all or just input)
@@ -215,7 +215,7 @@ export default {
 
       // Use active_requests to disable buttons
       parent.active_requests++;
-      this.loading = true;
+      this.is_loading = true;
       parent.status_message = `Generating new ${type}...`;
 
       try {
@@ -250,7 +250,7 @@ export default {
       } catch (err) {
         throw new Error(err.message || err);
       } finally {
-        this.loading = false;
+        this.is_loading = false;
         parent.active_requests--;
       }
     }
@@ -351,7 +351,7 @@ export default {
         />
       </label>
 
-      <button @click="createNewAsset()" :disabled="loading">Add</button>
+      <button @click="createNewAsset()" :disabled="is_loading">Add</button>
     </div>
 
     <label v-if="action_type !== 'new' && selected_skill === null">

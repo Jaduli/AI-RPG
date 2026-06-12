@@ -123,9 +123,85 @@ def embed(text):
     return model.encode(text).astype("float32")
 
 """
+Returns the number of stored memories for a story.
+"""
+def count_memories(story_id):
+    conn = get_db()
+    count = conn.execute(
+        "SELECT COUNT(*) AS count FROM memories WHERE story_id = ?",
+        (story_id,)
+    ).fetchone()["count"]
+    conn.close()
+    return int(count)
+
+"""
+Removes the least relevant memory for a story based on text similarity.
+"""
+def remove_least_relevant_memory(story_id, content):
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT id, content FROM memories WHERE story_id = ? ORDER BY created_at DESC",
+        (story_id,)
+    ).fetchall()
+    conn.close()
+
+    if not rows:
+        return None
+
+    index = load_index(story_id)
+
+    if index.ntotal == 0:
+        return None
+
+    query_embedding = embed(content)
+    vector = query_embedding.reshape(1, -1)
+    distances, indices = index.search(vector, len(rows))
+
+    candidate_ids = [int(i) for i in indices[0] if i != -1]
+    if not candidate_ids:
+        return None
+
+    # The last hit is the least similar memory in the FAISS result ordering.
+    least_relevant_id = candidate_ids[-1]
+
+    conn = get_db()
+    conn.execute("DELETE FROM memories WHERE id = ?", (least_relevant_id,))
+    conn.commit()
+    conn.close()
+
+    # Rebuild FAISS index to keep it consistent with SQLite.
+    rebuild_index(story_id)
+    return least_relevant_id
+
+"""
+Rebuilds the FAISS index for a story from the current SQLite memories.
+"""
+def rebuild_index(story_id):
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT id, content FROM memories WHERE story_id = ? ORDER BY created_at ASC",
+        (story_id,)
+    ).fetchall()
+    conn.close()
+
+    index = faiss.IndexIDMap(faiss.IndexFlatL2(384))
+
+    for row in rows:
+        vector = embed(row["content"]).reshape(1, -1)
+        ids = np.array([row["id"]], dtype="int64")
+        index.add_with_ids(vector, ids)
+
+    save_index(index, story_id)
+
+"""
 Saves content and index of memory to database. Returns ID of added memory.
+A maximum of 70 memories are stored per story. If limit is exceeded, the 
+least relevant memory is removed.
 """
 def create_memory(story_id, content):
+    while count_memories(story_id) >= 70:
+        remove_least_relevant_memory(story_id, content)
+
     # Save to SQLite
     memory_id = add_memory(story_id, content)
 

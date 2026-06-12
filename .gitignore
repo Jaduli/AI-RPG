@@ -12,5 +12,3 @@ backend/files/[1-4]/backup.json
 .env
 .env.*
 !.env.example
-backend/Dockerfile.local
-docker-compose.local.yml

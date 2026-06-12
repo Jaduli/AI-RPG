@@ -49,6 +49,7 @@ CONTENT REQUIREMENTS (WHAT TO INCLUDE):
 IF STORY INFORMATION IS INCLUDED:
 - Create a location that fits with the theme and universe of the story.
 - Do NOT repeat any already existing location information.
+- If name is provided, use it. If not, create a unique name that fits the story's setting and tone.
 
 IF GENERATION CONTEXT IS INCLUDED:
 - Stay consistent with established content of the named location in given context.

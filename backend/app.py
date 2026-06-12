@@ -15,6 +15,7 @@ from prompts.asset_generation import (
 from prompts.memory import (
     SUMMARIZATION_SYS_PROMPT, 
     MEMORY_SYS_PROMPT,
+    STORY_DIRECTION_SYS_PROMPT,
     CHARACTER_MEMORY_SYS_PROMPT,
     LOCATION_MEMORY_SYS_PROMPT,
     CHARACTER_MEMORY_RPG_SYS_PROMPT,
@@ -111,6 +112,7 @@ def load_file():
             instructions = data.get("instructions", '')
             content = data.get("content", '')
             summary = data.get("summary", '')
+            story_direction = data.get("story_direction", '')
             essential_context = data.get("essential_context", '')
             memory_cursor = data.get("memory_cursor", 0)
             summary_cursor = data.get("summary_cursor", 0)
@@ -124,7 +126,7 @@ def load_file():
         return jsonify({"error": str(e)}), 500
 
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
-                    "summary": summary, "essential_context": essential_context, "memory_cursor": memory_cursor,
+                    "summary": summary, "story_direction": story_direction, "essential_context": essential_context, "memory_cursor": memory_cursor,
                     "summary_cursor":summary_cursor, "card_memory_cursor": card_memory_cursor,
                     "context_cards": context_cards, "player": player, "inventory": inventory, "skills": skills})
 
@@ -172,6 +174,7 @@ def save_file():
     instructions = data.get("instructions", '')
     content = data.get("content", '')
     summary = data.get("summary", '')
+    story_direction = data.get("story_direction", '')
     essential_context = data.get("essential_context", '')
     memory_cursor = data.get("memory_cursor", 0)
     summary_cursor = data.get("summary_cursor", 0)
@@ -187,6 +190,7 @@ def save_file():
         "instructions": instructions,
         "content": content,
         "summary": summary,
+        "story_direction": story_direction,
         "essential_context": essential_context,
         "memory_cursor": memory_cursor,
         "summary_cursor": summary_cursor,
@@ -287,9 +291,10 @@ def continue_story():
     
     gamemode = data.get('gamemode')
     user_instructions = data.get('instructions')
-    essential_context = data.get('essential_context', 'None.')
-    summary = data.get('summary', 'None.')
-    context_cards = data.get('context_cards', 'None.')
+    essential_context = data.get('essential_context', '')
+    summary = data.get('summary', '')
+    story_direction = data.get('story_direction', '')
+    context_cards = data.get('context_cards', '')
     player_information = data.get('player_information', '')
     player_equipment = data.get('player_equipment', '')
     player_skills = data.get('player_skills', '')
@@ -329,7 +334,7 @@ def continue_story():
     # Combine and remove duplicate memories
     unique_memories = list(set(relevant_memories + recent_memories))
 
-    memory_block = "\n".join(unique_memories) or "None."
+    memory_block = '\n'.join(unique_memories) or ''
 
     if not outcome and player_action and use_d20:
         outcome = utils.get_action_outcome(player_action)
@@ -342,7 +347,8 @@ def continue_story():
         ("\n\n[Player Equipment]\n" + player_equipment if player_equipment else "") +
         ("\n\n[Player Skills & Proficiency]\n" + player_skills if player_skills else "") +
         ("\n\n[Story Summary]\n" + summary if summary else "") +
-        "\n\n[Past Memories]\n" + memory_block +
+        ("\n\n[Upcoming Story Events]\n" + story_direction if story_direction else "") +
+        ("\n\n[Past Memories]\n" + memory_block if memory_block else "") +
         ("\n\n[Relevant Context]\n" + context_cards if context_cards else "") +
         ("\n\n[Recent Player Action]\n" + recent_action if recent_action else "") +
         ("\n\n[Recent Action Outcome]\n" + recent_outcome if recent_outcome else "") +
@@ -382,7 +388,7 @@ def continue_story():
     # Disable "thinking" phase for DeepSeek models to reduce output token use 
     # -> cheaper & faster responses.
     # May become redundant if model names are changed by API provider.
-    if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+    if "deepseek" in model.lower():
         payload["thinking"] = {"type": "disabled"}
 
     # Call external AI API with error handling
@@ -445,7 +451,7 @@ def summarize():
                 "num_ctx": 8192 # Use 8k input token limit
             },
             "stream": False,
-            "keep_alive": "30m" # Keep the connection alive for 30 minutes to allow faster subsequent calls
+            "keep_alive": "60m" # Keep the connection alive for 60 minutes to allow faster subsequent calls
         })
 
         if response.status_code == 200:
@@ -476,7 +482,7 @@ def summarize():
             "max_tokens": 1000
         }
 
-        if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+        if "deepseek" in model.lower():
             payload["thinking"] = {"type": "disabled"}
 
         # Call external AI API with error handling
@@ -543,7 +549,7 @@ def memorize():
                 "num_ctx": 8192
             },
             "stream": False,
-            "keep_alive": "30m"
+            "keep_alive": "60m"
         })
 
         if response.status_code == 200:
@@ -582,7 +588,7 @@ def memorize():
             "max_tokens": 200
         }
 
-        if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+        if "deepseek" in model.lower():
             payload["thinking"] = {"type": "disabled"}
 
         # Call external AI API with error handling
@@ -680,7 +686,7 @@ def generate_asset():
                 "num_ctx": 8192
             },
             "stream": False,
-            "keep_alive": "30m"
+            "keep_alive": "60m"
         })
 
         if response.status_code == 200:
@@ -809,7 +815,7 @@ def generate_card_memory():
                 "num_ctx": 8192
             },
             "stream": False,
-            "keep_alive": "30m"
+            "keep_alive": "60m"
         })
 
         if response.status_code == 200:
@@ -856,6 +862,104 @@ def generate_card_memory():
         tokens_total = result['usage']['total_tokens']
 
     return jsonify({"new_memory": new_memory, "tokens_total": tokens_total})
+
+@app.route('/api/generate_direction', methods=['POST'])
+def generate_direction():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Missing or invalid JSON body."}), 400
+
+    instructions = (data.get('instructions') or '').strip()
+    essential_context = (data.get('essential_context') or '').strip()
+    summary = (data.get('summary') or '').strip()
+    context_cards = (data.get('context_cards') or '').strip()
+    recent_story = (data.get('recent_story') or '').strip()
+    player_information = (data.get('player_information') or '').strip()
+
+    if not recent_story:
+        return jsonify({"error": "Not enough recent story content to generate direction."}), 400
+
+    content_parts = []
+    if instructions:
+        content_parts.append('[Story Instructions]\n' + instructions)
+    if essential_context:
+        content_parts.append('[Essential Story Context]\n' + essential_context)
+    if player_information:
+        content_parts.append('[Protagonist Information]\n' + player_information)
+    if context_cards:
+        content_parts.append('[Relevant Context]\n' + context_cards)
+    if summary:
+        content_parts.append('[Story Summary]\n' + summary)
+    content_parts.append('[Recent Story]\n' + recent_story)
+
+    content = '\n\n'.join(content_parts)
+
+    local = data.get('local')
+    model = data.get('model')
+    if not model:
+        return jsonify({"error": "Model is required."}), 400
+
+    new_direction = ''
+    tokens_total = -1
+
+    if local and local == True and LOCAL_AI_ENABLED:
+        response = requests.post(OLLAMA_URL, json={
+            "model": OLLAMA_MODEL,
+            "messages": [
+                {"role": "system", "content": STORY_DIRECTION_SYS_PROMPT},
+                {"role": "user", "content": content}
+            ],
+            "options": {
+                "temperature": 0.4,
+                "num_predict": 300,
+                "num_ctx": 8192
+            },
+            "stream": False,
+            "keep_alive": "60m"
+        })
+
+        if response.status_code == 200:
+            try:
+                response_data = response.json()
+            except ValueError:
+                return jsonify({"error": "Invalid JSON response from local AI service.", "detail": response.text}), 502
+
+            new_direction = response_data.get("message", {}).get("content", '').strip()
+            tokens_total = response_data.get("prompt_eval_count", 0) + response_data.get("eval_count", 0)
+        else:
+            return jsonify({"error": response.text}), response.status_code
+    else:
+        if not api_url or not api_key:
+            return jsonify({"error": "API_URL or API_KEY not set."}), 500
+
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": STORY_DIRECTION_SYS_PROMPT},
+                {"role": "user", "content": content}
+            ],
+            "temperature": 0.4,
+            "max_tokens": 300
+        }
+
+        if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+            payload["thinking"] = {"type": "disabled"}
+
+        result, error = utils.call_ai_api(api_url, headers, payload)
+
+        if error:
+            message, status = error
+            return jsonify({"error": message}), status
+
+        new_direction = result["choices"][0]["message"]["content"]
+        tokens_total = result['usage']['total_tokens']
+
+    trimmed = utils.trim_incomplete_sentences(new_direction)
+
+    return jsonify({"direction": trimmed, "tokens_total": tokens_total})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -1,7 +1,8 @@
 /* Default Vue template styling */
 :root {
   --text: #6b6375;
-  --text-h: #08060d;
+  --text-h: #f3f4f6;
+  --text-h1: #08060d;
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;

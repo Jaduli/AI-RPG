@@ -18,7 +18,8 @@ export default {
     context_length: Number,
     is_loading: Boolean,
     summarize: Boolean,
-    memorize: Boolean
+    memorize: Boolean,
+    generate_direction: Boolean
   },
   methods: {
     setContextLength(new_length) {
@@ -76,6 +77,10 @@ export default {
     memorizeVal: {
       get() { return this.memorize; },
       set(v) { this.$emit('update:memorize', v); }
+    },
+    generateDirectionVal: {
+      get() { return this.generate_direction; },
+      set(v) { this.$emit('update:generate_direction', v); }
     },
     topPVal: {
       get() { return this.top_p; },
@@ -167,6 +172,10 @@ export default {
 
     <label>Create Memories: 
       <input v-model="memorizeVal" type="checkbox" class="custom-checkbox" />
+    </label>
+
+    <label>Generate Future Story Direction: 
+      <input v-model="generateDirectionVal" type="checkbox" class="custom-checkbox" />
     </label>
 
     <label>Recent Story Token Limit: 
