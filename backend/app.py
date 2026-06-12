@@ -847,7 +847,7 @@ def generate_card_memory():
             "max_tokens": 70
         }
 
-        if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+        if "deepseek" in model.lower():
             payload["thinking"] = {"type": "disabled"}
 
         # Call external AI API with error handling
@@ -910,7 +910,7 @@ def generate_direction():
                 {"role": "user", "content": content}
             ],
             "options": {
-                "temperature": 0.4,
+                "temperature": 0.8,
                 "num_predict": 300,
                 "num_ctx": 8192
             },
@@ -940,11 +940,11 @@ def generate_direction():
                 {"role": "system", "content": STORY_DIRECTION_SYS_PROMPT},
                 {"role": "user", "content": content}
             ],
-            "temperature": 0.4,
+            "temperature": 0.8,
             "max_tokens": 300
         }
 
-        if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+        if "deepseek" in model.lower():
             payload["thinking"] = {"type": "disabled"}
 
         result, error = utils.call_ai_api(api_url, headers, payload)

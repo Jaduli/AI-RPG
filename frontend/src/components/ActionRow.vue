@@ -215,7 +215,6 @@ export default {
 
       // Use active_requests to disable buttons
       parent.active_requests++;
-      this.is_loading = true;
       parent.status_message = `Generating new ${type}...`;
 
       try {
@@ -250,7 +249,6 @@ export default {
       } catch (err) {
         throw new Error(err.message || err);
       } finally {
-        this.is_loading = false;
         parent.active_requests--;
       }
     }
