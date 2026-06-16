@@ -884,6 +884,7 @@ export default {
         ref="contextCards"
         :mem_model="mem_model"
         :use_local="use_local"
+        :is_loading="is_loading"
       />
     </div>
 

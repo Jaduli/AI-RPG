@@ -5,12 +5,12 @@ export default {
   props: {
     mem_model: String,
     use_local: Boolean,
-    show_token_use: Boolean
+    show_token_use: Boolean,
+    is_loading: Boolean
   },
   data() {
     return {
       collapse: false,
-      loading: false,
       cards: [],
       name: '',
       content: '',
@@ -164,7 +164,6 @@ export default {
       const only_active = parent.active_requests === 0;
 
       try {
-        this.loading = true;
         parent.active_requests++;
 
         const story_information = parent.essential_context;
@@ -206,7 +205,7 @@ export default {
           }
         }
       } finally {
-        this.loading = false;
+         false;
         parent.active_requests--;
       }
     },
@@ -296,7 +295,6 @@ export default {
 
       parent.status_message = `Creating a ${card.type} memory...`;
       try {
-        this.loading = true;
         parent.active_requests++;
 
         // Get story information to use as context for memory generation
@@ -359,7 +357,6 @@ export default {
         }
         
       } finally {
-        this.loading = false;
         parent.active_requests--;
       }
     }
@@ -395,7 +392,7 @@ export default {
           <option value="location">Location</option>
           <option value="item">Item</option>
         </select>
-        <button @click="handleGenerateContent"  :disabled="loading">Generate Content</button>
+        <button @click="handleGenerateContent"  :disabled="is_loading">Generate Content</button>
         <span title="Card name, type, and essential context will be used in content generation.">
           ⓘ
         </span>
@@ -423,7 +420,7 @@ export default {
         <input v-model="create_memories" type="checkbox" class="custom-checkbox" />
       </label>
 
-      <button @click="addCard" :disabled="loading">Add Card</button>
+      <button @click="addCard" :disabled="is_loading">Add Card</button>
     </div>
   </div>
   

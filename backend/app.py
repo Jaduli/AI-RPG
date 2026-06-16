@@ -381,8 +381,8 @@ def continue_story():
         "max_tokens": max_tokens,
         "top_p": top_p,
         "temperature": temperature,
-        "presence_penalty": 0.3, # Increases the likelihood of introducing new content vs repeating existing content
-        "frequency_penalty": 0.3 # Decreases the likelihood of repeating words or phrases
+        "presence_penalty": 0.4, # Increases the likelihood of introducing new content vs repeating existing content
+        "frequency_penalty": 0.4 # Decreases the likelihood of repeating words or phrases
     }
 
     # Disable "thinking" phase for DeepSeek models to reduce output token use 
