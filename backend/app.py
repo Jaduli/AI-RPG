@@ -396,6 +396,10 @@ def continue_story():
     if "deepseek" in model.lower():
         payload["thinking"] = {"type": "disabled"}
 
+    # Same for qwen
+    elif "qwen" in model.lower():
+        payload["reasoning_effort"] = "none"
+
     # Call external AI API with error handling
     result, error = utils.call_ai_api(api_url, headers, payload)
 

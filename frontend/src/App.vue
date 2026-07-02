@@ -111,7 +111,7 @@ export default {
   <!-- App is loaded only after backend config is ready -->
   <div v-if="config_ready" class="app-container">
     <div class="app-header">
-      <h1>AI Storyteller</h1>
+      <h1>AI RPG</h1>
       <button @click="show_settings = !show_settings" class="settings-btn" title="Settings">
         ⚙️
       </button>
