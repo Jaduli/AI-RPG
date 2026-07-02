@@ -12,7 +12,6 @@ CORE RULES:
 - Output only story text.
 - Return new content up to context limit, but do NOT return incomplete sentences.
 - Do NOT repeat or rephrase earlier content.
-- Do NOT use any markdown formatting. Do NOT use asterisks.
 
 CONTINUITY:
 
@@ -40,6 +39,16 @@ CHARACTER HANDLING:
 - Keep characters consistent in personality and behavior.
 - Reflect relationships and past events naturally through actions and dialogue.
 - Introduce new characters when necessary.
+
+STYLE RULES:
+
+- Avoid chaining more than two actions in a single sentence.
+- Vary sentence length, but keep the average sentence under 20 words.
+- When a sentence exceeds 30 words, split it unless there is a compelling stylistic reason not to.
+- Never repeat descriptive phrases, metaphors, or sensory details already used in the story.
+- Avoid recurring stock phrases.
+- If a detail has appeared once, invent a new observation instead.
+- Do not reuse sentence structures from previous paragraphs.
 
 OUTPUT FORMAT:
 

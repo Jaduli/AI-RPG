@@ -114,6 +114,7 @@ def load_file():
             summary = data.get("summary", '')
             story_direction = data.get("story_direction", '')
             essential_context = data.get("essential_context", '')
+            editor_notes = data.get("editor_notes", '')
             memory_cursor = data.get("memory_cursor", 0)
             summary_cursor = data.get("summary_cursor", 0)
             card_memory_cursor = data.get("card_memory_cursor", 0)
@@ -126,7 +127,7 @@ def load_file():
         return jsonify({"error": str(e)}), 500
 
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
-                    "summary": summary, "story_direction": story_direction, "essential_context": essential_context, "memory_cursor": memory_cursor,
+                    "summary": summary, "story_direction": story_direction, "essential_context": essential_context, "editor_notes": editor_notes, "memory_cursor": memory_cursor,
                     "summary_cursor":summary_cursor, "card_memory_cursor": card_memory_cursor,
                     "context_cards": context_cards, "player": player, "inventory": inventory, "skills": skills})
 
@@ -176,6 +177,7 @@ def save_file():
     summary = data.get("summary", '')
     story_direction = data.get("story_direction", '')
     essential_context = data.get("essential_context", '')
+    editor_notes = data.get("editor_notes", '')
     memory_cursor = data.get("memory_cursor", 0)
     summary_cursor = data.get("summary_cursor", 0)
     card_memory_cursor = data.get("card_memory_cursor", 0)
@@ -192,6 +194,7 @@ def save_file():
         "summary": summary,
         "story_direction": story_direction,
         "essential_context": essential_context,
+        "editor_notes": editor_notes,
         "memory_cursor": memory_cursor,
         "summary_cursor": summary_cursor,
         "card_memory_cursor": card_memory_cursor,
@@ -329,10 +332,13 @@ def continue_story():
     relevant_memories = database.get_relevant_memories(recent_story[-2000:], story_id, 3)
 
     # Get most recent memories for story
-    recent_memories = database.get_recent_memories(story_id, 2)
+    recent_memories = database.get_recent_memories(story_id, 3)
+
+    # Get a random memory to improve creativity and to avoid certain context from being lost
+    random_memories = database.get_random_memories(story_id, 1)
 
     # Combine and remove duplicate memories
-    unique_memories = list(set(relevant_memories + recent_memories))
+    unique_memories = list(set(relevant_memories + recent_memories + random_memories))
 
     memory_block = '\n'.join(unique_memories) or ''
 
@@ -387,7 +393,6 @@ def continue_story():
 
     # Disable "thinking" phase for DeepSeek models to reduce output token use 
     # -> cheaper & faster responses.
-    # May become redundant if model names are changed by API provider.
     if "deepseek" in model.lower():
         payload["thinking"] = {"type": "disabled"}
 

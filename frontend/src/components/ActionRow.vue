@@ -149,7 +149,7 @@ export default {
     // Returns formatted player action and values for selected item, D20 
     // toggle, and action type. Returns null of no user action is made.
     // Also generates a new asset if action type is set to 'new'.
-    async getPlayerAction(recent_story = '') {
+    async getPlayerAction() {
       let item = null;
       let skill = null;
 
@@ -173,7 +173,7 @@ export default {
 
       if (this.action_type === 'new') {
         // Create new asset before continuing the story
-        await this.createNewAsset(recent_story);
+        await this.createNewAsset();
 
         // Disable D20 for 'new' actions
         this.use_d20 = false;
@@ -187,7 +187,7 @@ export default {
         action_type: this.action_type
       };
     },
-    async createNewAsset(recent_story = '') {
+    async createNewAsset() {
       const parent = this.$parent;
       const only_active = parent.active_requests === 0;
 
@@ -203,26 +203,25 @@ export default {
         throw new Error('Please set name for new story asset.');
       }
 
-      // Get recent story if not already passed in function call
-      if (!recent_story) {
-        recent_story = parent.story_editor_content.slice(-1000);
-      }
-
-      // Clear context if asset name is not found in recent story (i.e. context is irrelevant)
-      if (typeof(recent_story) !== 'string' || !recent_story.toLowerCase().includes(name.toLowerCase())) {
-        recent_story = '';
-      }
+      // Reset input for next action
+      this.reset(false);
 
       // Use active_requests to disable buttons
       parent.active_requests++;
-      parent.status_message = `Generating new ${type}...`;
 
+      if (['location', 'character', 'item'].includes(type)) {
+        parent.status_message = `Generating new ${type}...`;
+      }
+      else {
+        parent.status_message = `Generating new context card....`;
+      }
+      
       try {
         if (type === 'inventory item') {
           const item_type = this.new_item_type;
 
           // Generate new item and add to inventory
-          await parent.$refs.inventory.generateInventoryItem(item_type, name, recent_story, this.new_item_equipped);
+          await parent.$refs.inventory.generateInventoryItem(item_type, name, this.new_item_equipped);
           
           // Change status message if this is only active request
           if (only_active && this.new_item_equipped) {
@@ -231,11 +230,10 @@ export default {
           else if (only_active) {
             parent.status_message = `Got item '${name}'.`;
           }
-          this.reset(false);
           return;
         }
         // Generate and add new context card
-        await contextCards.generateContextCard(type, name, recent_story, this.new_create_memories);
+        await contextCards.generateContextCard(type, name, this.new_create_memories);
 
         // Set status message
         if (only_active && ['location', 'character', 'item'].includes(type)) {
@@ -244,8 +242,6 @@ export default {
         else if (only_active) {
           parent.status_message = `Created new context card called '${name}'.`;
         }
-        // Reset input for next action
-        this.reset(false);
       } catch (err) {
         throw new Error(err.message || err);
       } finally {

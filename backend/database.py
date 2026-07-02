@@ -106,11 +106,25 @@ def get_memories(story_id):
 
 """
 Gets most recent memories based on story ID up to a specified limit.
+Skip could be used to skip a number of most recent memories, e.g. if content is included in summary.
+Skip is currently unused as story consistency was found to be better without it in testing. 
 """
-def get_recent_memories(story_id, limit=2):
+def get_recent_memories(story_id, limit=2, skip=0):
     conn = get_db()
     rows = conn.execute(
-        "SELECT content FROM memories WHERE story_id = ? ORDER BY created_at DESC LIMIT ?",
+        "SELECT content FROM memories WHERE story_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
+        (story_id, limit, skip)
+    ).fetchall()
+    conn.close()
+    return [row["content"] for row in rows]
+
+"""
+Gets a number of random memories for a story.
+"""
+def get_random_memories(story_id, limit=2):
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT content FROM memories WHERE story_id = ? ORDER BY RANDOM() LIMIT ?",
         (story_id, limit)
     ).fetchall()
     conn.close()

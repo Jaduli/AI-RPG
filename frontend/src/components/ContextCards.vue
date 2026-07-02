@@ -204,8 +204,9 @@ export default {
             parent.status_message = '';
           }
         }
+      } catch (err) {
+        throw new Error(err.message || err);
       } finally {
-         false;
         parent.active_requests--;
       }
     },
@@ -218,7 +219,7 @@ export default {
     },
     // Adds a new card based on given recent story, type, and name. Used in
     // ActionRow to create new cards based on recent story and user input.
-    async generateContextCard(type = 'other', name = '', recent_story = '', create_memories = false) {
+    async generateContextCard(type = 'other', name = '', create_memories = false) {
       this.name = name.trim();
       this.type = type;
       this.create_memories = create_memories;
@@ -229,6 +230,14 @@ export default {
       // Clear other values
       this.parent_location = '';
       this.child_locations = '';
+
+      const parent = this.$parent;
+      let recent_story = parent.story_editor_content.slice(-2000);
+
+      // Clear context if asset name is not found in recent story (i.e. context is irrelevant)
+      if (!recent_story || !this.normalizeForMatch(recent_story).includes(this.normalizeForMatch(name))) {
+        recent_story = '';
+      }
 
       // Generate content with AI and add new card
       await this.generateContent(recent_story);
@@ -355,7 +364,8 @@ export default {
         else {
           parent.status_message = '';
         }
-        
+      } catch (err) {
+        throw new Error(err.message || err);
       } finally {
         parent.active_requests--;
       }
@@ -406,13 +416,20 @@ export default {
 
       <!-- Type-specific values -->
       <label v-if="type === 'location'">
-        Parent Location: 
-        <input type="text" v-model="parent_location" maxlength="200" />
-      </label>
-
-      <label v-if="type === 'location'">
-        Child Locations: 
-        <input type="text" v-model="child_locations" maxlength="300" />
+        <div>
+          <label>Parent Location: </label>
+          <input type="text" v-model="parent_location" maxlength="200" />
+          <span title="Parent location can be a kingdom or some other region the location belongs in.">
+            ⓘ
+          </span>
+        </div>
+        <div>
+          <label>Child Locations: </label>
+          <input type="text" v-model="child_locations" maxlength="300" />
+          <span title="Multiple child locations, such as villages in a kingdom, can be seperated using commas.">
+            ⓘ
+          </span>
+        </div>
       </label>
 
       <label v-if="type === 'character' || type === 'location'">

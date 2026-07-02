@@ -48,18 +48,12 @@ export default {
 
           <div v-if="card.type === 'location'">
             <div>
-            <label>Parent Location: </label>
-            <input v-model="card.parent_location" maxlength="200" />
-            <span title="Parent location can be a kingdom or some other region the location belongs in.">
-              ⓘ
-            </span>
+              <label>Parent Location: </label>
+              <input v-model="card.parent_location" maxlength="200" />
             </div>
             <div>
-            <label>Child Locations: </label>
-            <input v-model="card.child_locations" maxlength="200" />
-            <span title="Multiple child locations, such as villages in a kingdom, can be seperated using commas.">
-              ⓘ
-            </span>
+              <label>Child Locations: </label>
+              <input v-model="card.child_locations" maxlength="300" />
             </div>
           </div>
 

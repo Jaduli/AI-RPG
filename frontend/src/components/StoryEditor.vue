@@ -48,6 +48,8 @@ export default {
       summary: '',
       story_direction: '',
       essential_context: '',
+      editor_notes: '',
+      notes_collapsed: true,
       sent_context: '', // Full context sent for story generation
       status_message: '',
       // Values
@@ -100,6 +102,9 @@ export default {
         this.content = this.content.slice(0, start) + this.story_editor_content;
       }
     },
+    toggleNotesPanel() {
+      this.notes_collapsed = !this.notes_collapsed;
+    },
     // Main function to continue the story with backend API
     async continueStory() {
       const recent_story = this.story_editor_content
@@ -118,6 +123,12 @@ export default {
         // Get relevant context cards based on found keywords in recent story (as a string)
         const context_cards = this.$refs.contextCards.getMatchingContextCardsStr(recent_story);
 
+        let essential_context = this.essential_context;
+
+        if (this.editor_notes) {
+          essential_context += '\n\n' + this.editor_notes
+        }
+
         let payload = {
           story_id: this.story_id,
           gamemode: this.gamemode,
@@ -125,7 +136,7 @@ export default {
           instructions: this.instructions,
           summary: this.summary,
           story_direction: this.story_direction,
-          essential_context: this.essential_context,
+          essential_context,
           context_cards,
           recent_story,
           top_p: this.top_p,
@@ -144,9 +155,8 @@ export default {
         // Get RPG elements if relevant
         if (this.gamemode === 'rpg') {
           // Get player action. If action is set to 'new', also generates
-          // a new asset with most recent story as context.
-          const most_recent_content = recent_story.slice(-1000).trim();
-          const action = await this.$refs.actionRow.getPlayerAction(most_recent_content);
+          // a new asset with most recent story as context if relevant.
+          const action = await this.$refs.actionRow.getPlayerAction();
 
           is_new_action = action !== null;
 
@@ -582,6 +592,7 @@ export default {
             summary: this.summary,
             story_direction: this.story_direction,
             essential_context: this.essential_context,
+            editor_notes: this.editor_notes,
             memory_cursor: this.memory_cursor,
             summary_cursor: this.summary_cursor,
             card_memory_cursor: this.card_memory_cursor,
@@ -636,6 +647,7 @@ export default {
         this.summary = data.summary || '';
         this.story_direction = data.story_direction || '';
         this.essential_context = data.essential_context || '';
+        this.editor_notes = data.editor_notes || '';
         this.memory_cursor = data.memory_cursor || 0;
         this.summary_cursor = data.summary_cursor || 0;
         this.card_memory_cursor = data.card_memory_cursor || 0;
@@ -643,6 +655,11 @@ export default {
         this.recent_action = '';
         this.recent_outcome = '';
         this.outcome_counter = 0;
+
+        // Expand notes field if used in save
+        if (this.editor_notes) {
+          this.notes_collapsed = false;
+        }
 
         if (this.gamemode === 'rpg') {
           this.$refs.inventory.inventory = data.inventory || [];
@@ -678,6 +695,8 @@ export default {
       this.summary = '';
       this.story_direction = '';
       this.essential_context = '';
+      this.editor_notes = '';
+      this.notes_collapsed = true;
       this.memory_cursor = 0;
       this.summary_cursor = 0;
       this.$refs.contextCards.cards = [];
@@ -861,13 +880,29 @@ export default {
     <div v-show="active_tab === 'editor'">
       <div class="container">
         <h2>Story Editor</h2>
-        <textarea 
-        ref="editorBox"
-        v-model="story_editor_content" 
-        rows="12" 
-        cols="80" 
-        placeholder="Paste or write story text here.">
-        </textarea>
+        <div class="editor-layout">
+          <div class="editor-main">
+            <textarea 
+            ref="editorBox"
+            v-model="story_editor_content" 
+            rows="12" 
+            cols="80" 
+            placeholder="Paste or write story text here.">
+            </textarea>
+          </div>
+          <div class="notes-panel" :class="{ collapsed: notes_collapsed }">
+            <button class="toggle-notes" @click="toggleNotesPanel">
+              {{ notes_collapsed ? '📝' : 'Hide Notes' }}
+            </button>
+            <textarea
+              v-if="!notes_collapsed"
+              v-model="editor_notes"
+              rows="9"
+              cols="30"
+              placeholder="Add additional story notes/context here, e.g. current location or date.">
+            </textarea>
+          </div>
+        </div>
         <ActionRow
           ref="actionRow"
           v-if="gamemode === 'rpg'"
@@ -884,7 +919,7 @@ export default {
         ref="contextCards"
         :mem_model="mem_model"
         :use_local="use_local"
-        :is_loading="is_loading"
+        :is_loading="isLoading"
       />
     </div>
 
@@ -935,6 +970,42 @@ export default {
   align-items: center;
   width: 100%;
   height: 40px;
+}
+
+.editor-layout {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.editor-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.editor-main textarea,
+.notes-panel textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.notes-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 280px;
+  min-width: 280px;
+}
+
+.notes-panel.collapsed {
+  width: auto;
+  min-width: 0;
+}
+
+.toggle-notes {
+  background: #aa3bff;
+  padding: 6px 10px;
+  cursor: pointer;
 }
 
 .tab-content {

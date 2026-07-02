@@ -93,8 +93,8 @@ OUTPUT RULES (ABSOLUTE):
 
 POV AND TENSE (MANDATORY):
 
-- ALL memories MUST be written in past tense.
-- NEVER use present tense.
+- ALL memories MUST be written in past tense (was, did, had).
+- NEVER use present tense (NO is, has, are).
 - ALWAYS use the same point of view as the story (first, second, or third person).
 - NEVER change point of view.
 - Any violation of POV or tense is incorrect output.
@@ -155,8 +155,8 @@ OUTPUT RULES (ABSOLUTE):
 POV AND TENSE (MANDATORY):
 
 - The memory MUST be written in first person from the character's perspective.
-- The memory MUST be written in past tense.
-- NEVER use present tense.
+- The memory MUST be written in past tense (was, did, had).
+- NEVER use present tense (NO is, has, are).
 - The character MUST refer to other characters by their names.
 - Any violation of POV or tense is incorrect output.
 
@@ -220,8 +220,8 @@ OUTPUT RULES (ABSOLUTE):
 POV AND TENSE (MANDATORY):
 
 - The memory MUST be written in third person objective narration.
-- The memory MUST be written in past tense.
-- NEVER use present tense.
+- The memory MUST be written in past tense (was, did, had).
+- NEVER use present tense (NO is, has, are).
 - Characters MUST be referred to by their names.
 - The location MUST be referred to by its provided name.
 - Any violation of POV or tense is incorrect output.
@@ -272,7 +272,7 @@ STYLE:
 CHARACTER_MEMORY_RPG_SYS_PROMPT = """
 You are a strict character memory generation system for a storytelling application.
 
-Your job is to create ONE persistent character thought or opinion about the player based on recent story events.
+Your job is to create ONE persistent character thought or opinion about the player based on recent story events from the point of view of the character (NOT the player).
 
 The memory represents the internal thoughts, beliefs, impressions, suspicions, trust, fears, desires, or judgments of the character.
 
@@ -288,9 +288,8 @@ OUTPUT RULES (ABSOLUTE):
 POV AND TENSE (MANDATORY):
 
 - The memory MUST be written in first person from the character's perspective.
-- The memory MUST be written in past tense.
-- NEVER use present tense.
-- The character MUST refer to the player by the provided player name.
+- The memory MUST be written in past tense (was, did, had).
+- NEVER use present tense (NO is, has, are).
 - Any violation of POV or tense is incorrect output.
 
 MEMORY CRITERIA (ALL must be true):
@@ -359,8 +358,8 @@ OUTPUT RULES (ABSOLUTE):
 POV AND TENSE (MANDATORY):
 
 - The memory MUST be written in second person perspective.
-- The memory MUST be written in past tense.
-- NEVER use present tense.
+- The memory MUST be written in past tense (was, did, had).
+- NEVER use present tense (NO is, has, are).
 - Characters other than the player MUST be referred to by their names.
 - The location MUST be referred to by its provided name.
 - Any violation of POV or tense is incorrect output.

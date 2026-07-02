@@ -15,6 +15,12 @@ export default {
   },
   components: { InventoryItem },
   methods: {
+    normalizeForMatch(str) {
+      return ' ' + (str || '').toLowerCase()
+        .replace(/[^\p{L}\p{N}\s']/gu, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() + ' ';
+    },
     // Add item with id, name, type, content, and equipped value
     addItem() {
       const type = this.type
@@ -73,13 +79,20 @@ export default {
       this.inventory = this.inventory.filter(item => item.id !== id);
     },
     // Generate new item with local or cloud AI and add to Inventory
-    async generateInventoryItem(type = 'other', name = '', recent_story = '', equipped = false) {
+    async generateInventoryItem(type = 'other', name = '', equipped = false) {
       const parent = this.$parent;
       const story_information = parent.essential_context;
       
       this.name = name;
       this.type = type;
       this.equipped = equipped;
+
+      let recent_story = parent.story_editor_content.slice(-2000);
+
+      // Clear context if asset name is not found in recent story (i.e. context is irrelevant)
+      if (!recent_story || !this.normalizeForMatch(recent_story).includes(this.normalizeForMatch(name))) {
+        recent_story = '';
+      }
 
       try {
         const res = await fetch('/api/generate_asset', {
