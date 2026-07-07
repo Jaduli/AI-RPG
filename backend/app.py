@@ -125,6 +125,10 @@ def load_file():
     except Exception as e:
         # Internal Server Error
         return jsonify({"error": str(e)}), 500
+    
+    # Rebuild FAISS index for the story to ensure it's up-to-date
+    # e.g. in case of user edits to memories
+    database.rebuild_index(story_id)
 
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
                     "summary": summary, "story_direction": story_direction, "essential_context": essential_context, "editor_notes": editor_notes, "memory_cursor": memory_cursor,

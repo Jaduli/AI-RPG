@@ -1,17 +1,20 @@
 <script>
 export default {
+  props: {
+    is_loading: Boolean
+  },
   data() {
     return {
       files: [],
-      loading: false,
       show: true,
       error: ''
     }
   },
   methods: {
     async fetchFiles() {
+      const parent = this.$parent;
       this.error = '';
-      this.loading = true;
+      parent.active_requests++;
       try {
         const res = await fetch('/api/get_save_files');
         const data = await res.json();
@@ -22,7 +25,7 @@ export default {
       } catch (err) {
         this.error = 'Failed to load saved stories: ' + (err.message || err);
       } finally {
-        this.loading = false;
+        parent.active_requests--;
       }
     },
     load(story_id) {
@@ -52,7 +55,7 @@ export default {
           <span class="file-label">
             {{ file.story_id }} — {{ file.story_name || 'Untitled Story' }}
           </span>
-          <button @click="load(file.story_id)" :disabled="loading">Load</button>
+          <button @click="load(file.story_id)" :disabled="is_loading">Load</button>
         </li>
       </ul>
     </div>

@@ -836,7 +836,8 @@ export default {
       <FileMenu
         ref="fileMenu" 
         :story_id="story_id" 
-        @load-file="loadStory" 
+        :is_loading="isLoading"
+        @load-file="loadStory"
       />
     </div>
 

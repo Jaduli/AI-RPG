@@ -68,8 +68,10 @@ export default {
             <input v-model="card.create_memories" type="checkbox" class="custom-checkbox" />
             </label>
 
-
-            <div v-if="card.create_memories" class="memory-section">
+            <div v-if="card.create_memories
+              || (card.memories && card.memories.length > 0)" 
+              class="memory-section"
+            >
               <button type="button" @click="show_memories = !show_memories">
                 {{ show_memories ? 'Hide Memories' : 'Show Memories' }}
               </button>

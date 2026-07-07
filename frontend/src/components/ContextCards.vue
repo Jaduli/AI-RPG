@@ -359,7 +359,7 @@ export default {
         card.memories.push(memory);
 
         if (data.tokens_total && parent.show_token_use) {
-          parent.status_message = 'Tokens used for card memory generation: ' + data.tokens_total;
+          parent.status_message = `Tokens used for card '${card.name}' memory generation: ` + data.tokens_total;
         } 
         else {
           parent.status_message = '';
