@@ -66,7 +66,9 @@ export default {
       story_editor_content: '',
       recent_action: '',
       recent_outcome: '',
-      outcome_counter: 0
+      outcome_counter: 0,
+      current_location: '',
+      context_cards: []
     }
   },
   methods: {
@@ -105,6 +107,12 @@ export default {
     toggleNotesPanel() {
       this.notes_collapsed = !this.notes_collapsed;
     },
+    handleContextCardsUpdated(cards) {
+      this.context_cards = Array.isArray(cards) ? cards : [];
+    },
+    syncContextCardsFromChild() {
+      this.context_cards = Array.isArray(this.$refs.contextCards?.cards) ? this.$refs.contextCards.cards : [];
+    },
     // Main function to continue the story with backend API
     async continueStory() {
       const recent_story = this.story_editor_content
@@ -121,7 +129,7 @@ export default {
         this.syncContentWithEditor();
 
         // Get relevant context cards based on found keywords in recent story (as a string)
-        const context_cards = this.$refs.contextCards.getMatchingContextCardsStr(recent_story);
+        const context_cards = this.$refs.contextCards?.getMatchingContextCardsStr(recent_story, this.current_location) || '';
 
         let essential_context = this.essential_context;
 
@@ -405,7 +413,7 @@ export default {
     async createMemory() {
       // Minimum past content length to create a new memory.
       // default: 8000
-      const minimum_length_chars = 8000;
+      const minimum_length_chars = 10000;
 
       // Use past story content for new memory (without overlap with recent story)
       let {past_content, cutoff_index} = this.extractPastContent(this.memory_cursor);
@@ -417,7 +425,7 @@ export default {
         return;
       }
       // Prevent including too much content at once. Prioritize using newest story content.
-      if (content_length > 10000) {
+      if (content_length > 12000) {
         past_content = past_content.slice(-10000);
       }
       try {
@@ -593,6 +601,7 @@ export default {
             story_direction: this.story_direction,
             essential_context: this.essential_context,
             editor_notes: this.editor_notes,
+            current_location: this.current_location,
             memory_cursor: this.memory_cursor,
             summary_cursor: this.summary_cursor,
             card_memory_cursor: this.card_memory_cursor,
@@ -652,6 +661,8 @@ export default {
         this.summary_cursor = data.summary_cursor || 0;
         this.card_memory_cursor = data.card_memory_cursor || 0;
         this.$refs.contextCards.cards = data.context_cards || [];
+        this.current_location = data.current_location || '';
+        this.syncContextCardsFromChild();
         this.recent_action = '';
         this.recent_outcome = '';
         this.outcome_counter = 0;
@@ -700,6 +711,8 @@ export default {
       this.memory_cursor = 0;
       this.summary_cursor = 0;
       this.$refs.contextCards.cards = [];
+      this.syncContextCardsFromChild();
+      this.current_location = '';
       this.recent_action = '';
       this.recent_outcome = '';
       this.outcome_counter = 0;
@@ -721,6 +734,15 @@ export default {
     }
   },
   computed: {
+    availableLocationOptions() {
+      return (this.context_cards || [])
+        .filter(card => card && card.type === 'location' && (card.name || '').trim())
+        .map(card => ({
+          ...card,
+          name: (card.name || '').trim()
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    },
     // App state counts as loading if any active request is in process.
     // This disables continue, save, and load buttons to prevent multiple simultaneous 
     // requests which could cause issues. Also disables 'Set Limit' button in settings 
@@ -880,7 +902,16 @@ export default {
 
     <div v-show="active_tab === 'editor'">
       <div class="container">
-        <h2>Story Editor</h2>
+        <div class="header-row">
+          <h2>Story Editor</h2>
+          <select class="location-select" v-model="current_location">
+            <option value="">[Current Location]</option>
+            <option v-for="option in availableLocationOptions" :key="option.name" :value="option.name">
+              {{ option.name }}
+            </option>
+          </select>
+        </div>
+
         <div class="editor-layout">
           <div class="editor-main">
             <textarea 
@@ -921,6 +952,7 @@ export default {
         :mem_model="mem_model"
         :use_local="use_local"
         :is_loading="isLoading"
+        @cards-updated="handleContextCardsUpdated"
       />
     </div>
 

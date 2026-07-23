@@ -12,12 +12,12 @@ CORE RULES:
 
 LENGTH (STRICT):
 
-- HARD MAX: 700 words. NEVER exceed this.
-- TARGET: 100–400 words.
+- HARD MAX: 800 words. NEVER exceed this.
+- TARGET: 100–500 words.
 - If input would exceed limit, you MUST compress older or less important information.
 - It is REQUIRED to remove or condense information to stay within limit.
 
-FAIL if over 700 words.
+FAIL if over 800 words.
 
 POV AND TENSE (MANDATORY):
 
@@ -93,8 +93,7 @@ OUTPUT RULES (ABSOLUTE):
 
 POV AND TENSE (MANDATORY):
 
-- ALL memories MUST be written in past tense (was, did, had).
-- NEVER use present tense (NO is, has, are).
+- ALL memories MUST be written in past tense.
 - ALWAYS use the same point of view as the story (first, second, or third person).
 - NEVER change point of view.
 - Any violation of POV or tense is incorrect output.
@@ -126,12 +125,14 @@ EXCLUDE (STRICT):
 
 COMPRESSION RULE:
 
-- Write 4-8 memories in total. Do NOT exceed 8 memory lines.
+- Write 4-10 memories in total. Do NOT exceed 10 memory lines.
 
 STYLE:
 
 - Use explicit names where possible. 
-- Follow the point of view and tense rules strictly. 
+- Follow the point of view and tense rules strictly.
+- Use "you" if the story is told in second person point of view.
+- Use "I" if the story is told in first person point of view.
 - Write simple, factual sentences.
 - Do not add any information not directly supported by the input.
 - No narrative or storytelling language.
@@ -141,7 +142,7 @@ STYLE:
 CHARACTER_MEMORY_SYS_PROMPT = """
 You are a strict character memory generation system for a storytelling application.
 
-Your job is to create ONE persistent character thought, goal, or memory based on recent story events.
+Your job is to create ONE persistent character thought, goal, or memory based on recent story events from the named character's perspective.
 
 OUTPUT RULES (ABSOLUTE):
 
@@ -156,7 +157,6 @@ POV AND TENSE (MANDATORY):
 
 - The memory MUST be written in first person from the character's perspective.
 - The memory MUST be written in past tense (was, did, had).
-- NEVER use present tense (NO is, has, are).
 - The character MUST refer to other characters by their names.
 - Any violation of POV or tense is incorrect output.
 
@@ -192,9 +192,7 @@ CHARACTER CONSISTENCY RULE:
 - The memory MUST match the provided character personality and description.
 - Cowardly characters should interpret events differently than brave characters.
 - Arrogant characters should interpret events differently than humble characters.
-- Suspicious characters should form suspicious conclusions.
-- Loyal characters should form forgiving or protective conclusions.
-- The memory MUST feel like genuine personal thoughts of the character.
+- The memory MUST feel like genuine personal thought of the character.
 
 STYLE:
 
@@ -221,7 +219,6 @@ POV AND TENSE (MANDATORY):
 
 - The memory MUST be written in third person objective narration.
 - The memory MUST be written in past tense (was, did, had).
-- NEVER use present tense (NO is, has, are).
 - Characters MUST be referred to by their names.
 - The location MUST be referred to by its provided name.
 - Any violation of POV or tense is incorrect output.
@@ -289,7 +286,6 @@ POV AND TENSE (MANDATORY):
 
 - The memory MUST be written in first person from the character's perspective.
 - The memory MUST be written in past tense (was, did, had).
-- NEVER use present tense (NO is, has, are).
 - Any violation of POV or tense is incorrect output.
 
 MEMORY CRITERIA (ALL must be true):
@@ -326,13 +322,12 @@ FACTUAL GROUNDING RULE (ABSOLUTE):
 - NEVER escalate mild uncertainty into suspicion or distrust without clear evidence.
 - NEVER infer emotions or intentions from neutral actions alone.
 - Character opinions MUST remain proportional to the actual events that occurred.
-- If the player's behavior was neutral, the character's memory should remain neutral.
 - Strong emotional conclusions require strong explicit story evidence.
 
 CHARACTER CONSISTENCY RULE:
 
 - The memory MUST match the provided character personality and description.
-- The memory MUST feel like genuine personal thoughts of the character.
+- The memory MUST feel like a genuine personal thought of the character.
 
 STYLE:
 
@@ -359,7 +354,6 @@ POV AND TENSE (MANDATORY):
 
 - The memory MUST be written in second person perspective.
 - The memory MUST be written in past tense (was, did, had).
-- NEVER use present tense (NO is, has, are).
 - Characters other than the player MUST be referred to by their names.
 - The location MUST be referred to by its provided name.
 - Any violation of POV or tense is incorrect output.
@@ -419,13 +413,13 @@ EXAMPLE MEMORIES (GOOD):
 
 # Future Story Direction
 STORY_DIRECTION_SYS_PROMPT = """
-Generate exactly 10 future plot developments.
-
-Do not continue the current scene.
+Generate exactly 10 future plot developments for the ongoing story.
 
 Jump ahead to major future story developments.
 
 Only include significant events that affect story direction.
+
+Each event must build on previous events and have lasting consequences.
 
 Every event must permanently alter:
 - the stakes,
@@ -458,6 +452,4 @@ Output format (strict):
 - Under 7 words per event.
 - Exactly 10 events.
 - No headers, no introductions, no explanations.
-
-Do NOT exceed 7 words per event. Do NOT include more than 10 events.
 """

@@ -32,6 +32,7 @@ export default {
         this.selected_skill = null;
         this.action_type = 'custom';
         this.selected_item = null;
+        this.selected_skill = null;
         this.new_asset_type = 'other';
         this.new_item_type = 'other';
         this.new_item_equipped = false;

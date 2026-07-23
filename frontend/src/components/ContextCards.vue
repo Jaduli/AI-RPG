@@ -2,6 +2,7 @@
 import ContextCard from './ContextCard.vue';
 
 export default {
+  emits: ['cards-updated'],
   props: {
     mem_model: String,
     use_local: Boolean,
@@ -29,6 +30,11 @@ export default {
     // Add card with id, name, content, keywords (comma separated),
     // and type-specific values.
     addCard() {
+      // Ensure name is not empty
+      if (!this.name || !this.name.trim()) {
+        return;
+      }
+
       const type = this.type
       let payload = {
         id: Date.now(),
@@ -52,13 +58,14 @@ export default {
         .filter(k => k.length > 0);
       
       this.cards.push(payload);
+      this.$emit('cards-updated', this.cards);
       this.name = '';
       this.content = '';
       this.keywords = '';
       this.child_locations = '';
     },
     // Function to normalize strings for matching keywords in story content. 
-    // It lowercases the string, removes punctuation, and adds spaces at the 
+    // Lowercases the string, removes punctuation, and adds spaces at the 
     // start and end to prevent partial word matches.
     // Function made with ChatGPT-5.
     normalizeForMatch(str) {
@@ -76,16 +83,46 @@ export default {
       }
       return result;
     },
+    // Format a single card into a prompt-friendly string.
+    getContextCardText(card) {
+      let card_text = card.name || '';
+
+      if (card.type !== 'other') {
+        card_text += ', ' + (card.type || 'other');
+      }
+
+      if (card.parent_location) {
+        card_text += ' in ' + card.parent_location;
+      }
+      card_text += ':\n' + (card.content || '') + '\n';
+      if (card.child_locations) {
+        card_text += `\nLocations in ${card.name}: ${card.child_locations}.\n`
+      }
+      if (card.memories) {
+        // Get up to three random card memories as context
+        const random_memories = this.shuffleArray(card.memories).slice(0, 3);
+
+        if (random_memories.length > 0) {
+          card_text += `\nMemories for ${card.name}:\n`
+
+          for (const memory of random_memories) {
+            card_text += `-  ${memory}\n`;
+          }
+        }
+      }
+      return card_text.trim();
+    },
     // Get matching context cards based on keywords in recent story content.
     // Cards are formatted to a string to be used in story generation.
-    // If card type is character and its memories are enabled, up to 3 random
-    // memories of given character are added as context.
-    getMatchingContextCardsStr(text) {
+    // If card memories are enabled, up to 3 random memories of given character 
+    // are added as context.
+    getMatchingContextCardsStr(text, current_location = '') {
       const matching = [];
       const normalized_text = this.normalizeForMatch(text);
 
       for (const card of this.cards) {
-        if (card.keywords.length === 0) continue; // skip empty keyword fields
+        // skip empty keyword fields and add current location last to avoid adding it twice
+        if (card.keywords.length === 0 || card.name == current_location) continue; 
 
         // Check if any keyword is in the text
         for (const keyword of card.keywords) {
@@ -107,55 +144,25 @@ export default {
             break; // Only add card once even if multiple keywords match
           }
         }
-        // To avoid adding too much context, stop if we have 10 matching cards
-        if (matching.length >= 10) {
+        // To avoid adding too much context, stop if we have 15 matching cards
+        if (matching.length >= 15) {
           break;
         }
       }
+      const matching_str = matching.map(card => this.getContextCardText(card)).join('\n\n');
 
-      if (matching.length === 0) return '';
-      
-      // Format matching cards into a string to be included in the prompt.
-      // Example formatted character card below.
-      //
-      // Colin, character:
-      // A talented swordsman.
-      // Memories for Colin:
-      // - "I enjoyed my conversation with Luna."
-      let card_text = '';
+      // If current location is set, add it to the context string
+      const current_location_card = this.cards.find(card => card.name === current_location);
 
-      for (const card of matching) {
-        card_text += `${card.name}`;
-
-        if (card.type !== 'other') {
-          card_text += `, ${card.type}`;
-        }
-
-        if (card.parent_location) {
-          card_text += ' in ' + card.parent_location;
-        }
-        card_text += ':\n' + card.content + '\n';
-        if (card.child_locations) {
-          card_text += `\nLocations within ${card.name}: ${card.child_locations}.\n`
-        }
-        if (card.memories) {
-          // Get up to three random card memories as context
-          const random_memories = this.shuffleArray(card.memories).slice(0, 3);
-
-          if (random_memories.length > 0) {
-            card_text += `\nMemories for ${card.name}:\n`
-            
-            for (const memory of random_memories) {
-              card_text += `-  ${memory}\n`;
-            }
-          }
-        }
-        card_text += '\n';
+      if (current_location_card) {
+        const current_location_str = this.getContextCardText(current_location_card);
+        return matching_str + '\n\n[Current Location]\n' + current_location_str;
       }
-      return card_text.trim();
+      return matching_str;
     },
     removeCard(id) {
       this.cards = this.cards.filter(card => card.id !== id);
+      this.$emit('cards-updated', this.cards);
     },
     // Generate content with local or cloud AI. Can be done with or
     // without a name inserted.

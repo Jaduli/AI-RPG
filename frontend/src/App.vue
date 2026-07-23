@@ -223,7 +223,7 @@ button:disabled {
 
 .container {
   border-radius: 5px;
-  padding: 15px;
+  padding: 20px;
   background: #1a1a2e;
   margin: 5px;
 }

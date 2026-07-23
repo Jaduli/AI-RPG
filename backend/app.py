@@ -115,6 +115,7 @@ def load_file():
             story_direction = data.get("story_direction", '')
             essential_context = data.get("essential_context", '')
             editor_notes = data.get("editor_notes", '')
+            current_location = data.get("current_location", '')
             memory_cursor = data.get("memory_cursor", 0)
             summary_cursor = data.get("summary_cursor", 0)
             card_memory_cursor = data.get("card_memory_cursor", 0)
@@ -131,8 +132,8 @@ def load_file():
     database.rebuild_index(story_id)
 
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
-                    "summary": summary, "story_direction": story_direction, "essential_context": essential_context, "editor_notes": editor_notes, "memory_cursor": memory_cursor,
-                    "summary_cursor":summary_cursor, "card_memory_cursor": card_memory_cursor,
+                    "summary": summary, "story_direction": story_direction, "essential_context": essential_context, "editor_notes": editor_notes,
+                    "current_location": current_location,  "memory_cursor": memory_cursor, "summary_cursor":summary_cursor, "card_memory_cursor": card_memory_cursor,
                     "context_cards": context_cards, "player": player, "inventory": inventory, "skills": skills})
 
 """
@@ -182,6 +183,7 @@ def save_file():
     story_direction = data.get("story_direction", '')
     essential_context = data.get("essential_context", '')
     editor_notes = data.get("editor_notes", '')
+    current_location = data.get("current_location", '')
     memory_cursor = data.get("memory_cursor", 0)
     summary_cursor = data.get("summary_cursor", 0)
     card_memory_cursor = data.get("card_memory_cursor", 0)
@@ -199,6 +201,7 @@ def save_file():
         "story_direction": story_direction,
         "essential_context": essential_context,
         "editor_notes": editor_notes,
+        "current_location": current_location,
         "memory_cursor": memory_cursor,
         "summary_cursor": summary_cursor,
         "card_memory_cursor": card_memory_cursor,
@@ -358,8 +361,8 @@ def continue_story():
         ("\n\n[Player Skills & Proficiency]\n" + player_skills if player_skills else "") +
         ("\n\n[Story Summary]\n" + summary if summary else "") +
         ("\n\n[Upcoming Story Events]\n" + story_direction if story_direction else "") +
-        ("\n\n[Past Memories]\n" + memory_block if memory_block else "") +
         ("\n\n[Relevant Context]\n" + context_cards if context_cards else "") +
+        ("\n\n[Past Memories]\n" + memory_block if memory_block else "") +
         ("\n\n[Recent Player Action]\n" + recent_action if recent_action else "") +
         ("\n\n[Recent Action Outcome]\n" + recent_outcome if recent_outcome else "") +
         "\n\n[Recent Story]\n" + recent_story +
@@ -557,8 +560,8 @@ def memorize():
                 {"role": "user", "content": content}
             ],
             "options": {
-                "temperature": 0.0, # Low temperature for best consistency
-                "num_predict": 200,
+                "temperature": 0.1, # Low temperature for best consistency
+                "num_predict": 250,
                 "num_ctx": 8192
             },
             "stream": False,
@@ -597,8 +600,8 @@ def memorize():
                 {"role": "system", "content": MEMORY_SYS_PROMPT},
                 {"role": "user", "content": content}
             ],
-            "temperature": 0.0,
-            "max_tokens": 200
+            "temperature": 0.1,
+            "max_tokens": 250
         }
 
         if "deepseek" in model.lower():

@@ -17,6 +17,16 @@ export default {
   methods: {
     removeMemory(index) {
       this.card.memories.splice(index, 1);
+    },
+    addMemory() {
+      if (!this.new_memory || !this.new_memory.trim()) {
+        return;
+      }
+      if (!Array.isArray(this.card.memories)) {
+        this.card.memories = [];
+      }
+      this.card.memories.push(this.new_memory.trim());
+      this.new_memory = '';
     }
   },
   computed: {
@@ -72,6 +82,7 @@ export default {
               || (card.memories && card.memories.length > 0)" 
               class="memory-section"
             >
+
               <button type="button" @click="show_memories = !show_memories">
                 {{ show_memories ? 'Hide Memories' : 'Show Memories' }}
               </button>
@@ -98,6 +109,22 @@ export default {
                       Remove
                     </button>
                   </label>
+                </div>
+
+                <div class="add-memory-row">
+                  <input
+                    type="text"
+                    v-model="new_memory"
+                    placeholder="Add a new memory"
+                    maxlength="200"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    @click="addMemory"
+                  >
+                    Add Memory
+                  </button>
                 </div>
               </div>
             </div>
@@ -162,5 +189,13 @@ export default {
 }
 .memory-item input {
   width: 70%;
+}
+.add-memory-row {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.add-memory-row input {
+  flex: 1;
 }
 </style>
