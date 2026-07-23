@@ -898,6 +898,7 @@ export default {
         </textarea>
         <button @click="generateDirectionManually" :disabled="isLoading">Generate Story Direction</button>
       </div>
+      <p class="status">{{ status_message }}</p>
     </div>
 
     <div v-show="active_tab === 'editor'">
