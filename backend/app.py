@@ -123,6 +123,7 @@ def load_file():
             player = data.get("player", [])
             inventory = data.get("inventory", [])
             skills = data.get("skills", [])
+            timestamp = data.get("timestamp", '')
     except Exception as e:
         # Internal Server Error
         return jsonify({"error": str(e)}), 500
@@ -134,7 +135,7 @@ def load_file():
     return jsonify({"story_name": story_name, "instructions": instructions, "content": content, 
                     "summary": summary, "story_direction": story_direction, "essential_context": essential_context, "editor_notes": editor_notes,
                     "current_location": current_location,  "memory_cursor": memory_cursor, "summary_cursor":summary_cursor, "card_memory_cursor": card_memory_cursor,
-                    "context_cards": context_cards, "player": player, "inventory": inventory, "skills": skills})
+                    "context_cards": context_cards, "player": player, "inventory": inventory, "skills": skills, "timestamp": timestamp})
 
 """
 /save
@@ -191,10 +192,12 @@ def save_file():
     player = data.get("player_information", [])
     inventory = data.get("inventory", [])
     skills = data.get("skills", [])
+    timestamp = data.get("timestamp", '')
 
     # Build payload
     save_data = {
         "story_name": story_name,
+        "timestamp": timestamp,
         "instructions": instructions,
         "content": content,
         "summary": summary,
@@ -205,10 +208,10 @@ def save_file():
         "memory_cursor": memory_cursor,
         "summary_cursor": summary_cursor,
         "card_memory_cursor": card_memory_cursor,
-        "context_cards": context_cards,
         "player": player,
         "inventory": inventory,
-        "skills": skills
+        "skills": skills,
+        "context_cards": context_cards
     }
 
     # Serialize to JSON
@@ -254,10 +257,12 @@ def get_save_files():
                     data = json.load(f)
 
                 story_name = data.get("story_name", '')
+                timestamp = data.get("timestamp", '')
 
                 files.append({
                     "story_id": story_id,
-                    "story_name": story_name
+                    "story_name": story_name,
+                    "timestamp": timestamp
                 })
             except (OSError, json.JSONDecodeError):
                 # Skip corrupted or unreadable save files

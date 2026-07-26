@@ -34,6 +34,33 @@ export default {
   },
   mounted() {
     this.fetchFiles();
+  },
+  computed: {
+    // Display files from newest to oldest based on timestamp, with fallback to story_id
+    sortedFiles() {
+      const getTimestampValue = (file) => {
+        if (!file.timestamp) return 0;
+
+        const numericTimestamp = Number(file.timestamp);
+        if (!Number.isNaN(numericTimestamp)) {
+          return numericTimestamp;
+        }
+
+        const parsedDate = Date.parse(file.timestamp);
+        return Number.isNaN(parsedDate) ? 0 : parsedDate;
+      };
+
+      return [...this.files].sort((a, b) => {
+        const aTimestamp = getTimestampValue(a);
+        const bTimestamp = getTimestampValue(b);
+
+        if (aTimestamp !== bTimestamp) {
+          return bTimestamp - aTimestamp;
+        }
+
+        return Number(a.story_id || 0) - Number(b.story_id || 0);
+      });
+    }
   }
 }
 </script>
@@ -51,7 +78,7 @@ export default {
       <div v-else-if="files.length === 0" class="info-message">No saved stories found.</div>
 
       <ul v-else class="file-list">
-        <li v-for="file in files" :key="file.story_id">
+        <li v-for="file in sortedFiles" :key="file.story_id">
           <span class="file-label">
             {{ file.story_id }} — {{ file.story_name || 'Untitled Story' }}
           </span>

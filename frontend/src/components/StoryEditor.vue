@@ -608,7 +608,8 @@ export default {
             context_cards,
             player_information,
             skills: player_skills,
-            inventory: player_inventory
+            inventory: player_inventory,
+            timestamp: new Date().toISOString()
           })
         });
         const data = await res.json();
@@ -906,7 +907,7 @@ export default {
         <div class="header-row">
           <h2>Story Editor</h2>
           <select class="location-select" v-model="current_location">
-            <option value="">[Current Location]</option>
+            <option :value=null>[Current Location]</option>
             <option v-for="option in availableLocationOptions" :key="option.name" :value="option.name">
               {{ option.name }}
             </option>
