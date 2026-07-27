@@ -78,6 +78,10 @@ export default {
             this.temperature = 1.0;
             this.top_p = 0.9;
           }
+          else if (this.gamemode === 'choices') {
+            // higher max tokens to allow storytelling until next meaningful choice
+            this.max_tokens = 400;
+          }
 
           this.config_ready = true;
         } catch (err) {

@@ -29,6 +29,7 @@ from prompts.rpg import (
 )
 from prompts.storyteller import STORYTELLER_SYS_PROMPT
 from prompts.hybrid import HYBRID_SYS_PROMPT
+from prompts.choices import CHOICES_SYS_PROMPT, GENERATE_CHOICES_SYS_PROMPT
 
 # Maximum file size for save files
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
@@ -294,7 +295,7 @@ def continue_story():
     model = data.get('model')
     if not model:
         return jsonify({"error": "Model is required."}), 400
-    
+
     story_id = data.get('story_id')
 
     # Validate story ID
@@ -320,6 +321,7 @@ def continue_story():
     recent_outcome = data.get('recent_outcome', '')
     use_d20 = data.get('use_d20', False)
     outcome = data.get('outcome', '')
+    player_choice = data.get('player_choice', '')
 
     top_p = data.get('top_p', 0.9)
     temperature = data.get('temperature', 0.8)
@@ -331,7 +333,9 @@ def continue_story():
     
     full_instructions = ''
 
-    if (hybrid_enabled):
+    if (gamemode == 'choices'):
+        full_instructions = CHOICES_SYS_PROMPT
+    elif (hybrid_enabled):
         full_instructions = HYBRID_SYS_PROMPT
     elif (gamemode == 'rpg'):
         full_instructions = RPG_SYS_PROMPT
@@ -374,7 +378,8 @@ def continue_story():
         ("\n\n[Player Uses Item]\n" + player_item if player_item else "") +
         ("\n\n[Player Uses Skill]\n" + player_skill if player_skill else "") +
         ("\n\n[Player Action]\n" + player_action if player_action else "") +
-        ("\n\n[Action Outcome]\n" + outcome if outcome else "")
+        ("\n\n[Action Outcome]\n" + outcome if outcome else "") +
+        ("\n\n[Player Choice]\n" + player_choice if player_choice else "")
     )
 
     if (player_action):
@@ -739,8 +744,11 @@ def generate_asset():
             "max_tokens": 200
         }
 
-        if model in ("deepseek-v4-flash", "deepseek-v4-pro"):
+        if "deepseek" in model.lower():
             payload["thinking"] = {"type": "disabled"}
+
+        elif "qwen" in model.lower():
+            payload["reasoning_effort"] = "none"
 
         # Call external AI API with error handling
         result, error = utils.call_ai_api(api_url, headers, payload)
@@ -756,6 +764,115 @@ def generate_asset():
     trimmed = utils.trim_incomplete_sentences(generated_content)
 
     return jsonify({"generated_content": trimmed, "tokens_total": tokens_total})
+
+"""
+/generate_choices
+
+Generates player choices based on the provided context.
+Returns 400 for missing/invalid JSON or missing required fields;
+API call errors with appropriate status codes (from utils.call_ai_api);
+500 for server or API key errors, or if AI API returns empty content.
+"""
+@app.route('/api/generate_choices', methods=['POST'])
+def generate_choices():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Missing or invalid JSON body."}), 400
+
+    recent_story = data.get('recent_story')
+    if not recent_story or recent_story.strip() == '':
+        return jsonify({"error": "Empty story content."}), 400
+
+    model = data.get('model')
+    if not model:
+        return jsonify({"error": "Model is required."}), 400
+
+    local = data.get('local', False)
+
+    essential_context = data.get('essential_context', '')
+    player_information = data.get('player_information', '')
+    player_equipment = data.get('player_equipment', '')
+    player_skills = data.get('player_skills', '')
+
+    # Generate player choices based on context
+    choices_prompt = (
+        "[Essential Story Information]\n" + essential_context +
+        ("\n\n[Player]\n" + player_information if player_information else "") +
+        ("\n\n[Player Equipment]\n" + player_equipment if player_equipment else "") +
+        ("\n\n[Player Skills & Proficiency]\n" + player_skills if player_skills else "") +
+        "\n\n[Recent Story]\n" + recent_story
+    )
+
+    generated_choices = ''
+    tokens_total = -1
+
+    if (local == True and LOCAL_AI_ENABLED):
+        # Local using Ollama API
+        response = requests.post(OLLAMA_URL, json={
+            "model": OLLAMA_MODEL,
+            "messages": [
+                {"role": "system", "content": GENERATE_CHOICES_SYS_PROMPT},
+                {"role": "user", "content": choices_prompt}
+            ],
+            "options": {
+                "temperature": 0.8,
+                "num_predict": 100,
+                "num_ctx": 8192
+            },
+            "stream": False,
+            "keep_alive": "60m"
+        })
+
+        if response.status_code == 200:
+            try:
+                response_data = response.json()
+            except ValueError:
+                return jsonify({"error": "Invalid JSON response from local AI service.", "detail": response.text}), 502
+
+            generated_choices = response_data.get("message", {}).get("content", '').strip()
+
+            tokens_total = response_data.get("prompt_eval_count", 0) + response_data.get("eval_count", 0)
+
+        else:
+            return jsonify({"error": response.text}), response.status_code
+
+    else:
+        if not api_url or not api_key:
+            return jsonify({"error": "API_URL or API_KEY not set."}), 500
+        
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": GENERATE_CHOICES_SYS_PROMPT},
+                {"role": "user", "content": choices_prompt}
+            ],
+            "temperature": 0.8,
+            "max_tokens": 100
+        }
+
+        if "deepseek" in model.lower():
+            payload["thinking"] = {"type": "disabled"}
+
+        elif "qwen" in model.lower():
+            payload["reasoning_effort"] = "none"
+
+        result, error = utils.call_ai_api(api_url, headers, payload)
+
+        if error:
+            message, status = error
+            return jsonify({"error": message}), status
+
+        generated_choices = result["choices"][0]["message"]["content"]
+        tokens_total = result['usage']['total_tokens']
+
+    if not generated_choices or generated_choices.strip() == '':
+        return jsonify({"error": "AI API returned empty content for choices."}), 500
+
+    choices_array = [choice.strip() for choice in generated_choices.splitlines() if choice.strip()]
+
+    return jsonify({"generated_choices": choices_array, "tokens_total": tokens_total})
 
 """
 /generate_card_memory
@@ -787,7 +904,7 @@ def generate_card_memory():
     sys_prompt = ''
 
     if card_type == 'location':
-        temperature = 0.3 # Low temperature for better consistency in location memories
+        temperature = 0.1 # Low temperature for better consistency in location memories
         if gamemode == 'rpg':
             sys_prompt = LOCATION_MEMORY_RPG_SYS_PROMPT
         else:
@@ -870,6 +987,9 @@ def generate_card_memory():
 
         if "deepseek" in model.lower():
             payload["thinking"] = {"type": "disabled"}
+
+        elif "qwen" in model.lower():
+            payload["reasoning_effort"] = "none"
 
         # Call external AI API with error handling
         result, error = utils.call_ai_api(api_url, headers, payload)
@@ -967,6 +1087,9 @@ def generate_direction():
 
         if "deepseek" in model.lower():
             payload["thinking"] = {"type": "disabled"}
+
+        elif "qwen" in model.lower():
+            payload["reasoning_effort"] = "none"
 
         result, error = utils.call_ai_api(api_url, headers, payload)
 

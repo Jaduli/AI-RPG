@@ -67,8 +67,9 @@ export default {
       recent_action: '',
       recent_outcome: '',
       outcome_counter: 0,
-      current_location: '',
-      context_cards: []
+      current_location: null,
+      context_cards: [],
+      choices: []
     }
   },
   methods: {
@@ -107,6 +108,9 @@ export default {
     toggleNotesPanel() {
       this.notes_collapsed = !this.notes_collapsed;
     },
+    selectChoice(choice) {
+      this.continueStory(choice);
+    },
     handleContextCardsUpdated(cards) {
       this.context_cards = Array.isArray(cards) ? cards : [];
     },
@@ -114,7 +118,7 @@ export default {
       this.context_cards = Array.isArray(this.$refs.contextCards?.cards) ? this.$refs.contextCards.cards : [];
     },
     // Main function to continue the story with backend API
-    async continueStory() {
+    async continueStory(player_choice = '') {
       const recent_story = this.story_editor_content
 
       // Basic validation to ensure there's enough content to continue from
@@ -136,6 +140,9 @@ export default {
         if (this.editor_notes) {
           essential_context += '\n\n' + this.editor_notes
         }
+
+        // Convert player_choice to string to avoid issues with undefined values
+        const player_choice_str = typeof player_choice === 'string' ? player_choice : '';
 
         let payload = {
           story_id: this.story_id,
@@ -161,31 +168,33 @@ export default {
         let use_d20 = false;
 
         // Get RPG elements if relevant
-        if (this.gamemode === 'rpg') {
-          // Get player action. If action is set to 'new', also generates
+        if (this.gamemode === 'rpg' || this.gamemode === 'choices') {
+          // Get player action unless a choice is used. If action is set to 'new', also generates
           // a new asset with most recent story as context if relevant.
-          const action = await this.$refs.actionRow.getPlayerAction();
+          if (!player_choice_str) {
+            const action = await this.$refs.actionRow.getPlayerAction();
 
-          is_new_action = action !== null;
+              is_new_action = action !== null;
 
-          if (is_new_action) {
-            player_action = action.player_action || '';
-            selected_item = action.selected_item || null;
-            selected_skill = action.selected_skill || null;
-            use_d20 = action.use_d20 || false;
-            action_type = action.action_type || '';
-          }
+              if (is_new_action) {
+                player_action = action.player_action || '';
+                selected_item = action.selected_item || null;
+                selected_skill = action.selected_skill || null;
+                use_d20 = action.use_d20 || false;
+                action_type = action.action_type || '';
+              }
 
-          // Get skill outcome based on level if a skill was selected for the action
-          if (selected_skill) {
-            outcome = this.$refs.skills.getSkillOutcome(selected_skill.level);
-          }
+              // Get skill outcome based on level if a skill was selected for the action
+              if (selected_skill) {
+                outcome = this.$refs.skills.getSkillOutcome(selected_skill.level);
+              }
 
-          // Reset previous action context when a new action is provided
-          if (is_new_action) {
-            this.recent_action = '';
-            this.recent_outcome = '';
-            this.outcome_counter = 0;
+              // Reset previous action context when a new action is provided
+              if (is_new_action) {
+                this.recent_action = '';
+                this.recent_outcome = '';
+                this.outcome_counter = 0;
+              }
           }
 
           // Get player information (as string)
@@ -197,6 +206,7 @@ export default {
             player_information,
             player_equipment,
             player_skills,
+            player_choice: player_choice_str,
             player_action,
             outcome,
             player_item: selected_item ? selected_item.name : '',
@@ -255,16 +265,18 @@ export default {
           this.sent_context = data.full_context;
         }
 
-        if (this.gamemode === 'rpg') {
+        this.choices = [];
+
+        if (this.gamemode === 'rpg' || this.gamemode === 'choices' && !player_choice_str) {
           // D20 action outcome of player action (success, failure, etc.)
           if (data.outcome) {
-            this.recent_action = player_action;
-            this.recent_outcome = data.outcome;
+            // this.recent_action = player_action;
+            // this.recent_outcome = data.outcome;
           }
           // Skill use outcome separate from D20
           if (outcome) {
-            this.recent_action = player_action;
-            this.recent_outcome = outcome;
+            // this.recent_action = player_action;
+            // this.recent_outcome = outcome;
           }
 
           // Add XP to used skill (allows leveling up).
@@ -295,20 +307,14 @@ export default {
           }
         }
 
-        // Scroll to bottom to show new content
-        this.$nextTick(() => {
-          const el = this.$refs.editorBox;
-          el.scrollTop = el.scrollHeight;
-        });
-
         this.status_message = '';
 
         if (this.show_token_use && data.tokens_total) {
           this.status_message = 'Total tokens used for continue action: ' + data.tokens_total;
         }
 
-        // The following memory actions happen only if enough content has fallen out of the  
-        // context window to avoid unnecessary API calls and to ensure that there is enough
+        // The following three memory actions happen only if enough content has fallen out of
+        // the context window to avoid unnecessary API calls and to ensure that there is enough
         // content for the memory to be meaningful.
 
         // Summarize story
@@ -326,16 +332,20 @@ export default {
 
         // Refresh future story direction every 15 turns when enabled.
         if (this.generate_direction) {
-          this.direction_turn_counter += 1;
+          this.direction_turn_counter -= 1;
 
-          if (this.direction_turn_counter >= 15) {
+          if (this.direction_turn_counter <= 0) {
             await this.generateStoryDirection();
-            this.direction_turn_counter = 0;
+            this.direction_turn_counter = 15;
           }
         }
 
         // Automatically save the story with new content
         await this.saveStory();
+
+        if (this.gamemode === 'choices') {
+          await this.generateChoices();
+        }
       } catch (err) {
         this.status_message = 'Error continuing story: ' + (err.message || err);
       } finally {
@@ -516,7 +526,7 @@ export default {
 
       let player_information = '';
 
-      if (this.gamemode === 'rpg') {
+      if (this.gamemode === 'rpg' || this.gamemode === 'choices') {
         player_information = this.$refs.playerCard.getPlayerStr();
       }
 
@@ -558,6 +568,68 @@ export default {
         this.active_requests--;
       }
     },
+    async generateChoices() {
+      const recent_story = this.story_editor_content.slice(-2000).trim();
+
+      if (!recent_story || recent_story.trim().length < 20) {
+        this.status_message = 'Error: Please enter enough story content to generate choices.';
+        return;
+      }
+      try {
+        this.active_requests++;
+        this.status_message = 'Generating choices...';
+
+        // Sync content with editor for any user edits before generating choices
+        if (this.active_requests === 1) {
+          this.syncContentWithEditor();
+        }
+
+        let essential_context = this.essential_context;
+
+        if (this.editor_notes) {
+          essential_context += '\n\n' + this.editor_notes
+        }
+        let payload = {
+            model: this.mem_model,
+            player_information: this.$refs.playerCard.getPlayerStr(),
+            player_equipment: this.$refs.inventory.getEquipmentStr(),
+            player_skills: this.$refs.skills.getSkillsStr(),
+            essential_context,
+            recent_story
+        }
+
+        const res = await fetch('/api/generate_choices', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          this.status_message = 'Backend error generating choices: ' + data.error;
+          return;
+        }
+
+        if (!data.generated_choices || !Array.isArray(data.generated_choices)) {
+          this.status_message = 'Error: Choices generation returned invalid data.';
+          return;
+        }
+        this.choices = data.generated_choices;
+
+        if (this.show_token_use && data.tokens_total) {
+          this.status_message = 'Total tokens used for choices generation: ' + data.tokens_total;
+        }
+        else {
+          this.status_message = '';
+        }
+      } catch (err) {
+        this.status_message = 'Error generating choices: ' + (err.message || err);
+      } finally {
+        this.active_requests--;
+      }
+    },
     // Function to save the story to backend API
     async saveStory(sync = true) {
       // Only change status message if this is the only active request to
@@ -580,7 +652,7 @@ export default {
         let player_inventory = [];
         let player_skills = [];
 
-        if (this.gamemode === 'rpg') {
+        if (this.gamemode === 'rpg' || this.gamemode === 'choices') {
           player_information = this.$refs.playerCard.getPlayer() || [];
           player_inventory = this.$refs.inventory.getInventory() || [];
           player_skills = this.$refs.skills.getSkills() || [];
@@ -662,18 +734,19 @@ export default {
         this.summary_cursor = data.summary_cursor || 0;
         this.card_memory_cursor = data.card_memory_cursor || 0;
         this.$refs.contextCards.cards = data.context_cards || [];
-        this.current_location = data.current_location || '';
+        this.current_location = data.current_location || null;
         this.syncContextCardsFromChild();
         this.recent_action = '';
         this.recent_outcome = '';
         this.outcome_counter = 0;
+        this.choices = [];
 
         // Expand notes field if used in save
         if (this.editor_notes) {
           this.notes_collapsed = false;
         }
 
-        if (this.gamemode === 'rpg') {
+        if (this.gamemode === 'rpg' || this.gamemode === 'choices') {
           this.$refs.inventory.inventory = data.inventory || [];
           this.$refs.skills.skills = data.skills || [];
 
@@ -713,14 +786,15 @@ export default {
       this.summary_cursor = 0;
       this.$refs.contextCards.cards = [];
       this.syncContextCardsFromChild();
-      this.current_location = '';
+      this.current_location = null;
       this.recent_action = '';
       this.recent_outcome = '';
       this.outcome_counter = 0;
       this.card_memory_cursor = 0;
       this.direction_turn_counter = 0;
+      this.choices = [];
 
-      if (this.gamemode === 'rpg') {
+      if (this.gamemode === 'rpg' || this.gamemode === 'choices') {
         this.$refs.inventory.inventory = [];
         this.$refs.skills.skills = [];
         
@@ -823,7 +897,7 @@ export default {
   </button>
 
   <button 
-    v-if="gamemode === 'rpg'"
+    v-if="gamemode === 'rpg' || gamemode === 'choices'"
     :class="{ active: active_tab === 'player' }"
     @click="setActiveTab('player')"
   >
@@ -937,15 +1011,37 @@ export default {
             </textarea>
           </div>
         </div>
+
+        <div class="choices-row" v-if="gamemode === 'choices'">
+          <div class="choices-panel" v-if="choices.length > 0">
+            <button
+              v-for="(choice, index) in choices"
+              :key="index"
+              type="button"
+              :disabled="isLoading"
+              @click="selectChoice(choice)"
+            >
+              {{ choice }}
+            </button>
+          </div>
+
+          <button 
+            @click="generateChoices" 
+            :title="choices.length > 0 ? 'Regenerate Choices' : 'Generate Choices'"
+            :disabled="isLoading">
+            ↺
+          </button>
+        </div>
+
         <ActionRow
           ref="actionRow"
-          v-if="gamemode === 'rpg'"
+          v-if="gamemode === 'rpg' || gamemode === 'choices'"
           :gamemode="gamemode"
           :is_loading="isLoading"
         />
+        <button @click="continueStory" :disabled="isLoading">Continue Story</button>
       </div>
       <p class="status">{{ status_message }}</p>
-      <button @click="continueStory" :disabled="isLoading">Continue Story</button>
     </div>
 
     <div class="container" v-show="active_tab === 'context_cards'">
@@ -1073,5 +1169,24 @@ export default {
   background: #9a2bef;
   color: white;
   font-weight: bold;
+}
+
+.choices-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.choices-panel {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+}
+.choices-actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 </style>

@@ -142,6 +142,7 @@ export default {
       <select v-model="gamemodeVal">
         <option value="rpg">RPG</option>
         <option value="storyteller">Storyteller</option>
+        <option value="choices">Choices</option>
       </select>
     </label>
 
