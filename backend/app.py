@@ -336,9 +336,7 @@ def continue_story():
     
     full_instructions = ''
 
-    if (user_instructions):
-        full_instructions = user_instructions
-    elif (gamemode == 'choices'):
+    if (gamemode == 'choices'):
         full_instructions = CHOICES_SYS_PROMPT
     elif (hybrid_enabled):
         full_instructions = HYBRID_SYS_PROMPT
@@ -393,8 +391,8 @@ def continue_story():
     if (outcome or recent_outcome):
         full_instructions += OUTCOME_SYS_PROMPT
 
-    #if (user_instructions.strip() != ''):
-    #    full_instructions = (f"{full_instructions}\n{user_instructions}")
+    if (user_instructions.strip() != ''):
+        full_instructions = (f"{full_instructions}\n{user_instructions}")
 
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 

@@ -89,7 +89,7 @@ FAIL CONDITIONS:
 
 # Alternative system prompt which was found to provide more fast-paced, interesting content at 
 # the cost of consistency. More unexpected events and better player agency.
-HYBRID_SYSS_PROMPT = """
+HYBRID_SYS_ALTERNATIVE_PROMPT = """
 You are a storytelling engine that continues an ongoing narrative.
 
 Write only the next part of the story, continuing immediately from the latest event or player action.
