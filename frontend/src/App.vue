@@ -67,7 +67,14 @@ export default {
           this.main_model = data.main_model || this.main_model;
           this.mem_model = data.mem_model || this.mem_model;
 
-          this.gamemode = data.gamemode || this.gamemode;
+          const user_gamemode = data.gamemode ? data.gamemode.toLowerCase() : this.gamemode;
+          if (user_gamemode) {
+            if (['rpg', 'storyteller', 'choices'].includes(user_gamemode)) {
+              this.gamemode = user_gamemode;
+            } else {
+              console.warn(`Invalid gamemode from backend config: ${user_gamemode}. Valid modes: rpg, storyteller, choices.`);
+            }
+          }
           
           const hybrid_enabled = data.hybrid_enabled || false;
 

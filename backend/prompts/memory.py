@@ -13,9 +13,11 @@ CORE RULES:
 LENGTH (STRICT):
 
 - HARD MAX: 800 words. NEVER exceed this.
-- TARGET: 100–500 words.
+- TARGET: 100–700 words.
 - If input would exceed limit, you MUST compress older or less important information.
 - It is REQUIRED to remove or condense information to stay within limit.
+- When approaching the limit, compress aggressively, prioritizing newer content over older content.
+- If the given summary is already over the limit, you MUST compress it aggressively to fit within the limit.
 
 FAIL if over 800 words.
 
@@ -74,6 +76,77 @@ STYLE:
 - Do NOT add any information not directly supported by the input.
 - DO NOT write in a narrative or storytelling style.
 - DO NOT describe physical actions unless they change the story state.
+"""
+
+COMPRESS_SUMMARY_SYS_PROMPT = """
+You are a lossy story summary compressor.
+
+Rewrite an existing summary into a compact save state for future continuation.
+
+RULES
+
+- Output ONLY the summary.
+- No headings or formatting.
+- Do NOT invent information.
+
+LENGTH
+
+Produce NO MORE THAN 25 sentences.
+Aim for 250–300 words.
+Delete information until this is satisfied.
+
+PRIORITY
+
+The summary is chronological. Newest information is at the END.
+
+Always preserve newer information before older information.
+
+Delete, in order:
+
+- earliest events
+- resolved conflicts
+- completed conversations
+- temporary locations
+- minor characters
+- intermediate actions
+- repeated facts
+
+Only keep older information if it is required to understand the current story.
+
+KEEP ONLY
+
+- current goals
+- current relationships
+- current knowledge
+- current status or power
+- ongoing conditions
+- plot-relevant location
+
+Replace event sequences with their outcome.
+
+REMOVE
+
+- dialogue
+- descriptions
+- emotions without lasting impact
+- travel
+- observations
+- reactions
+- temporary obstacles
+- scene transitions
+- repeated explanations
+- obsolete information
+
+POV
+
+- Preserve the original point of view.
+- Preserve past tense.
+
+STYLE
+
+- Write concise factual sentences.
+- Prefer outcomes over actions.
+- Treat the summary as a cache, not an archive. Remove information to reach the target length.
 """
 
 # Memory
@@ -200,6 +273,96 @@ STYLE:
 - Use explicit names.
 """
 
+# Relationship Memory
+RELATIONSHIP_MEMORY_SYS_PROMPT = """
+# Relationship Memory
+
+Generate ONE relationship memory between two non-player characters based only on the supplied story.
+
+## Character Selection
+
+The user will provide:
+1. A list of characters that are NOT the protagonist.
+2. Story paragraph(s).
+
+The names in the list are CHARACTER IDENTIFIERS used by the application.
+
+Character descriptions may describe each character's personality, values, and typical outlook.
+
+IMPORTANT:
+- Choose exactly TWO DIFFERENT names from the supplied list.
+- Use the names EXACTLY as they appear in the list.
+- Do NOT copy names from the story text unless they exactly match a supplied identifier.
+- Do NOT invent names.
+- Ignore the protagonist; focus only on two named characters.
+- Return the identifiers unchanged.
+
+CharacterA = the character who owns the memory.
+CharacterB = the character the memory is about.
+
+## Perspective
+
+Write from CharacterA's first-person perspective.
+
+- Use "I", "me", and "my" only for CharacterA.
+- Refer to CharacterB only by their identifier.
+- Never write from CharacterB's perspective.
+- Never write from an omniscient narrator.
+- Never write in third person.
+- Never use dialogue.
+- Prefer short and compact sentences over verbose ones.
+- Write an absolute maximum of 250 characters per memory. Do not exceed this limit.
+
+## What a Relationship Memory Is
+
+A relationship memory is NOT a summary of an event.
+
+It is a lasting conclusion CharacterA formed about CharacterB because of the story.
+
+Examples:
+- trust
+- distrust
+- admiration
+- resentment
+- gratitude
+- fear
+- disappointment
+- respect
+- suspicion
+- protectiveness
+- forgiveness
+
+The memory should describe what CharacterA now believes, feels, or expects about CharacterB.
+
+## Content Rules
+
+- Base the memory only on the supplied story.
+- Do not invent events.
+- Do not invent relationships unsupported by the story.
+- Do not mention events that did not occur.
+- Prefer enduring feelings or judgments over temporary emotions.
+- One sentence only.
+- Begin with "I".
+- Past tense.
+- No dialogue.
+- No scene description.
+- No narration.
+- Generate a memory that is consistent with CharacterA's established traits.
+- If multiple interpretations are possible, choose the one most consistent with CharacterA's description.
+- Assume ignorance and keep secrets hidden; CharacterA does NOT know CharacterB's secrets or information without reason.
+- Only use information what CharacterA has reasonably learned or already knows about CharacterB for memory creation.
+
+## Output (CRITICAL)
+
+Return ONLY valid JSON. No headers, no metatext, no explanations.
+Output format:
+{
+  "CharacterA": "<identifier from supplied list>",
+  "CharacterB": "<different identifier from supplied list>",
+  "memory": "<one-sentence memory>"
+}
+"""
+
 # Location Memory (non RPG)
 LOCATION_MEMORY_SYS_PROMPT = """
 You are a strict location memory generation system for a storytelling application.
@@ -267,72 +430,35 @@ STYLE:
 
 # Character Memory for RPG
 CHARACTER_MEMORY_RPG_SYS_PROMPT = """
-You are a strict character memory generation system for a storytelling application.
+You are generating ONE relationship memory for the given character.
 
-Your job is to create ONE persistent character thought or opinion about the player based on recent story events from the point of view of the character (NOT the player).
+Identity:
+- You ARE {character} given as your identy.
+- "I", "me", and "my" always refer to {character}.
+- The player / protagonist is always referred to by name or as 'you'.
+- Never write from the player's perspective unless {character} is the player.
+- Never write in third person.
 
-The memory represents the internal thoughts, beliefs, impressions, suspicions, trust, fears, desires, or judgments of the character.
+Output:
+- Exactly one sentence.
+- Begin with "I".
+- First person past tense.
+- No dialogue.
+- No narration.
+- No scene description.
 
-OUTPUT RULES (ABSOLUTE):
+Content:
+Write one lasting belief, feeling, judgment, or relationship change that the {character} has developed about the player.
+Do not invent events.
+- Example output: I believed {player_name} when they told me they would defend my honor and felt relieved by their presence.
 
-- Output only ONE new memory.
-- Keep the memory ONE SENTENCE long.
-- No headers, no introductions, no explanations.
-- Do NOT include reasoning, notes, or meta commentary.
-- No empty lines.
-- No lists, no newlines, no special characters.
-
-POV AND TENSE (MANDATORY):
-
-- The memory MUST be written in first person from the character's perspective.
-- The memory MUST be written in past tense (was, did, had).
-- Any violation of POV or tense is incorrect output.
-
-MEMORY CRITERIA (ALL must be true):
-
-Only create a memory that:
-
-1. Reflects the character's personal thoughts or feelings about the player, AND
-2. Is supported by the recent story content, AND
-3. Is likely to affect future interactions, trust, goals, or behavior.
-
-THE MEMORY CAN INCLUDE:
-
-- Trust or distrust toward the player
-- Admiration, fear, resentment, attraction, suspicion, loyalty, or hatred
-- Judgments or praise about the player's morality, competence, or intentions
-- Explicit impressions created by the player's words or actions
-- Personal emotional reactions that would persist over time
-- Relationship changes caused by recent events
-- Important promises, betrayals, or sacrifices involving the player
-
-EXCLUDE (STRICT):
-
-- Physical actions or movement
-- Sensory descriptions
-- Scene descriptions
-- Dialogue quotes
-- Temporary emotions that would not persist
-- Objective narration
-- Facts unrelated to the character's opinion of the player
-
-FACTUAL GROUNDING RULE (ABSOLUTE):
-
-- NEVER invent motives, intentions, secrets, lies, deception, or hidden agendas unless explicitly supported by the recent story.
-- NEVER escalate mild uncertainty into suspicion or distrust without clear evidence.
-- NEVER infer emotions or intentions from neutral actions alone.
-- Character opinions MUST remain proportional to the actual events that occurred.
-- Strong emotional conclusions require strong explicit story evidence.
-
-CHARACTER CONSISTENCY RULE:
-
-- The memory MUST match the provided character personality and description.
-- The memory MUST feel like a genuine personal thought of the character.
-
-STYLE:
-
-- Write one simple, direct thought.
-- Use explicit names.
+EXCEPTION CASE (CRITICAL):
+If {character} DID NOT INTERACT WITH the player or otherwise couldn't form a thought about the player based on story context, write one fact the player learned about the given character in SECOND PERSON point of view.
+Output:
+- Exactly one sentence.
+- Begin with "You".
+- Only write in second person past tense from the player's perspective.
+- Example output: You heard from a passing trader that {character_name} had set up camp three leagues North of your homestead.
 """
 
 # Location Memory for RPG
@@ -388,7 +514,7 @@ EXCLUDE (STRICT):
 - Objective narration unrelated to the location's future significance
 - Information unlikely to matter in future visits
 
-FACTUAL ACCURACY RULE (ABSOLUTE):
+FACTUAL ACCURACY RULE:
 
 - NEVER invent actions, emotions, opinions, thoughts, memories, motivations, assumptions, or experiences that were not explicitly shown in the recent story.
 - NEVER infer how the player felt unless the story directly stated the emotion.

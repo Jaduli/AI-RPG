@@ -18,6 +18,37 @@ export default {
     removeMemory(index) {
       this.card.memories.splice(index, 1);
     },
+    removeRelationshipMemory(relationship, index) {
+      const relationships = this.card.relationship_memories;
+
+      if (!relationships) {
+        return;
+      }
+
+      if (Array.isArray(relationships)) {
+        const relationship_index = relationship.sourceIndex;
+        const relationship_entry = relationships[relationship_index];
+
+        if (!Array.isArray(relationship_entry)) {
+          return;
+        }
+
+        relationship_entry.splice(index, 1);
+
+        if (relationship_entry.length === 0) {
+          relationships.splice(relationship_index, 1);
+        }
+        return;
+      }
+
+      if (relationship.sourceKey && Array.isArray(relationships[relationship.sourceKey])) {
+        relationships[relationship.sourceKey].splice(index, 1);
+
+        if (relationships[relationship.sourceKey].length === 0) {
+          delete relationships[relationship.sourceKey];
+        }
+      }
+    },
     addMemory() {
       if (!this.new_memory || !this.new_memory.trim()) {
         return;
@@ -30,6 +61,33 @@ export default {
     }
   },
   computed: {
+    relationshipMemoryEntries() {
+      const relationships = this.card.relationship_memories;
+
+      if (!relationships) {
+        return [];
+      }
+
+      if (Array.isArray(relationships)) {
+        return relationships.map((memory, index) => ({
+          key: `relationship-${index}`,
+          label: 'Relationship',
+          memories: Array.isArray(memory) ? memory : [memory],
+          sourceIndex: index,
+          sourceKey: index
+        }));
+      }
+
+      return Object.entries(relationships)
+        .filter(([, memories]) => Array.isArray(memories))
+        .map(([partner, memories]) => ({
+          key: partner,
+          label: partner || 'Relationship',
+          memories,
+          sourceIndex: null,
+          sourceKey: partner
+        }));
+    },
     keywordsString: {
       get() {
         return Array.isArray(this.card.keywords) ? this.card.keywords.join(',') : this.card.keywords;
@@ -109,6 +167,27 @@ export default {
                       Remove
                     </button>
                   </label>
+                </div>
+
+                <div v-if="relationshipMemoryEntries.length > 0">
+                  <h4>Relationship Memories</h4>
+                  <div
+                    v-for="relationship in relationshipMemoryEntries"
+                    :key="relationship.key"
+                  >
+                    <div
+                      v-for="(memory, index) in relationship.memories"
+                      :key="`${relationship.key}-${index}`"
+                      class="memory-item"
+                    >
+                      <label>Memory {{ index + 1 }}:
+                        <input v-model="relationship.memories[index]" />
+                        <button type="button" class="btn btn-danger" @click="removeRelationshipMemory(relationship, index)">
+                          Remove
+                        </button>
+                      </label>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="add-memory-row">

@@ -51,6 +51,9 @@ export default {
         payload.create_memories = this.create_memories;
         payload.memories = [];
       }
+      if (type === 'character') {
+        payload.relationship_memories = {};
+      }
       // Split, trim, and remove empty keywords to avoid accidental empty-string matches
       payload.keywords = this.keywords
         .split(',')
@@ -84,7 +87,7 @@ export default {
       return result;
     },
     // Format a single card into a prompt-friendly string.
-    getContextCardText(card) {
+    getContextCardText(card, found_character_ids = []) {
       let card_text = card.name || '';
 
       if (card.type !== 'other') {
@@ -95,7 +98,7 @@ export default {
         card_text += ' in ' + card.parent_location;
       }
       card_text += ':\n' + (card.content || '') + '\n';
-      if (card.child_locations) {
+      if (card.child_locations && card.child_locations.length > 0) {
         card_text += `\nLocations in ${card.name}: ${card.child_locations}.\n`
       }
       if (card.memories) {
@@ -106,7 +109,23 @@ export default {
           card_text += `\nMemories for ${card.name}:\n`
 
           for (const memory of random_memories) {
-            card_text += `-  ${memory}\n`;
+            card_text += `- ${memory}\n`;
+          }
+        }
+      }
+      if (card.relationship_memories && found_character_ids.length > 0) {
+        for (const partner_id of found_character_ids) {
+          const partner = this.cards.find(c => c.id === partner_id);
+          if (!partner || !card.relationship_memories[partner_id]) continue;
+
+          const random_relationship_memories = this.shuffleArray(card.relationship_memories[partner_id]).slice(0, 2);
+
+          if (random_relationship_memories.length > 0) {
+            card_text += `\n${card.name}'s memories about ${partner.name}:\n`
+
+            for (const memory of random_relationship_memories) {
+              card_text += `- ${memory}\n`;
+            }
           }
         }
       }
@@ -119,6 +138,7 @@ export default {
     getMatchingContextCardsStr(text, current_location = '') {
       const matching = [];
       const normalized_text = this.normalizeForMatch(text);
+      const found_character_ids = [];
 
       for (const card of this.cards) {
         // skip empty keyword fields and add current location last to avoid adding it twice
@@ -133,14 +153,20 @@ export default {
 
           if (normalized_text.includes(kw)) {
             const payload = {
+              id: card.id,
               name: card.name || '',
               type: card.type || '',
               content: card.content || '',
               parent_location: card.parent_location || '',
               child_locations: card.child_locations || '',
-              memories: card.memories || []
+              memories: card.memories || [],
+              relationship_memories: card.relationship_memories || {}
             };
             matching.push(payload);
+
+            if (card.type === 'character') {
+              found_character_ids.push(card.id);
+            }
             break; // Only add card once even if multiple keywords match
           }
         }
@@ -149,7 +175,7 @@ export default {
           break;
         }
       }
-      const matching_str = matching.map(card => this.getContextCardText(card)).join('\n\n');
+      const matching_str = matching.map(card => this.getContextCardText(card, found_character_ids)).join('\n\n');
 
       // If current location is set, add it to the context string
       const current_location_card = this.cards.find(card => card.name === current_location);
@@ -287,6 +313,7 @@ export default {
 
         if (normalized_text.includes(kw)) {
           card = c;
+          break;
         }
       }
 
@@ -318,7 +345,7 @@ export default {
 
         let player_name = '';
 
-        if (gamemode === 'rpg') {
+        if (gamemode === 'rpg' || gamemode === 'choices') {
           const player = parent.$refs.playerCard;
 
           if (!player || !player.name) {
@@ -376,7 +403,130 @@ export default {
       } finally {
         parent.active_requests--;
       }
-    }
+    },
+    async addCharacterRelationshipMemory(recent_story) {
+      const parent = this.$parent;
+      const gamemode = parent.gamemode;
+
+      // Avoid memory generation every time
+      if (Math.random() > 0.5) return;
+
+      // Get character context cards with memory creation turned on
+      let cards = this.cards.filter(
+        card => card.create_memories === true && card.type === 'character'
+      );
+
+      if (cards.length === 0) return;
+
+      const normalized_text = this.normalizeForMatch(recent_story);
+      const found_caracters = [];
+
+      for (const c of cards) {
+        if (c.keywords.length === 0) continue; // skip empty keyword fields
+
+        // Check if first card keyword is found in recent story
+        let kw = (c.keywords[0] || '')
+        if (!kw) continue;
+
+        kw = this.normalizeForMatch(kw);
+
+        if (normalized_text.includes(kw)) {
+          found_caracters.push(c);
+        }
+        if (found_caracters.length > 5) {
+          break; // Stop with a maximum of five characters to save context
+        }
+      }
+
+      // Return if less than 2 characters found
+      if (found_caracters.length < 2) return;
+
+      parent.status_message = 'Creating a relationship memory...';
+      try {
+        parent.active_requests++;
+
+        // Get story information to use as context for memory generation
+        const story_information =  parent.essential_context;
+
+        const characters_json = JSON.stringify(
+          found_caracters.map(c => ({
+            name: c.name,
+            description: c.content
+          })),
+          null,
+          2
+        );
+
+        const res = await fetch('/api/generate_relationship_memory', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: this.mem_model,
+            local: this.use_local,
+            story_information,
+            characters: characters_json,
+            recent_story
+          })
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        const response_json = data.response_json;
+        
+        const characterA_name = response_json.CharacterA.toLowerCase()
+        const characterB_name = response_json.CharacterB.toLowerCase()
+
+        const characterA = this.cards.find(c => c.name.toLowerCase() === characterA_name);
+        const characterB = this.cards.find(c => c.name.toLowerCase() === characterB_name);
+
+        if (!characterA) {
+          console.log(response_json);
+          throw new Error(`Backend returned invalid name: ${characterA_name}.`);
+        }
+        if (!characterB) {
+          console.log(response_json);
+          throw new Error(`Backend returned invalid name: ${characterB_name}.`);
+        }
+
+        const memory = response_json.memory.trim();
+
+        if (!memory) {
+          throw new Error('Backend returned empty relationship memory.');
+        }
+
+        if (!characterA.relationship_memories) {
+          characterA.relationship_memories = [];
+        }
+        if (!characterB.relationship_memories) {
+          characterB.relationship_memories = [];
+        }
+        if (!Array.isArray(characterA.relationship_memories[characterB.id])) {
+          characterA.relationship_memories[characterB.id] = [];
+        }
+        // Keep a maximum of 5 memories per relationship
+        if (characterA.relationship_memories[characterB.id].length >= 5) {
+          // Remove the oldest memory
+          characterA.relationship_memories[characterB.id].shift();
+        }
+        characterA.relationship_memories[characterB.id].push(memory);
+
+        if (data.tokens_total && parent.show_token_use) {
+          parent.status_message = `Tokens used for '${characterA.name}' and '${characterB.name}' relationship memory generation: ` + data.tokens_total;
+        } 
+        else {
+          parent.status_message = '';
+        }
+      } catch (err) {
+        throw new Error(err.message || err);
+      } finally {
+        parent.active_requests--;
+      }
+    },
   },
   computed: {
     // Display cards from newest to oldest, filtered by selected type

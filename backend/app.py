@@ -13,13 +13,15 @@ from prompts.asset_generation import (
     GENERATE_OTHER_SYS_PROMPT
 )
 from prompts.memory import (
-    SUMMARIZATION_SYS_PROMPT, 
+    SUMMARIZATION_SYS_PROMPT,
+    COMPRESS_SUMMARY_SYS_PROMPT,
     MEMORY_SYS_PROMPT,
     STORY_DIRECTION_SYS_PROMPT,
     CHARACTER_MEMORY_SYS_PROMPT,
     LOCATION_MEMORY_SYS_PROMPT,
     CHARACTER_MEMORY_RPG_SYS_PROMPT,
-    LOCATION_MEMORY_RPG_SYS_PROMPT
+    LOCATION_MEMORY_RPG_SYS_PROMPT,
+    RELATIONSHIP_MEMORY_SYS_PROMPT
 )
 from prompts.rpg import (
     RPG_SYS_PROMPT, 
@@ -30,6 +32,7 @@ from prompts.rpg import (
 from prompts.storyteller import STORYTELLER_SYS_PROMPT
 from prompts.hybrid import HYBRID_SYS_PROMPT
 from prompts.choices import CHOICES_SYS_PROMPT, GENERATE_CHOICES_SYS_PROMPT
+from prompts.time_skip import TIME_SKIP_SYS_PROMPT, TIME_SKIP_RPG_SYS_PROMPT
 
 # Maximum file size for save files
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
@@ -333,7 +336,9 @@ def continue_story():
     
     full_instructions = ''
 
-    if (gamemode == 'choices'):
+    if (user_instructions):
+        full_instructions = user_instructions
+    elif (gamemode == 'choices'):
         full_instructions = CHOICES_SYS_PROMPT
     elif (hybrid_enabled):
         full_instructions = HYBRID_SYS_PROMPT
@@ -347,14 +352,11 @@ def continue_story():
     # Get relevant memories for recent content
     relevant_memories = database.get_relevant_memories(recent_story[-2000:], story_id, 3)
 
-    # Get most recent memories for story
-    recent_memories = database.get_recent_memories(story_id, 3)
-
     # Get a random memory to improve creativity and to avoid certain context from being lost
     random_memories = database.get_random_memories(story_id, 1)
 
     # Combine and remove duplicate memories
-    unique_memories = list(set(relevant_memories + recent_memories + random_memories))
+    unique_memories = list(set(relevant_memories + random_memories))
 
     memory_block = '\n'.join(unique_memories) or ''
 
@@ -384,14 +386,15 @@ def continue_story():
 
     if (player_action):
         full_instructions += PLAYER_ACTION_SYS_PROMPT
-    elif (recent_action):
+    
+    if (recent_action):
         full_instructions += RECENT_ACTION_SYS_PROMPT
 
     if (outcome or recent_outcome):
         full_instructions += OUTCOME_SYS_PROMPT
 
-    if (user_instructions.strip() != ''):
-        full_instructions = (f"{full_instructions}\n{user_instructions}")
+    #if (user_instructions.strip() != ''):
+    #    full_instructions = (f"{full_instructions}\n{user_instructions}")
 
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
@@ -473,7 +476,7 @@ def summarize():
             ],
             "options": {
                 "temperature": 0.2, # Low temperature for good consistency
-                "num_predict": 1000, # Token limit to prevent unnecessarily long responses
+                "num_predict": 2000, # Token limit to prevent unnecessarily long responses
                 "num_ctx": 8192 # Use 8k input token limit
             },
             "stream": False,
@@ -505,7 +508,7 @@ def summarize():
                 {"role": "user", "content": content}
             ],
             "temperature": 0.2,
-            "max_tokens": 1000
+            "max_tokens": 2000
         }
 
         if "deepseek" in model.lower():
@@ -523,6 +526,92 @@ def summarize():
         tokens_total = result['usage']['total_tokens']
 
     trimmed = utils.trim_incomplete_sentences(new_summary)
+
+    print(f"Content used for summary creation:\n{content}")
+
+    return jsonify({"summary": trimmed, "tokens_total": tokens_total})
+
+@app.route('/api/compress_summary', methods=['POST'])
+def compress_summary():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Missing or invalid JSON body."}), 400
+
+    content = data.get('content')
+    if not content or content.strip() == '':
+        return jsonify({"error": "Empty content."}), 400
+    
+    local = data.get('local')
+
+    model = data.get('model')
+    if not model:
+        return jsonify({"error": "Model is required."}), 400
+    
+    new_summary = ''
+    tokens_total = -1
+
+    if (local and local == True and LOCAL_AI_ENABLED):
+        # Local summarization using Ollama API
+        response = requests.post(OLLAMA_URL, json={
+            "model": OLLAMA_MODEL,
+            "messages": [
+                {"role": "system", "content": COMPRESS_SUMMARY_SYS_PROMPT},
+                {"role": "user", "content": content}
+            ],
+            "options": {
+                "temperature": 0.2, # Low temperature for good consistency
+                "num_predict": 800, # Token limit to prevent unnecessarily long responses
+                "num_ctx": 8192 # Use 8k input token limit
+            },
+            "stream": False,
+            "keep_alive": "60m" # Keep the connection alive for 60 minutes to allow faster subsequent calls
+        })
+
+        if response.status_code == 200:
+            try:
+                response_data = response.json()
+            except ValueError:
+                return jsonify({"error": "Invalid JSON response from local AI service.", "detail": response.text}), 502
+
+            new_summary = response_data.get("message", {}).get("content", '').strip()
+            tokens_total = response_data.get("prompt_eval_count", 0) + response_data.get("eval_count", 0)
+
+        else:
+            return jsonify({"error": response.text}), response.status_code
+    # Default to cloud  
+    else:
+        if not api_url or not api_key:
+            return jsonify({"error": "API_URL or API_KEY not set."}), 500
+
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": COMPRESS_SUMMARY_SYS_PROMPT},
+                {"role": "user", "content": content}
+            ],
+            "temperature": 0.2,
+            "max_tokens": 800
+        }
+
+        if "deepseek" in model.lower():
+            payload["thinking"] = {"type": "disabled"}
+
+        # Call external AI API with error handling
+        result, error = utils.call_ai_api(api_url, headers, payload)
+
+        if error:
+            message, status = error
+            return jsonify({"error": message}), status
+
+        new_summary = result["choices"][0]["message"]["content"]
+
+        tokens_total = result['usage']['total_tokens']
+
+    trimmed = utils.trim_incomplete_sentences(new_summary)
+
+    print(f"Content used for summary compression:\n{content}")
 
     return jsonify({"summary": trimmed, "tokens_total": tokens_total})
 
@@ -570,7 +659,7 @@ def memorize():
                 {"role": "user", "content": content}
             ],
             "options": {
-                "temperature": 0.1, # Low temperature for best consistency
+                "temperature": 0.0, # Low temperature for best consistency
                 "num_predict": 250,
                 "num_ctx": 8192
             },
@@ -905,14 +994,14 @@ def generate_card_memory():
 
     if card_type == 'location':
         temperature = 0.1 # Low temperature for better consistency in location memories
-        if gamemode == 'rpg':
+        if gamemode == 'rpg' or gamemode == 'choices':
             sys_prompt = LOCATION_MEMORY_RPG_SYS_PROMPT
         else:
             sys_prompt = LOCATION_MEMORY_SYS_PROMPT
 
     elif card_type == 'character':
         temperature = 0.8 # Higher temperature for more personality in character memories
-        if gamemode == 'rpg':
+        if gamemode == 'rpg' or gamemode == 'choices':
             sys_prompt = CHARACTER_MEMORY_RPG_SYS_PROMPT
         else:
             sys_prompt = CHARACTER_MEMORY_SYS_PROMPT
@@ -927,7 +1016,7 @@ def generate_card_memory():
     # Build context for memory
     content += '[Story Information]\n' + story_information + '\n\n'
 
-    if (gamemode == 'rpg') and player_name:
+    if (gamemode == 'rpg' or gamemode == 'choices') and player_name:
         content += '[Player]\nPlayer Name: ' + player_name + '\n\n'
 
     content += f'[{card_type_cap}]\n{card_type_cap} Name: {card_name}\n'
@@ -1003,6 +1092,110 @@ def generate_card_memory():
         tokens_total = result['usage']['total_tokens']
 
     return jsonify({"new_memory": new_memory, "tokens_total": tokens_total})
+
+@app.route('/api/generate_relationship_memory', methods=['POST'])
+def generate_relationship_memory():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Missing or invalid JSON body."}), 400
+
+    model = data.get('model')
+    if not model:
+        return jsonify({"error": "Model is required."}), 400
+
+    local = data.get('local', False)
+    story_information = data.get('story_information', '')
+    characters = data.get('characters', '')
+    recent_story = data.get('recent_story', '')
+
+    content = ''
+    
+    # Build context for memory
+    content += '[Story Information]\n' + story_information + '\n\n'
+
+    content += f"[Relevant Character Information]\n{characters}\n\n"
+    content += f"[Reference Story]\nThe following is only evidence.\nDo NOT copy its narration style.\nExtract only lasting relationship implications."
+    content += f"\n\n{recent_story}"
+    
+    response_content = ''
+    tokens_total = -1
+
+    if (local == True and LOCAL_AI_ENABLED):
+        # Local memorization using Ollama API
+        response = requests.post(OLLAMA_URL, json={
+            "model": OLLAMA_MODEL,
+            "messages": [
+                {"role": "system", "content": RELATIONSHIP_MEMORY_SYS_PROMPT},
+                {"role": "user", "content": content}
+            ],
+            "options": {
+                "temperature": 0.4,
+                "num_predict": 120, # Small-ish limit as one memory should only be one sentence long
+                "num_ctx": 8192
+            },
+            "stream": False,
+            "keep_alive": "60m"
+        })
+
+        if response.status_code == 200:
+            try:
+                response_data = response.json()
+            except ValueError:
+                return jsonify({"error": "Invalid JSON response from local AI service.", "detail": response.text}), 502
+
+            response_content = response_data.get("message", {}).get("content", '').strip()
+
+            tokens_total = response_data.get("prompt_eval_count", 0) + response_data.get("eval_count", 0)
+
+        else:
+            return jsonify({"error": response.text}), response.status_code
+    # Default to cloud
+    else:
+        if not api_url or not api_key:
+            return jsonify({"error": "API_URL or API_KEY not set."}), 500
+
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": RELATIONSHIP_MEMORY_SYS_PROMPT},
+                {"role": "user", "content": content}
+            ],
+            "temperature": 0.4,
+            "max_tokens": 120
+        }
+
+        if "deepseek" in model.lower():
+            payload["thinking"] = {"type": "disabled"}
+
+        elif "qwen" in model.lower():
+            payload["reasoning_effort"] = "none"
+
+        # Call external AI API with error handling
+        result, error = utils.call_ai_api(api_url, headers, payload)
+
+        if error:
+            message, status = error
+            return jsonify({"error": message}), status
+
+        response_content = result["choices"][0]["message"]["content"]
+
+        tokens_total = result['usage']['total_tokens']
+
+    try:
+        response_json = json.loads(response_content.strip())
+    except json.JSONDecodeError as exc:
+        print(f"Used context for relationship memory:\n{content}\n\n")
+        print(f"Generated relationship memory:\n{response_content.strip()}\n\n")
+        return jsonify({"error": "AI returned invalid JSON for relationship memory.", "detail": str(exc)}), 500
+
+    if not isinstance(response_json, dict):
+        print(f"Used context for relationship memory:\n{content}\n\n")
+        print(f"Generated relationship memory:\n{response_content.strip()}\n\n")
+        return jsonify({"error": "AI returned an invalid relationship memory payload."}), 500
+
+    return jsonify({"response_json": response_json, "tokens_total": tokens_total})
 
 @app.route('/api/generate_direction', methods=['POST'])
 def generate_direction():
@@ -1103,6 +1296,86 @@ def generate_direction():
     trimmed = utils.trim_incomplete_sentences(new_direction)
 
     return jsonify({"direction": trimmed, "tokens_total": tokens_total})
+
+@app.route('/api/use_time_skip', methods=['POST'])
+def use_time_skip():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Missing or invalid JSON body."}), 400
+
+    recent_story = data.get('recent_story')
+    if not recent_story or recent_story.strip() == '':
+        return jsonify({"error": "Empty story content."}), 400
+    
+    model = data.get('model')
+    if not model:
+        return jsonify({"error": "Model is required."}), 400
+
+    max_tokens = data.get('max_tokens', 200) + 100
+    gamemode = data.get('gamemode')
+    user_instructions = data.get('instructions')
+    essential_context = data.get('essential_context', '')
+    summary = data.get('summary', '')
+    story_direction = data.get('story_direction', '')
+    context_cards = data.get('context_cards', '')
+    player_information = data.get('player_information', '')
+    player_equipment = data.get('player_equipment', '')
+    player_skills = data.get('player_skills', '')
+    time_skip_instructions = data.get('time_skip_instructions', '')
+
+    full_prompt = (
+        "[Essential Story Information]\n" + essential_context +
+        ("\n\n[Storytelling Instructions]\n" + user_instructions if user_instructions else "") +
+        ("\n\n[Player]\n" + player_information if player_information else "") +
+        ("\n\n[Player Equipment]\n" + player_equipment if player_equipment else "") +
+        ("\n\n[Player Skills & Proficiency]\n" + player_skills if player_skills else "") +
+        ("\n\n[Story Summary]\n" + summary if summary else "") +
+        ("\n\n[Upcoming Story Events]\n" + story_direction if story_direction else "") +
+        ("\n\n[Relevant Context]\n" + context_cards if context_cards else "") +
+        "\n\n[Recent Story]\n" + recent_story +
+        ("\n\n[Time Skip Instructions]\n" + time_skip_instructions if time_skip_instructions else "")
+    )
+
+    sys_prompt = TIME_SKIP_SYS_PROMPT
+    if gamemode == 'rpg' or gamemode == 'choices':
+        sys_prompt = TIME_SKIP_RPG_SYS_PROMPT
+
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": sys_prompt},
+            {"role": "user", "content": full_prompt}
+        ],
+        "max_tokens": max_tokens,
+        "temperature": 0.8
+    }
+
+    # Disable "thinking" phase for DeepSeek models to reduce output token use 
+    # -> cheaper & faster responses.
+    if "deepseek" in model.lower():
+        payload["thinking"] = {"type": "disabled"}
+
+    # Same for qwen
+    elif "qwen" in model.lower():
+        payload["reasoning_effort"] = "none"
+
+    # Call external AI API with error handling
+    result, error = utils.call_ai_api(api_url, headers, payload)
+
+    if error:
+        message, status = error
+        return jsonify({"error": message}), status
+
+    continued_content = result["choices"][0]["message"]["content"]
+
+    if not continued_content or continued_content.strip() == '':
+        return jsonify({"error": "AI API returned empty content."}), 500
+
+    trimmed = utils.trim_incomplete_sentences(continued_content)
+
+    return jsonify({"continued_content": trimmed, "tokens_total": result['usage']['total_tokens']})
 
 
 if __name__ == '__main__':

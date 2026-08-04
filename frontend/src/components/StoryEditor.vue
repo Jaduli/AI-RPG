@@ -50,6 +50,8 @@ export default {
       essential_context: '',
       editor_notes: '',
       notes_collapsed: true,
+      time_skip_instructions: '',
+      time_skip_collapsed: true,
       sent_context: '', // Full context sent for story generation
       status_message: '',
       // Values
@@ -59,7 +61,7 @@ export default {
       memory_cursor: 0,
       summary_cursor: 0,
       card_memory_cursor: 0,
-      direction_turn_counter: 0,
+      direction_turn_counter: 15,
       player_section: 'inventory',
       // Recent story content (i.e. content within the context window) 
       // is displayed in the editor
@@ -106,7 +108,12 @@ export default {
       }
     },
     toggleNotesPanel() {
+      this.time_skip_collapsed = true;
       this.notes_collapsed = !this.notes_collapsed;
+    },
+    toggleTimeSkipPanel() {
+      this.notes_collapsed = true;
+      this.time_skip_collapsed = !this.time_skip_collapsed;
     },
     selectChoice(choice) {
       this.continueStory(choice);
@@ -119,7 +126,7 @@ export default {
     },
     // Main function to continue the story with backend API
     async continueStory(player_choice = '') {
-      const recent_story = this.story_editor_content
+      let recent_story = this.story_editor_content
 
       // Basic validation to ensure there's enough content to continue from
       if (!recent_story || recent_story.trim().length < 20) {
@@ -141,8 +148,20 @@ export default {
           essential_context += '\n\n' + this.editor_notes
         }
 
+        let used_timeskip = false;
+        if (!this.time_skip_collapsed) {
+          await this.useTimeSkip(recent_story, context_cards, essential_context);
+          used_timeskip = true;
+          recent_story = this.story_editor_content
+        }
+
         // Convert player_choice to string to avoid issues with undefined values
-        const player_choice_str = typeof player_choice === 'string' ? player_choice : '';
+        let player_choice_str = typeof player_choice === 'string' ? player_choice : '';
+
+        // Player actions aren't used with a time skip
+        if (used_timeskip) {
+          player_choice_str = '';
+        }
 
         let payload = {
           story_id: this.story_id,
@@ -171,7 +190,7 @@ export default {
         if (this.gamemode === 'rpg' || this.gamemode === 'choices') {
           // Get player action unless a choice is used. If action is set to 'new', also generates
           // a new asset with most recent story as context if relevant.
-          if (!player_choice_str) {
+          if (!player_choice_str && !used_timeskip) {
             const action = await this.$refs.actionRow.getPlayerAction();
 
               is_new_action = action !== null;
@@ -267,16 +286,16 @@ export default {
 
         this.choices = [];
 
-        if (this.gamemode === 'rpg' || this.gamemode === 'choices' && !player_choice_str) {
+        if (this.gamemode === 'rpg' || this.gamemode === 'choices' && is_new_action) {
           // D20 action outcome of player action (success, failure, etc.)
           if (data.outcome) {
-            // this.recent_action = player_action;
-            // this.recent_outcome = data.outcome;
+            this.recent_action = player_action;
+            this.recent_outcome = data.outcome;
           }
           // Skill use outcome separate from D20
           if (outcome) {
-            // this.recent_action = player_action;
-            // this.recent_outcome = outcome;
+            this.recent_action = player_action;
+            this.recent_outcome = outcome;
           }
 
           // Add XP to used skill (allows leveling up).
@@ -378,8 +397,34 @@ export default {
         this.active_requests++;
         this.status_message = 'Summarizing story, please wait...'
 
-        const full_context = 'Current Summary:\n' + this.summary + 
-                             '\n\nNew Story Content:\n' + past_content;
+        while (this.summary.length > 6000) {
+          // Compress old summary before adding new information
+          const res = await fetch('/api/compress_summary', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              content: this.summary,
+              model: this.mem_model,
+              local: this.use_local
+            })
+          });
+          const data = await res.json();
+
+          if (data.error) {
+            this.status_message = 'Backend error compressing summary: ' + data.error;
+            return;
+          }
+          if (!data.summary || data.summary.trim() === '') {
+            this.status_message = 'Error: Summary compression returned empty content.';
+            return;
+          }
+          this.summary = data.summary;
+        }
+
+        const full_context = '[Current Summary]\n' + this.summary + 
+                             '\n\n[New Story Content]\n' + past_content;
         
         // Use POST for summary action
         const res = await fetch('/api/summarize', {
@@ -503,10 +548,11 @@ export default {
         // chance based on existing memory count.
         await this.$refs.contextCards.addCardMemory(past_content, 'character');
         await this.$refs.contextCards.addCardMemory(past_content, 'location');
+        await this.$refs.contextCards.addCharacterRelationshipMemory(past_content);
 
         this.card_memory_cursor = cutoff_index;
       } catch (err) {
-        console.error('Error creating context card memory: ' + (err.message || err));
+        this.status_message = 'Error creating context card memory: ' + (err.message || err);
       }
     },
     // Trigger story direction generation from the current story editor content.
@@ -630,6 +676,86 @@ export default {
         this.active_requests--;
       }
     },
+    async useTimeSkip(recent_story, essential_context = '', context_cards = '') {
+      if (!recent_story || recent_story.trim().length < 20) {
+        const message = 'Please enter enough story content to use a time skip.';
+        this.status_message = message;
+        throw new Error(message);
+      }
+      try {
+        this.active_requests++;
+        this.status_message = 'Using a time skip...';
+
+        let player_information = '';
+        let player_equipment = '';
+        let player_skills = '';
+        if (this.gamemode === 'rpg' || this.gamemode === 'choices') {
+          player_information = this.$refs.playerCard.getPlayerStr();
+          player_equipment = this.$refs.inventory.getEquipmentStr();
+          player_skills = this.$refs.skills.getSkillsStr();
+        }
+
+        const payload = {
+            model: this.mem_model,
+            max_tokens: this.max_tokens,
+            essential_context,
+            recent_story,
+            context_cards,
+            user_instructions: this.instructions,
+            summary: this.summary,
+            story_direction: this.story_direction,
+            player_information,
+            player_equipment,
+            player_skills,
+            time_skip_instructions: this.time_skip_instructions
+        }
+
+        const res = await fetch('/api/use_time_skip', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          const message = 'Backend error using time skip: ' + data.error;
+          this.status_message = message;
+          throw new Error(message);
+        }
+
+        if (!data.continued_content || data.continued_content.trim() === '') {
+          const message = 'Time skip returned empty content.';
+          this.status_message = message;
+          throw new Error(message);
+        }
+        
+        // Append new content to story with proper spacing (\n\n + new content).
+        // Count existing newlines at end of text
+        const matching_count = recent_story.match(/\n*$/)[0].length;
+
+        // Add 0-2 newlines based on existing count. This ensures \n\n in case of
+        // 0-2 existing newlines but does not remove newlines above the limit.
+        const newline_count = Math.max(0, 2 - matching_count);
+        this.content += '\n'.repeat(newline_count);
+
+        this.content += data.continued_content;
+
+        this.time_skip_instructions = '';
+        this.time_skip_collapsed = true;
+
+        if (this.show_token_use && data.tokens_total) {
+          this.status_message = 'Total tokens used for time skip: ' + data.tokens_total;
+        }
+      } catch (err) {
+        const message = 'Error using time skip: ' + (err.message || err);
+        this.status_message = message;
+        throw err;
+      } finally {
+        this.active_requests--;
+      }
+    },
     // Function to save the story to backend API
     async saveStory(sync = true) {
       // Only change status message if this is the only active request to
@@ -740,6 +866,8 @@ export default {
         this.recent_outcome = '';
         this.outcome_counter = 0;
         this.choices = [];
+        this.direction_turn_counter = 15;
+        this.time_skip_instructions = '';
 
         // Expand notes field if used in save
         if (this.editor_notes) {
@@ -791,7 +919,8 @@ export default {
       this.recent_outcome = '';
       this.outcome_counter = 0;
       this.card_memory_cursor = 0;
-      this.direction_turn_counter = 0;
+      this.direction_turn_counter = 15;
+      this.time_skip_instructions = '';
       this.choices = [];
 
       if (this.gamemode === 'rpg' || this.gamemode === 'choices') {
@@ -998,17 +1127,31 @@ export default {
             placeholder="Paste or write story text here.">
             </textarea>
           </div>
-          <div class="notes-panel" :class="{ collapsed: notes_collapsed }">
-            <button class="toggle-notes" @click="toggleNotesPanel">
-              {{ notes_collapsed ? '📝' : 'Hide Notes' }}
-            </button>
-            <textarea
-              v-if="!notes_collapsed"
-              v-model="editor_notes"
-              rows="9"
-              cols="30"
-              placeholder="Add additional story notes/context here, e.g. current location or date.">
-            </textarea>
+          <div class="side-panel-column">
+            <div class="side-panel" :class="{ collapsed: notes_collapsed }">
+              <button @click="toggleNotesPanel">
+                {{ notes_collapsed ? '📝' : 'Hide Notes' }}
+              </button>
+              <textarea
+                v-if="!notes_collapsed"
+                v-model="editor_notes"
+                rows="7"
+                cols="8"
+                placeholder="Add additional story notes/context here, e.g. current location or date.">
+              </textarea>
+            </div>
+            <div class="side-panel" :class="{ collapsed: time_skip_collapsed }">
+              <button @click="toggleTimeSkipPanel">
+                {{ time_skip_collapsed ? '⌛' : 'Hide Panel' }}
+              </button>
+              <textarea
+                v-if="!time_skip_collapsed"
+                v-model="time_skip_instructions"
+                rows="7"
+                cols="8"
+                placeholder="Instructions for the time skip, e.g. how long and what happens during the elapsed time. Press 'Continue' and a time skip will be used.">
+              </textarea>
+            </div>
           </div>
         </div>
 
@@ -1115,27 +1258,41 @@ export default {
 }
 
 .editor-main textarea,
-.notes-panel textarea {
+.side-panel textarea {
   width: 100%;
   box-sizing: border-box;
+  min-width: 250px;
 }
 
-.notes-panel {
+.side-panel-column {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 280px;
-  min-width: 280px;
+  flex-shrink: 0;
 }
 
-.notes-panel.collapsed {
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.side-panel.collapsed {
   width: auto;
   min-width: 0;
 }
 
-.toggle-notes {
+.side-panel button {
+  border: none;
+  padding: 4px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.toggle-panel {
   background: #aa3bff;
-  padding: 6px 10px;
+  padding: 4px 6px;
   cursor: pointer;
 }
 

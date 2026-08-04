@@ -142,7 +142,7 @@ export default {
         if (!user_input.endsWith('"') || !user_input.startsWith('"')) {
           user_input = '"' + user_input + '"'
         }
-        return 'You say ' + user_input;
+        return 'You say, ' + user_input;
       }
 
       return user_input;
